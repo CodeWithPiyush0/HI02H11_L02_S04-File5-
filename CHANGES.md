@@ -78,3 +78,20 @@ Status: ✅ DONE · ⚑ FLAGGED · ⏳ PENDING · N/C no change asked.
   handler fires on release). Same in File3.
 - The word shown under a picture after Hint 2 (page 13) is small (File3's size).
 - The bundle is not size-optimised yet (raw-WAV audio). Do the Opus re-encode on a copy before delivery.
+
+## Round 2 (2026-10-06) — screens made identical to File3
+
+The developer: "all the screens should be same as my previous file, just content changes". Compared
+screen by screen against a live capture of File3 and changed, so the File3 look wins over the deck:
+
+| | was (from the deck) | now (File3) |
+|---|---|---|
+| pages 2, 4, 6 | heading band shown | no heading |
+| ◌ो / ◌ौ chips, pages 2, 3, 5 | dotted circle navy, strokes orange | whole chip orange |
+| pages 3, 5 | caption «घो + ड़ा = घोड़ा» / «खि + लौ + ना = खिलौना» | no caption |
+| word sort + demo coach labels | «ओ» / «औ» | «ओ (ो)» / «औ (ौ)» |
+| mark sort, placed card | strokes lit on placement | plain, as File3 |
+
+The stroke-only look is one card switch (`chip_strokes: true`) if the SME asks for it back.
+Content, VO and the deck's hint ladder are unchanged. Re-driven: 10/10 screens, right-first-time on
+all 11 test screens, 0 console errors.

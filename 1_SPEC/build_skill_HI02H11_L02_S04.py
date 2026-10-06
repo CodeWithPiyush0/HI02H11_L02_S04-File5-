@@ -239,9 +239,10 @@ def s_intro(sid):
         pairs.append({"letter": NAME[m], "matra": m, "audio": vid,
                       "cue_ms": _matra_cue_ms(vid, line, "इसकी")})
     return {"id": sid, "phase": "tutorial", "eis": "enactive", "type": "MATRA_PAIRS",
-            "prompt_hi": p,
+            # NO HEADING, exactly as File3's page 2 (the developer: screens identical to File3)
+            "prompt_hi": "",
             "audio": {"prompt": vo("vo_%s_prompt" % sid.lower(), p)},
-            "data": {"pairs": pairs, "auto": True,
+            "data": {"pairs": pairs, "auto": True, "no_heading": True,
                      "phonemes": {m: vo("vo_matra_" + SLUG[m], "%s की मात्रा" % NAME[m])
                                   for m in (O, AU)}}}
 
@@ -278,7 +279,7 @@ def s_build(sid, base_word, consonant, matra, syllable, result_word, result_line
                      "sound_ms": _sound_cues_ms(a["sounds"], 3),
                      "base_img": pic(bk), "base_emoji": BASE_OBJ[base_word][1],
                      "base_img_from": pic(base_img_from) if base_img_from else None,
-                     "cap_base": None, "cap_mid": None, "cap_result": cap_result,
+                     "cap_base": None, "cap_mid": None, "cap_result": None,   # File3: no captions
                      "no_heading": True}}
 
 
@@ -298,10 +299,10 @@ def s_pair(sid, words, matra):
                    "matra_ms": _matra_cue_ms(vid, t, "इसमें", 900),
                    "matra_audio": None})
     return {"id": sid, "phase": "tutorial", "eis": "iconic", "type": "MEET_PAIR",
-            "prompt_hi": "%s की मात्रा वाले शब्द पढ़िए।" % M,
+            "prompt_hi": "",                     # no heading, as File3
             "audio": {"prompt": vo("vo_%s_prompt" % sid.lower(),
                                    "आइए, %s की मात्रा वाले कुछ शब्द देखें।" % M)},
-            "data": {"examples": ex}}
+            "data": {"examples": ex, "no_heading": True}}
 
 
 def s_tap(sid, words, target):
@@ -326,8 +327,11 @@ def s_tap(sid, words, target):
                                   "audio": name_clip(w), "matra": matra_of(w)} for w in words]}}
 
 
-def bins():
-    return [{"key": m, "label": NAME[m], "matra": m} for m in (O, AU)]
+def bins(with_matra=False):
+    """File3: the word round's coaches read «उ (ु)» - letter + its matra; the mark and picture
+    rounds show the bare letter (otherwise the label would give the mark round away)."""
+    return [{"key": m, "label": ("%s (%s)" % (NAME[m], m)) if with_matra else NAME[m], "matra": m}
+            for m in (O, AU)]
 
 
 def sort_card(word, kind):
@@ -360,7 +364,7 @@ def s_demo(sid, words):
             "audio": {"prompt": vo("vo_g4d_prompt",
                                    "देखिए, शब्द को उसकी मात्रा वाले डिब्बे में कैसे डालते हैं।"),
                       "outro": vo("vo_g4d_end", "अब आप भी ऐसे ही करके देखिए।")},
-            "data": {"kind": "word", "bins": bins(), "single": False, "demo": True,
+            "data": {"kind": "word", "bins": bins(True), "single": False, "demo": True,
                      "shuffle": False, "cards": cards}}
 
 
@@ -374,7 +378,7 @@ def s_sort_words(sid, words):
                                   "फिर से पढ़िए। इस शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।"),
                       "hint2": vo("vo_%s_h2" % sid.lower(),
                                   "इस शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।")},
-            "data": {"kind": "word", "bins": bins(), "single": False, "shuffle": False,
+            "data": {"kind": "word", "bins": bins(True), "single": False, "shuffle": False,
                      "h2_read_bins": False, "hint3_hand": HINT3_HAND["sort_words"],
                      "cards": [sort_card(w, "word") for w in words]}}
 

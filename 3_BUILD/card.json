@@ -380,7 +380,7 @@
    "phase": "tutorial",
    "eis": "enactive",
    "type": "MATRA_PAIRS",
-   "prompt_hi": "आज हम ओ और औ की मात्रा वाले शब्द पढ़ेंगे।",
+   "prompt_hi": "",
    "audio": {
     "prompt": "vo_t1_prompt"
    },
@@ -400,6 +400,7 @@
      }
     ],
     "auto": true,
+    "no_heading": true,
     "phonemes": {
      "ो": "vo_matra_o",
      "ौ": "vo_matra_au"
@@ -441,7 +442,7 @@
     "base_img_from": null,
     "cap_base": null,
     "cap_mid": null,
-    "cap_result": "घो + ड़ा = घोड़ा",
+    "cap_result": null,
     "no_heading": true
    }
   },
@@ -450,7 +451,7 @@
    "phase": "tutorial",
    "eis": "iconic",
    "type": "MEET_PAIR",
-   "prompt_hi": "ओ की मात्रा वाले शब्द पढ़िए।",
+   "prompt_hi": "",
    "audio": {
     "prompt": "vo_t3_prompt"
    },
@@ -476,7 +477,8 @@
       "matra_ms": 1465,
       "matra_audio": null
      }
-    ]
+    ],
+    "no_heading": true
    }
   },
   {
@@ -514,7 +516,7 @@
     "base_img_from": "obj_khilna_bud",
     "cap_base": null,
     "cap_mid": null,
-    "cap_result": "खि + लौ + ना = खिलौना",
+    "cap_result": null,
     "no_heading": true
    }
   },
@@ -523,7 +525,7 @@
    "phase": "tutorial",
    "eis": "iconic",
    "type": "MEET_PAIR",
-   "prompt_hi": "औ की मात्रा वाले शब्द पढ़िए।",
+   "prompt_hi": "",
    "audio": {
     "prompt": "vo_t5_prompt"
    },
@@ -549,7 +551,8 @@
       "matra_ms": 1399,
       "matra_audio": null
      }
-    ]
+    ],
+    "no_heading": true
    }
   },
   {
@@ -690,12 +693,12 @@
     "bins": [
      {
       "key": "ो",
-      "label": "ओ",
+      "label": "ओ (ो)",
       "matra": "ो"
      },
      {
       "key": "ौ",
-      "label": "औ",
+      "label": "औ (ौ)",
       "matra": "ौ"
      }
     ],
@@ -738,12 +741,12 @@
     "bins": [
      {
       "key": "ो",
-      "label": "ओ",
+      "label": "ओ (ो)",
       "matra": "ो"
      },
      {
       "key": "ौ",
-      "label": "औ",
+      "label": "औ (ौ)",
       "matra": "ौ"
      }
     ],

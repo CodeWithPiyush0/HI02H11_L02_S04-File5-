@@ -75,7 +75,7 @@ document.querySelectorAll('.mb-panel,.mb-arrow').forEach(function(e){ e.classLis
   }
   if(slot){ slot.classList.remove('mb-slot-wait'); slot.classList.add('mb-slot-in'); }
   /* [S04] ो / ौ: the chip is navy and only its strokes light (matraHL mask path) */
-  if(slot && typeof matraHLSoon === 'function' && !/[\\u0941\\u0942\\u0943]/.test(slot.textContent)
+  if(slot && typeof CARD !== 'undefined' && CARD.chip_strokes && typeof matraHLSoon === 'function' && !/[\\u0941\\u0942\\u0943]/.test(slot.textContent)
      && !slot.querySelector('.mh-ov')){
     matraHLSoon(slot, (typeof CARD !== 'undefined' && CARD.slides[state.idx].data.matra) || '', { glow:true });
   }

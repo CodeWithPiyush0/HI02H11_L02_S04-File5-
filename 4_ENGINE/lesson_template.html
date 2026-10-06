@@ -10868,7 +10868,8 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
         /* [S04] the mark round: «Highlight only the complete matra strokes in red» on placement */
         if(d.kind === "matra"){
           const mk = tile.querySelector(".tr-matra");
-          if(mk){ if(tile._h2undo) tile._h2undo(); matraHLSoon(mk, tile.dataset.bin, { glow:true }); }
+          if(tile._h2undo) tile._h2undo();
+          if(mk && CARD.chip_strokes) matraHLSoon(mk, tile.dataset.bin, { glow:true });
         }
         /* [S04] «Remove temporary word support whenever its picture is correctly placed», and
            Hint 3's glow / the other cards' wait end with the guided placement */
@@ -11248,7 +11249,7 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
       /* [S04] «Highlight only the ो मात्रा … The dotted circle is a display aid» - for a mark
          drawn above/right of its consonant the chip is painted navy and only the strokes are
          lit (matraHL's mask path separates them from the ◌ exactly). ु/ू keep File3's chip. */
-      const strokeChip = !_BELOW_MARKS.has(d.matra || "");
+      const strokeChip = !!CARD.chip_strokes && !_BELOW_MARKS.has(d.matra || "");   /* File3 look unless asked */
       if(strokeChip) p2.classList.add("mb-strokes");
       const show   = (el)=>{ el.classList.remove("mb-hidden"); el.classList.remove("mb-in");
                              void el.offsetWidth; el.classList.add("mb-in"); };
@@ -11760,7 +11761,7 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
       const els = pairs.map(p => {
         const el = document.createElement("div"); el.className = "mp-pair";
         /* [S04] «Highlight only the matra strokes in red. Keep the dotted circle neutral.» */
-        const strokes = !_BELOW_MARKS.has(p.matra || "");
+        const strokes = !!CARD.chip_strokes && !_BELOW_MARKS.has(p.matra || "");   /* File3 look unless asked */
         el.innerHTML = '<span class="mp-letter">' + p.letter + "</span>" +
                        '<span class="mp-arrow">\u2192</span>' +
                        '<span class="mp-matra' + (strokes ? " mp-strokes" : "") + '">' +
