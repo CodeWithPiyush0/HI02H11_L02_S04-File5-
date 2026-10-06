@@ -1,0 +1,554 @@
+
+/* ==========================================================================================
+   «मात्राओं की रेल» — styles for the train module set     [local to HI02H11_L02_S03]
+   ==========================================================================================
+   EVERY RULE HERE IS AUTHORED IN THE SETTLED STATE. capture_pages.py injects
+   `*{animation:none!important;transition:none!important}`, so anything that only exists inside
+   an @keyframes or a transition is INVISIBLE in the review deck. Entry motion is therefore an
+   added class that animates FROM an offset TO the default — kill animation and you get the
+   finished slide, which is exactly what a reviewer should see.
+
+   ------------------------------------------------------------------------------------------
+   REVIEW ROUND 2 (SME, 2026-09-21). Four defects the SME found by looking at the built HTML:
+     1. "ऊपर स्विफ्टी वाले बॉक्स की हेडिंग मिसिंग है" — the heading band was HIDDEN on 14 of 16
+        screens. Cause is at the bottom of this file under HEADING BAND. Fixed.
+     2. "बहुत सारी जगह ओवरलैप हो रही है" — three separate causes, all fixed below and each
+        marked OVERLAP-FIX with the measurement that proved it.
+     3. The matra was never highlighted inside the word, which the SME asks for on every teach
+        screen. Now possible — see MATRA HIGHLIGHT.
+     4. The POEM_SEARCH ghost, specified at length by the SME, did not exist. Now built.
+   ========================================================================================== */
+
+/* ---------- .ink-box — THE REAL CAUSE OF THE WORD-ON-TOP-OF-PICTURE OVERLAP ----------
+   OVERLAP-FIX #0, found by reading the DOM rather than the screenshot. The engine runs
+   centerInkGlyph() over every `.ink-glyph`, which measures the glyph's ink box and then
+   translateY()s it so the ink is vertically centred IN ITS PARENT ELEMENT. That is right when
+   the parent hugs the word (a coach body, a drag tile). It is badly wrong when the parent is a
+   tall column: the MATRA_BUILD result panel is word → picture → caption, so the engine centred
+   the word in the WHOLE PANEL and stamped it 62px down, straight through the bridge picture.
+   Measured on the built page: `.mb-result` carried style="transform: translateY(61.97px)".
+
+   No amount of margin fixes that, because the transform is applied after layout. The fix is to
+   give the word a parent that hugs it, so the centring has nowhere to move it. The 12px side
+   padding is deliberate: centerInkGlyph also SHRINKS a glyph whose ink is wider than its box,
+   and Devanagari ink paints 4-11px past its advance, so a box that hugs exactly would shrink
+   every word slightly for no reason. The padding is the overhang room the engine's own comment
+   describes.
+
+   Any future word placed in a column MUST be wrapped in .ink-box. */
+.ink-box{ display:inline-block; padding:0 12px; line-height:var(--hi-lh); }
+
+/* ---------- LINE HEIGHT: the single biggest cause of the overlaps ----------
+   OVERLAP-FIX #1. Every Devanagari run in this lesson was set at line-height:1.05, which is
+   fine for आ/इ/ई but NOT for this skill: ु and ू hang BELOW the baseline, so the glyph's ink
+   box is taller than a 1.05 line box and the descender bleeds into whatever sits underneath.
+   Measured on the built page: the 56px «पुल» in the MATRA_BUILD result panel painted 18px of
+   ु straight through the bridge picture below it.
+   1.45 clears the descender at every size used here. Do not lower it in a उ/ऊ/ृ lesson. */
+:root{ --hi-lh: 1.45; }
+
+/* ---------- the train ---------- */
+.tr-wrap{ position:relative; display:flex; flex-direction:column; align-items:center;
+  gap:4px; width:100%; padding-top:6px; }
+.tr-rail{ display:flex; align-items:flex-end; justify-content:center; gap:14px; }
+.tr-track{ width:min(1020px,94%); height:12px; border-radius:6px;
+  background:repeating-linear-gradient(90deg,#8C6239 0 22px,#A8764A 22px 34px);
+  box-shadow:0 3px 0 rgba(11,61,140,.10); }
+.tr-loco{ position:relative; flex:0 0 auto; margin-bottom:-6px; }
+.tr-steam{ position:absolute; left:26px; top:-16px; display:flex; gap:5px; opacity:0; }
+.tr-steam i{ width:13px; height:13px; border-radius:50%; background:#DCEBFF; display:block; }
+.tr-done .tr-steam{ opacity:1; }
+
+.tr-coach{ flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:7px; }
+
+/* OVERLAP-FIX #2: the coach label. The label itself contains a matra («छोटी उ ◌ु»), so it has
+   the same descender problem, and at gap:7px its ु touched the coach roof. Extra bottom
+   padding + the shared line-height give it room; the gap grows to a full 12px. */
+.tr-coach{ gap:12px; }
+.tr-label{ min-height:44px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-hi); font-size:27px; font-weight:800; color:var(--navy-dk,#0B3D8C);
+  line-height:var(--hi-lh);
+  background:#fff; border:2px solid #E4ECF7; border-radius:13px; padding:4px 15px 8px; }
+.tr-label:empty{ border:0; background:transparent; min-height:10px; padding:0; }
+
+.tr-car{ position:relative; border-radius:17px; padding:9px; border:4px solid rgba(0,0,0,.18); }
+.tr-body{ width:196px; height:116px; border-radius:11px; background:rgba(255,255,255,.96);
+  display:flex; align-items:center; justify-content:center; gap:7px; flex-wrap:wrap;
+  padding:5px; overflow:hidden; }
+/* wheels, drawn on the car so a coach always reads as a coach */
+.tr-car::after{ content:""; position:absolute; left:16px; right:16px; bottom:-17px; height:17px;
+  background:
+    radial-gradient(circle 13px at 22px 4px,#3B3B4F 0 11px,transparent 12px),
+    radial-gradient(circle 13px at calc(100% - 22px) 4px,#3B3B4F 0 11px,transparent 12px);
+  background-repeat:no-repeat; }
+.c-rose   .tr-car{ background:#F2637A; }
+.c-green  .tr-car{ background:#4CAF7D; }
+.c-amber  .tr-car{ background:#F2A93B; }
+.c-violet .tr-car{ background:#8B6FD6; }
+
+.tr-word{ font-family:var(--font-hi); font-size:44px; font-weight:800; color:var(--navy-dk,#0B3D8C);
+  line-height:var(--hi-lh); white-space:nowrap; }
+.tr-coach.is-tappable{ cursor:pointer; }
+.tr-coach.is-tappable .tr-car{ transition:transform .14s ease; }
+.tr-coach.is-tappable:hover .tr-car{ transform:translateY(-3px); }
+
+/* states — all four are visible with animation disabled */
+.tr-body.hover{ outline:4px dashed #2BA79B; outline-offset:3px; background:#EAFBF6; }
+.tr-coach.is-correct .tr-car{ box-shadow:0 0 0 6px rgba(76,175,125,.55),0 0 22px 6px rgba(76,175,125,.35); }
+.tr-coach.is-nudge   .tr-car{ box-shadow:0 0 0 7px rgba(255,206,46,.85),0 0 24px 7px rgba(252,188,24,.55); }
+.tr-coach.is-locked  .tr-body{ background:#F4FAF7; }
+.tr-coach.is-shake{ animation:trShake .48s ease; }
+@keyframes trShake{ 0%,100%{transform:translateX(0)} 20%{transform:translateX(-9px)}
+  45%{transform:translateX(8px)} 70%{transform:translateX(-5px)} }
+
+/* entry: settled by default, animated in by .tr-enter */
+.tr-wrap.tr-enter .tr-rail{ animation:trRollIn .85s cubic-bezier(.22,.9,.3,1) both; }
+@keyframes trRollIn{ from{ transform:translateX(46%); opacity:0 } to{ transform:none; opacity:1 } }
+@media (prefers-reduced-motion:reduce){
+  .tr-wrap.tr-enter .tr-rail{ animation:none; }
+  .tr-coach.is-shake{ animation:none; outline:4px solid var(--wrong,#E8453C); }
+}
+
+/* ---------- the card tray ---------- */
+.tr-tray{ display:flex; gap:16px; justify-content:center; flex-wrap:nowrap; margin-top:22px; }
+.tr-card{ width:112px; min-height:112px; border-radius:15px; background:#fff;
+  border:3px solid #8BBFFF; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:2px; cursor:grab; touch-action:none; position:relative; z-index:2;
+  box-shadow:0 5px 0 rgba(11,61,140,.12); padding:5px; }
+.tr-card.tr-seq-hidden{ opacity:0; pointer-events:none; }
+.tr-card.dragging{ z-index:50; cursor:grabbing; }
+.tr-card.snapped{ width:86px; min-height:86px; box-shadow:none; border-width:2px; cursor:default; }
+.tr-pic{ width:62px; height:62px; object-fit:contain; }
+.tr-card.snapped .tr-pic{ width:48px; height:48px; }
+.tr-emoji{ font-size:44px; line-height:1; }
+.tr-cardlbl{ font-family:var(--font-hi); font-size:21px; font-weight:800; color:var(--navy-dk,#0B3D8C);
+  line-height:var(--hi-lh); }
+.tr-card.snapped .tr-cardlbl{ font-size:17px; }
+.tr-matra{ font-family:var(--font-hi); font-size:52px; font-weight:800; color:var(--navy-dk,#0B3D8C);
+  line-height:var(--hi-lh); }
+.tr-card.k-matra{ min-height:96px; }
+
+/* ---------- MATRA_FILL ----------
+   OVERLAP-FIX #3, and the worst one. The blank carries `.dd-zone` so makeDraggable can hit-test
+   it — but the engine sizes EVERY drop zone with
+       .dd-tile:not(.snapped), .dd-zone { width:150px; height:150px }
+   My `.tr-blank{min-width:44px}` never contested that, because it sets min-width, not width.
+   Measured on the built page: .tr-fill was 216px inside a 172px coach body, so 22px of the word
+   spilled out each side — which is why «प» and «ल» sat on the coach frame and «ल» collided with
+   the next coach's «फ». These three rules take the width back and keep the word inside. */
+.tr-body .tr-blank.dd-zone{ width:auto; min-width:54px; height:56px; flex:0 0 auto;
+  align-self:center; }
+.tr-fill{ display:inline-flex; align-items:center; justify-content:center; gap:4px;
+  max-width:100%; font-family:var(--font-hi); font-size:40px; font-weight:800;
+  line-height:var(--hi-lh); color:var(--navy-dk,#0B3D8C); white-space:nowrap; }
+.tr-blank{ display:inline-block; border-radius:9px;
+  border:3px dashed #2BA79B; background:#F3FBF9; vertical-align:middle; }
+.tr-blank.filled{ border-style:solid; background:#EAFBF6; }
+.tr-inmatra{ color:var(--wrong,#E8453C); font-size:40px; line-height:var(--hi-lh); }
+.tr-doneword{ font-family:var(--font-hi); font-size:42px; font-weight:800;
+  color:var(--navy-dk,#0B3D8C); line-height:var(--hi-lh); white-space:nowrap; }
+/* the support picture above each coach — the SME asks for it, and it needs to be readable */
+.tr-slotpic{ width:70px; height:70px; object-fit:contain; }
+
+/* ---------- MATRA_BUILD ---------- */
+.mb-stage{ display:flex; align-items:center; justify-content:center; gap:16px; width:100%;
+  flex-wrap:nowrap; padding:6px 4px 16px; }
+.mb-panel{ background:#fff; border:3px solid #E4ECF7; border-radius:20px; padding:16px 20px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  box-shadow:0 8px 20px rgba(11,61,140,.10); }
+/* the middle panel is now a COLUMN: the equation row, then its one-line caption, exactly as
+   the SME's mockup draws it. .mb-eqrow keeps the equation itself horizontal. */
+.mb-p2{ align-items:center; gap:6px; background:#F4F8FF; }
+.mb-eqrow{ display:flex; flex-direction:row; align-items:center; gap:10px; }
+.mb-arrow{ font-size:40px; color:#8BBFFF; font-weight:800; }
+/* panel captions — SME mockup: «यह शब्द देखिए — पल», «पल से बना पुल» */
+.mb-cap{ font-family:var(--font-hi); font-size:19px; font-weight:800; color:#5B7BA6;
+  line-height:var(--hi-lh); text-align:center; max-width:230px; }
+.mb-p2 .mb-cap{ max-width:250px; color:#3E6FA8; }
+.mb-word{ font-family:var(--font-hi); font-size:60px; font-weight:800;
+  color:var(--navy-dk,#0B3D8C); line-height:var(--hi-lh); }
+.mb-cons,.mb-syl{ font-family:var(--font-hi); font-size:54px; font-weight:800;
+  color:var(--navy-dk,#0B3D8C); line-height:var(--hi-lh); }
+.mb-matra{ font-family:var(--font-hi); font-size:50px; font-weight:800;
+  color:var(--wrong,#E8453C); line-height:var(--hi-lh); }
+.mb-plus,.mb-eq{ font-size:34px; color:#5B7BA6; font-weight:800; }
+.mb-cons.mb-hot{ color:var(--wrong,#E8453C); }
+.mb-img{ width:104px; height:104px; object-fit:contain; }
+.mb-emoji{ font-size:80px; line-height:1; }
+/* the result panel: word ABOVE its picture, with the descender cleared (OVERLAP-FIX #1) */
+.mb-p3{ gap:4px; padding:14px 18px; }
+.mb-p3 .mb-word{ font-size:52px; }
+.mb-p3 .mb-pic{ display:block; line-height:0; }
+.mb-p3 .mb-img{ width:88px; height:88px; }
+.mb-p3 .mb-emoji{ font-size:66px; }
+/* off/in: `mb-seq-hidden` is the only hidden state, and it is removed BEFORE the clip that reveals
+   each piece, so a capture with animation disabled shows everything that has been revealed. */
+.mb-seq-hidden{ opacity:0; }
+.mb-in{ opacity:1; }
+.mb-pop{ animation:mbPop .4s cubic-bezier(.34,1.5,.6,1) both; }
+@keyframes mbPop{ from{ transform:scale(.6) } to{ transform:none } }
+.mb-fly.mb-travel-down{ animation:mbDown .5s cubic-bezier(.34,1.4,.6,1) both; }
+@keyframes mbDown{ from{ transform:translateY(-34px); opacity:0 } to{ transform:none; opacity:1 } }
+.mb-fly.mb-travel-left{ animation:mbLeft .5s cubic-bezier(.34,1.4,.6,1) both; }
+@keyframes mbLeft{ from{ transform:translateX(34px); opacity:0 } to{ transform:none; opacity:1 } }
+.mb-fly.mb-travel-right{ animation:mbRight .5s cubic-bezier(.34,1.4,.6,1) both; }
+@keyframes mbRight{ from{ transform:translateX(-34px); opacity:0 } to{ transform:none; opacity:1 } }
+
+/* ---------- MEET_PAIR ---------- */
+.mp-stage{ display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px; width:100%; padding-bottom:22px; }
+.mp-card{ display:flex; align-items:center; gap:34px; opacity:0; min-height:168px; }
+.mp-card.mp-in{ opacity:1; }
+.mp-word{ font-family:var(--font-hi); font-size:80px; font-weight:800;
+  color:var(--navy-dk,#0B3D8C); line-height:var(--hi-lh); }
+/* the picture arrives AFTER the word, per the SME's "Word should appear first, then image" */
+.mp-pic{ opacity:0; display:inline-block; line-height:0; }
+.mp-pic.mp-in{ opacity:1; }
+.mp-img{ width:146px; height:146px; object-fit:contain; }
+.mp-emoji{ font-size:108px; line-height:1; }
+/* the callout was almost unreadable at opacity .35 before its cue; .62 keeps it legible */
+.mp-callout{ opacity:.62; display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--font-hi); font-size:26px; font-weight:800; color:var(--navy-dk,#0B3D8C);
+  background:#FFF6E0; border:2px solid #F7C948; border-radius:999px; padding:6px 22px 10px;
+  line-height:var(--hi-lh); }
+.mp-callout.mp-in{ opacity:1; }
+.mp-matra{ font-size:40px; color:var(--wrong,#E8453C); line-height:var(--hi-lh); }
+
+/* ---------- CONTRAST_PAIR ---------- */
+.cp-stage{ display:flex; align-items:center; justify-content:center; gap:26px; width:100%;
+  padding-bottom:18px; }
+.cp-side{ background:#fff; border:3px solid #E4ECF7; border-radius:22px; padding:18px 30px;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  box-shadow:0 8px 20px rgba(11,61,140,.10); }
+.cp-a{ border-color:#F6C9CE; background:#FFF6F7; }
+.cp-b{ border-color:#BFE6D2; background:#F4FCF8; }
+.cp-word{ font-family:var(--font-hi); font-size:70px; font-weight:800;
+  color:var(--navy-dk,#0B3D8C); line-height:var(--hi-lh); }
+.cp-matra{ font-family:var(--font-hi); font-size:34px; font-weight:800;
+  color:var(--wrong,#E8453C); line-height:var(--hi-lh); }
+.cp-lbl{ font-family:var(--font-hi); font-size:23px; font-weight:800; color:#5B7BA6;
+  line-height:var(--hi-lh); }
+.cp-vs{ font-size:48px; font-weight:800; color:#8BBFFF; }
+
+/* ---------- MATRA_INTRO — the SME's «letter → matra» pairs ---------- */
+.mi-stage{ display:flex; align-items:center; justify-content:center; gap:70px; width:100%;
+  flex-wrap:wrap; padding-bottom:20px; }
+.mi-pair{ display:flex; align-items:center; gap:12px; background:#fff;
+  border:3px solid #E4ECF7; border-radius:22px; padding:12px 26px;
+  box-shadow:0 8px 20px rgba(11,61,140,.10); }
+.mi-pair.is-dim{ opacity:.42; }
+.mi-pair.is-on{ border-color:#F7C948; box-shadow:0 0 0 5px rgba(247,201,72,.42),0 8px 20px rgba(11,61,140,.10); }
+.mi-letter{ font-family:var(--font-hi); font-size:74px; font-weight:800;
+  color:var(--navy-dk,#0B3D8C); line-height:var(--hi-lh); }
+.mi-arrow{ font-size:38px; color:#8BBFFF; font-weight:800; }
+.mi-matra{ font-family:var(--font-hi); font-size:68px; font-weight:800;
+  color:var(--wrong,#E8453C); line-height:var(--hi-lh); }
+
+/* ---------- MATRA HIGHLIGHT (new) ----------
+   The SME asks, on every teach screen, to "Highlight only the matra in the word". For आ/इ/ई the
+   engine does it with RIGHT_SPACING_MATRAS + _matraClipCols, which colours a vertical PIXEL
+   COLUMN range. That method cannot work for this skill and the attempt was measured failing:
+   ु and ू are BELOW-BASE marks that share their consonant's columns, so the column range lands
+   on the NEXT letter — «पुल» put 11,342 red pixels on the ल.
+
+   What works, and is what these classes support, is a TWO-DIMENSIONAL clip: take the grapheme
+   cluster that carries the mark (Intl.Segmenter), and clip an overlay copy of the whole word to
+   that cluster's x-range INTERSECTED with the band BELOW the baseline. Nothing else in these
+   words descends below the baseline, so only the mark is painted. Verified at 150px on पुल,
+   फूल and मुकुट (which correctly reddens BOTH of its ु marks).
+
+   The overlay is a duplicate of the full word, so it stays in perfect register with the
+   original at any font size or weight; only the clip changes. aria-hidden, so a screen reader
+   reads the word once. See matraHL() in train_modules.js. */
+.mh{ position:relative; display:inline-block; }
+/* height:100% matters: the mask canvas is sized to the ELEMENT box and applied with
+   mask-size:100% 100%, so an auto-height overlay would scale the mask vertically and slide the
+   red off the stroke. */
+.mh-ov{ position:absolute; left:0; top:0; width:100%; height:100%;
+  color:var(--wrong,#E8453C); pointer-events:none; user-select:none; white-space:pre; }
+/* the overlay's text is an ATTRIBUTE painted by a pseudo-element, so the engine's
+   centerInkGlyph() — which measures with textContent — never sees it. See matraHL(). */
+.mh-ov::before{ content:attr(data-w); }
+/* NO GLOW. The overlay is clipped to the mark's exact ink box, so a text-shadow paints a soft
+   red RECTANGLE out to the clip edges instead of a halo around the stroke — clearly visible in
+   the सेब capture. The red is unmistakable on its own; the class is kept as a no-op so callers
+   passing {glow:true} need no change. */
+.mh-ov.mh-glow{ text-shadow:none; }
+.mh-pulse{ animation:mhPulse 1.1s ease 2; }
+@keyframes mhPulse{ 0%,100%{ filter:none } 50%{ filter:brightness(1.35) drop-shadow(0 0 9px rgba(232,69,60,.7)) } }
+
+/* ---------- POEM_SEARCH ---------- */
+.ps-stage{ position:relative; display:flex; align-items:center; justify-content:center;
+  width:100%; padding-bottom:22px; }
+.ps-card{ background:#fff; border:3px solid #E4ECF7; border-radius:24px; padding:26px 40px;
+  box-shadow:0 10px 26px rgba(11,61,140,.12); display:flex; flex-direction:column; gap:12px; }
+.ps-card.ps-round-done{ box-shadow:0 0 0 6px rgba(76,175,125,.5),0 10px 26px rgba(11,61,140,.12); }
+.ps-line{ display:flex; gap:14px; justify-content:center; }
+.ps-w{ font-family:var(--font-hi); font-size:38px; font-weight:800; color:var(--navy-dk,#0B3D8C);
+  padding:2px 6px 6px; border-radius:9px; cursor:pointer; line-height:var(--hi-lh); }
+.ps-w.ps-mag{ transform:scale(1.22); background:#EAF4FF; }
+.ps-w.ps-hit{ background:#DFF6EA; color:#12796E; box-shadow:0 0 0 3px #4CAF7D inset; }
+.ps-w.ps-miss{ background:#FDECEC; }
+.ps-lens{ position:absolute; right:5%; bottom:4%; width:90px; height:90px; cursor:grab;
+  touch-action:none; z-index:6; filter:drop-shadow(0 6px 10px rgba(11,61,140,.28)); }
+.ps-lens:active{ cursor:grabbing; }
+.ps-lens.ps-lens-done{ filter:drop-shadow(0 0 16px rgba(247,201,72,.95)); }
+/* the round counter — the SME wants no instruction TEXT, but a child hunting six words with no
+   idea how many remain has no way to know a round ended. Dots, not words. */
+.ps-dots{ position:absolute; left:50%; transform:translateX(-50%); bottom:-6px;
+  display:flex; gap:9px; align-items:center; }
+.ps-dot{ width:15px; height:15px; border-radius:50%; background:#fff;
+  border:3px solid #8BBFFF; }
+.ps-dot.on{ background:#4CAF7D; border-color:#2F8A5E; }
+
+/* ---------- the search ghost ----------
+   Specified by the SME in full and simply missing from the first build: entry flight, idle cue,
+   happy bounce on a hit, thinking face on a miss, a drift to a real target as the 2nd-attempt
+   hint, a fly-across on round completion and a spin at the end. It is a GUIDE, not decoration —
+   the SME is explicit that the old scenic art (Ravi, kite, girl, tree) comes OUT and only this
+   stays. Drawn, not generated: it has to fly to an arbitrary word position. */
+.ps-ghost{ position:absolute; left:0; top:0; width:74px; height:74px; z-index:7;
+  pointer-events:none; opacity:0;
+  transition:transform .85s cubic-bezier(.32,.86,.4,1), opacity .4s ease;
+  filter:drop-shadow(0 5px 9px rgba(11,61,140,.26)); }
+.ps-ghost.gh-on{ opacity:1; }
+.ps-ghost.gh-dim{ opacity:.42; }
+.ps-ghost .gh-mouth{ transition:none; }
+.ps-ghost.gh-think .gh-eye{ transform:translateY(-2px); }
+.ps-ghost.gh-bounce{ animation:ghBounce .7s cubic-bezier(.34,1.5,.6,1) 1; }
+@keyframes ghBounce{ 0%,100%{ translate:0 0 } 30%{ translate:0 -20px } 60%{ translate:0 -7px } }
+.ps-ghost.gh-spin{ animation:ghSpin 1.1s ease 1; }
+@keyframes ghSpin{ from{ rotate:0deg; scale:1 } 50%{ rotate:180deg; scale:1.22 } to{ rotate:360deg; scale:1 } }
+.ps-ghost.gh-float{ animation:ghFloat 2.6s ease-in-out infinite; }
+@keyframes ghFloat{ 0%,100%{ translate:0 0 } 50%{ translate:0 -9px } }
+/* a sparkle the ghost leaves behind — drawn in the settled state so a capture still sees it */
+.ps-spark{ position:absolute; width:16px; height:16px; z-index:7; pointer-events:none;
+  font-size:16px; line-height:1; }
+
+/* narrow-stage safety: the 3-coach trains are the widest thing in this lesson */
+@media (max-width:1180px){
+  .tr-body{ width:178px; }
+  .tr-word{ font-size:40px; }
+  .tr-fill{ font-size:36px; } .tr-inmatra{ font-size:36px; } .tr-doneword{ font-size:38px; }
+  .mb-word{ font-size:52px; } .mb-cons,.mb-syl{ font-size:46px; }
+  .mb-p3 .mb-word{ font-size:46px; }
+  .mp-word{ font-size:68px; }
+  .cp-word{ font-size:62px; }
+  .ps-w{ font-size:34px; }
+  .mi-letter{ font-size:62px; } .mi-matra{ font-size:58px; } .mi-stage{ gap:44px; }
+}
+
+/* ==========================================================================================
+   HEADING BAND — the SME's round-2 defect #1
+   ==========================================================================================
+   THE PREVIOUS BUILD HID THE HEADING BAND ON 14 OF 16 SCREENS. This rule used to live here:
+
+       .header-row:has(#promptText:empty){ display:none; }
+
+   …paired with `prompt_hi: ""` on every test screen. The reasoning was the SME's repeated note
+   "No instruction text on screen. Only VO should play." That reading was WRONG, and their own
+   mockups say so: `_SME_MOCKUPS/slide11_image12.png` draws the train screen WITH the blue band
+   across the top carrying «जिन डिब्बों में आ की मात्रा वाले शब्द है, उन डिब्बों पर टैप करो।»
+   The note means "do not add EXTRA explanatory text to the play area" — the standard heading
+   band beside the mascot is part of the house chrome on every screen of every shipped lesson,
+   and removing it left the mascot floating alone with an empty page.
+
+   The rule is deleted rather than commented out, and the builder now REFUSES to emit a slide
+   with an empty prompt_hi (guard_prompts), so this cannot regress silently a second time.
+   ========================================================================================== */
+
+/* ---------- vertical rhythm ----------
+   With the band restored the host has less room, so the train no longer needs the forced
+   centring that compensated for the dead space. Keep the content block centred in what is
+   left, and give the tray a floor so a 4-card tray never rides up into the track. */
+.slide-host:has(.tr-wrap){ justify-content:center; gap:8px; padding-bottom:6px; }
+.slide-host:has(.mb-stage),
+.slide-host:has(.cp-stage),
+.slide-host:has(.mp-stage),
+.slide-host:has(.ps-stage){ justify-content:center; }
+
+/* `concept_strip` landings never receive the glow class — carried over from the sibling
+   bundle, which still ships this same scoped rule. */
+.concept-strip .concept-tile{ animation:ctGlow 2.4s ease-in-out infinite; }
+@keyframes ctGlow{ 0%,100%{ box-shadow:0 6px 0 rgba(11,61,140,.10) }
+  50%{ box-shadow:0 6px 0 rgba(11,61,140,.10),0 0 22px 6px rgba(247,201,72,.55) } }
+
+/* ==========================================================================================
+   WORD_BUILD  —  «चित्र देखकर सही अक्षर से शब्द पूरा कीजिए»
+   ==========================================================================================
+   The blank sits FIRST in the coach (`_ब`), so it is sized for a whole akshara (consonant +
+   matra), not a bare mark. It carries `.dd-zone`, which the engine sizes at 150x150 for every
+   drop zone in the fleet — that rule beat MATRA_FILL's blank once already and pushed the word
+   out of its coach, so the override is repeated here rather than inherited by luck. */
+.tr-body .wb-blank.dd-zone{ width:auto; min-width:74px; height:62px; flex:0 0 auto;
+  align-self:center; border-radius:10px; border:3px dashed #2BA79B; background:#F3FBF9; }
+.tr-body .wb-blank.dd-zone.filled{ border-style:solid; background:#EAFBF6; }
+.wb-word{ display:inline-flex; align-items:center; justify-content:center; gap:5px;
+  max-width:100%; font-family:var(--font-hi); font-size:40px; font-weight:800;
+  line-height:var(--hi-lh); color:var(--navy-dk,#0B3D8C); white-space:nowrap; }
+.wb-post{ font-size:40px; line-height:var(--hi-lh); }
+.wb-done{ font-family:var(--font-hi); font-size:42px; font-weight:800;
+  color:var(--navy-dk,#0B3D8C); line-height:var(--hi-lh); white-space:nowrap; }
+.wb-akshara{ font-family:var(--font-hi); font-size:46px; font-weight:800;
+  color:var(--navy-dk,#0B3D8C); line-height:var(--hi-lh); }
+.tr-card.k-akshara{ min-height:96px; width:100px; }
+
+/* ==========================================================================================
+   SENTENCE_COMPLETE  —  «सही शब्द चुनकर वाक्य पूरा कीजिए»
+   ==========================================================================================
+   The SME's mockup: scene illustration on the LEFT, the sentence with its blank on the RIGHT,
+   three picture options underneath the sentence. */
+.sc-stage{ display:flex; align-items:center; justify-content:center; gap:26px; width:100%;
+  padding-bottom:14px; }
+.sc-scene{ flex:0 0 auto; line-height:0; }
+.sc-img{ width:288px; height:288px; object-fit:contain; border-radius:20px; }
+.sc-emoji{ font-size:170px; line-height:1; }
+.sc-right{ display:flex; flex-direction:column; align-items:center; gap:18px; flex:1 1 auto;
+  min-width:0; }
+
+.sc-card{ background:#fff; border:3px solid #E4ECF7; border-radius:20px; padding:18px 24px;
+  box-shadow:0 8px 20px rgba(11,61,140,.10); display:flex; align-items:center;
+  justify-content:center; gap:8px; flex-wrap:wrap; max-width:100%;
+  font-family:var(--font-hi); font-size:34px; font-weight:800; line-height:var(--hi-lh);
+  color:var(--navy-dk,#0B3D8C); }
+.sc-card.sc-done{ border-color:#BFE6D2; background:#F4FCF8; }
+.sc-pre,.sc-post{ font-size:34px; line-height:var(--hi-lh); }
+/* the blank is NOT a drop target here — this screen is TAP, not drag — but it keeps the same
+   dashed look as every other blank in the lesson so the child reads it the same way */
+.sc-blank{ display:inline-block; min-width:130px; height:50px; border-radius:10px;
+  border:3px dashed #2BA79B; background:#F3FBF9; vertical-align:middle; }
+.sc-blank.filled{ border-style:solid; background:#EAFBF6; min-width:0; padding:0 12px;
+  height:auto; }
+.sc-fill{ font-size:34px; line-height:var(--hi-lh); color:var(--navy-dk,#0B3D8C); }
+
+.sc-opts{ display:flex; gap:16px; justify-content:center; flex-wrap:nowrap; }
+.sc-opt{ width:132px; border-radius:16px; background:#fff; border:3px solid #8BBFFF;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  padding:10px 6px 8px; cursor:grab; touch-action:none; position:relative; z-index:2;
+  box-shadow:0 5px 0 rgba(11,61,140,.12); }
+.sc-opt.dragging{ z-index:50; cursor:grabbing; }
+/* the blank is a real drop target on this screen */
+.sc-right .sc-blank.dd-zone{ width:auto; min-width:130px; height:50px; flex:0 0 auto; }
+.sc-blank.hover{ outline:4px dashed #2BA79B; outline-offset:3px; background:#EAFBF6; }
+.sc-optpic{ width:76px; height:76px; object-fit:contain; }
+.sc-optemoji{ font-size:60px; line-height:1; }
+.sc-optlbl{ font-family:var(--font-hi); font-size:24px; font-weight:800;
+  color:var(--navy-dk,#0B3D8C); line-height:var(--hi-lh); }
+.sc-opt:hover{ transform:translateY(-3px); }
+.sc-opt.is-correct{ border-color:#4CAF7D; background:#F4FCF8;
+  box-shadow:0 0 0 5px rgba(76,175,125,.45),0 5px 0 rgba(11,61,140,.12); }
+.sc-opt.is-nudge{ border-color:#F7C948;
+  box-shadow:0 0 0 6px rgba(255,206,46,.75),0 5px 0 rgba(11,61,140,.12); }
+.sc-opt.sc-shake{ animation:scShake .48s ease; }
+@keyframes scShake{ 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+  45%{transform:translateX(7px)} 70%{transform:translateX(-4px)} }
+@media (prefers-reduced-motion:reduce){
+  .sc-opt.sc-shake{ animation:none; outline:4px solid var(--wrong,#E8453C); }
+}
+.slide-host:has(.sc-stage){ justify-content:center; }
+
+@media (max-width:1180px){
+  .sc-img{ width:236px; height:236px; } .sc-emoji{ font-size:140px; }
+  .sc-card{ font-size:29px; } .sc-pre,.sc-post,.sc-fill{ font-size:29px; }
+  .sc-opt{ width:116px; } .sc-optpic{ width:66px; height:66px; }
+  .wb-word,.wb-post{ font-size:35px; } .wb-done{ font-size:37px; }
+  .wb-akshara{ font-size:40px; } .tr-card.k-akshara{ width:88px; }
+}
+
+/* ============================================================================================
+   THE IDLE CUE. Deliberately the WHOLE tray / coach row, never the correct answer: this help is
+   un-earned (a timer, not two failed attempts), so under [28i] it must not point at anything.
+   It says "your turn", which is what a child who has stopped because they are unsure needs, and
+   it cannot leak the answer to a child who has stopped because they are distracted.
+   A tint rather than motion, so it still reads with prefers-reduced-motion and in a screenshot.
+   ============================================================================================ */
+.tr-idlecue{ animation:trIdleCue 2s ease both; }
+@keyframes trIdleCue{
+  0%,100%{ box-shadow:0 0 0 0 rgba(255,206,46,0); }
+  18%    { box-shadow:0 0 0 8px rgba(255,206,46,.42); }
+  42%    { box-shadow:0 0 0 0 rgba(255,206,46,0); }
+  62%    { box-shadow:0 0 0 8px rgba(255,206,46,.42); }
+}
+.tr-tray.tr-idlecue,.sc-opts.tr-idlecue{ border-radius:22px; }
+@media (prefers-reduced-motion:reduce){
+  .tr-idlecue{ animation:none; box-shadow:0 0 0 6px rgba(255,206,46,.42); }
+}
+
+/* ============================================================================================
+   THE THREE-RUNG LADDER — the states Hint 2 and Hint 3 need.
+   Every one of these is asked for in the SME's page-by-page review; see makeHints().
+   ============================================================================================ */
+
+/* "Disable all answer taps and drags while any VO is playing." Appears in the Developer Notes of
+   every screen. The lock is released in the rung's own callback, so a clip that never ends
+   cannot leave a dead screen — makeHints also holds a 20s backstop. */
+.hint-locked .tr-tray, .hint-locked .tr-coach, .hint-locked .sc-opts, .hint-locked .sc-blank{
+  pointer-events:none;
+}
+
+/* the item Hint 2 is reading right now — a lift, NOT a correctness cue: Hint 2 must not say
+   which one is right, and the same treatment is used on every option in turn */
+.tr-coach.is-reading .tr-car{ transform:translateY(-6px); }
+.tr-card.is-reading, .sc-opt.is-reading{ transform:translateY(-6px) scale(1.06); }
+.tr-coach.is-reading .tr-car, .tr-card.is-reading, .sc-opt.is-reading{
+  box-shadow:0 0 0 5px rgba(11,61,140,.18);
+}
+
+/* frozen by Hint 3: "Temporarily disable other unfinished cards until this guided placement is
+   complete." Dimmed rather than hidden, so the child can see they still exist. */
+.tr-card.is-frozen, .sc-opt.is-frozen{
+  opacity:.38; filter:grayscale(.55); pointer-events:none;
+}
+
+/* Hint 2's neutral preview of an option sitting in the sentence blank. Deliberately NOT the
+   filled style — "Use the same neutral preview style for all three words. Do not show success
+   feedback." */
+.sc-preview{ color:#6B7A99; }
+.sc-blank.is-nudge{ box-shadow:0 0 0 5px rgba(255,206,46,.75); border-radius:12px; }
+
+/* "Highlight the large tree in the main scene... to help the child compare the sentence with
+   the picture." The scene is a photo-like illustration, so the cue is a ring plus a lift rather
+   than anything drawn on top of it. */
+.sc-scene.sc-scenehl{ box-shadow:0 0 0 7px rgba(255,206,46,.8); border-radius:26px; }
+
+/* ============================================================================================
+   THE MARKER RING — for a lesson whose mark is a DOT.
+   अं's anusvara is 3-4px across on a sort card. The red is correct and invisible. The ring says
+   "look here" without covering the mark: no fill, a thin stroke, and it sits UNDER the overlay so
+   the red dot stays the brightest thing inside it. Drawn for every mark in the lesson or not at
+   all — see matraHL(). Off by default; scaffold_rules.mark_ring turns it on.
+   ============================================================================================ */
+.mh-ring{
+  position:absolute; border-radius:50%; pointer-events:none;
+  border:2px solid rgba(232,69,60,.55);
+  box-shadow:0 0 0 2px rgba(232,69,60,.12);
+}
+
+/* the picture round's Hint-2 name: shown only for the card the child has missed twice, removed
+   the moment that card is placed. Same type as a word card's label so it reads as "the name". */
+.tr-card.k-picture .tr-templbl{ display:block; margin-top:2px; }
+
+/* ============================================================================================
+   THE TRAIN LANDING — the two target marks riding in two bogies (SME landing note).
+   Sized for the start card, not the play area: the same shell, scaled down so title, train and
+   the शुरू करें button all sit inside the card. The pop is an animation on top of a SETTLED base
+   rule, so the review capture (which freezes animation) still shows both bogies.
+   ============================================================================================ */
+.sg-hero .tr-wrap.tr-landing{ transform:scale(.78); transform-origin:center top; margin:4px auto -34px; }
+.tr-landing .tr-track{ opacity:.9; }
+.tr-landing .tr-landmatra{ font-size:98px; line-height:1; color:#0B3D8C; }
+.tr-landpop{ animation:trLandPop .5s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes trLandPop{ from{ transform:scale(.4); opacity:0; } to{ transform:scale(1); opacity:1; } }
+.sg-content.has-train .sg-hero{ display:flex; justify-content:center; width:100%; }
+@media (prefers-reduced-motion:reduce){ .tr-landpop{ animation:none; } }
+
+/* the build screen's base picture, lit while its explaining line plays (SME p.3 / p.5) */
+.mb-pic.mb-picglow{ border-radius:18px; box-shadow:0 0 0 6px rgba(255,206,46,.8), 0 0 22px 6px rgba(252,188,24,.45); }
+
+/* S04 p.5 — the base picture as an action: the bud dissolves into the open flower (base_img_from) */
+.mb-bloom{ position:relative; display:inline-block; line-height:0; }
+.mb-bloom .mb-bloom-from{ position:absolute; left:0; top:0; transition:opacity 1.4s ease, transform 1.4s ease; }
+.mb-bloom .mb-bloom-to{ opacity:0; transform:scale(.55); transform-origin:50% 85%;
+  transition:opacity 1.4s ease, transform 1.6s cubic-bezier(.3,1.4,.5,1); }
+.mb-bloom.is-bloomed .mb-bloom-from{ opacity:0; transform:scale(1.08); }
+.mb-bloom.is-bloomed .mb-bloom-to{ opacity:1; transform:scale(1); }

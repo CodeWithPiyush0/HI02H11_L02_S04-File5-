@@ -1,0 +1,1023 @@
+{
+  "version": "0.1",
+  "skill_code": "HI02H11_L02_S04",
+  "lo_code": "HI02H11_L02",
+  "grade": "02",
+  "attribute": "H11",
+  "skill_type": "CORE",
+  "medium": "hi",
+  "title": {
+    "hi": "मात्राओं की रेल",
+    "en": "Matra train — the o / au matras"
+  },
+  "subtitle_hi": "",
+  "theme": "toybox",
+  "skill_description_hi": "ओ, औ मात्रा वाले शब्द पढ़ता है। शब्दों में आने वाली मात्रा पहचानता है।",
+  "landing_audio": "vo_landing",
+  "landing_hero": {
+    "kind": "train",
+    "cells": [
+      {
+        "type": "letter",
+        "letter": "◌ो",
+        "label": "ओ"
+      },
+      {
+        "type": "letter",
+        "letter": "◌ौ",
+        "label": "औ"
+      }
+    ]
+  },
+  "phase_transition_audio": {
+    "tutorial": "vo_pt_tutorial",
+    "guided": "vo_pt_guided",
+    "practice": "vo_pt_practice"
+  },
+  "phase_transition_title": {
+    "tutorial": "चलिए, शुरू करें!",
+    "guided": "चलिए, साथ में करें!",
+    "practice": "अब आपकी बारी!",
+    "independent": "अब आपकी बारी!"
+  },
+  "phase_distribution": {
+    "tutorial": 5,
+    "guided": 10,
+    "independent": 1
+  },
+  "scaffold_rules": {
+    "nudge_timeout_ms": {
+      "guided": 6000,
+      "practice": 8000
+    },
+    "idle_hint_ms": 9000,
+    "max_attempts": 3,
+    "hand_on_attempt": 3,
+    "reveal_on_attempt": 3,
+    "silent_after_reveal": true
+  },
+  "signals_expected": [
+    "slide_entered",
+    "slide_completed",
+    "train_tap_first_try",
+    "matra_sort_item",
+    "matra_sort_first_try",
+    "word_build_item",
+    "word_build_first_try",
+    "sentence_complete",
+    "answer_wrong",
+    "hint_shown",
+    "idle_cue",
+    "phase_transition",
+    "mastery_score",
+    "lesson_completed"
+  ],
+  "_emoji_fallback": {
+    "obj_mor": "🦚",
+    "obj_koyal": "🐦",
+    "obj_ghoda": "🐴",
+    "obj_tota": "🦜",
+    "obj_dhol": "🥁",
+    "obj_kaua": "🐦",
+    "obj_khilona": "🧸",
+    "obj_paudha": "🌱",
+    "obj_daud": "🏃",
+    "obj_hathauda": "🔨",
+    "obj_ghada": "🏺",
+    "obj_khilna": "🌸",
+    "scn_ped_kaua": "🐦",
+    "scn_khel": "🧸",
+    "scn_hathauda": "🔨",
+    "obj_khilna_bud": "🌱"
+  },
+  "assets": {
+    "audio": {
+      "vo_akshara_0": "assets/Audio/vo_akshara_0.ogg",
+      "vo_akshara_1": "assets/Audio/vo_akshara_1.ogg",
+      "vo_akshara_2": "assets/Audio/vo_akshara_2.ogg",
+      "vo_akshara_3": "assets/Audio/vo_akshara_3.ogg",
+      "vo_akshara_4": "assets/Audio/vo_akshara_4.ogg",
+      "vo_base_ghada": "assets/Audio/vo_base_ghada.ogg",
+      "vo_base_khilna": "assets/Audio/vo_base_khilna.ogg",
+      "vo_cel_prompt": "assets/Audio/vo_cel_prompt.ogg",
+      "vo_g10_correct": "assets/Audio/vo_g10_correct.ogg",
+      "vo_g10_hint1": "assets/Audio/vo_g10_hint1.ogg",
+      "vo_g10_hint2": "assets/Audio/vo_g10_hint2.ogg",
+      "vo_g10_hint3": "assets/Audio/vo_g10_hint3.ogg",
+      "vo_g10_prompt": "assets/Audio/vo_g10_prompt.ogg",
+      "vo_g1_correct": "assets/Audio/vo_g1_correct.ogg",
+      "vo_g1_hint1": "assets/Audio/vo_g1_hint1.ogg",
+      "vo_g1_hint2": "assets/Audio/vo_g1_hint2.ogg",
+      "vo_g1_hint3": "assets/Audio/vo_g1_hint3.ogg",
+      "vo_g1_prompt": "assets/Audio/vo_g1_prompt.ogg",
+      "vo_g2_correct": "assets/Audio/vo_g2_correct.ogg",
+      "vo_g2_hint1": "assets/Audio/vo_g2_hint1.ogg",
+      "vo_g2_hint2": "assets/Audio/vo_g2_hint2.ogg",
+      "vo_g2_hint3": "assets/Audio/vo_g2_hint3.ogg",
+      "vo_g2_prompt": "assets/Audio/vo_g2_prompt.ogg",
+      "vo_g3_correct": "assets/Audio/vo_g3_correct.ogg",
+      "vo_g3_hint1": "assets/Audio/vo_g3_hint1.ogg",
+      "vo_g3_hint2": "assets/Audio/vo_g3_hint2.ogg",
+      "vo_g3_hint3": "assets/Audio/vo_g3_hint3.ogg",
+      "vo_g3_prompt": "assets/Audio/vo_g3_prompt.ogg",
+      "vo_g4_hint1": "assets/Audio/vo_g4_hint1.ogg",
+      "vo_g4_hint2": "assets/Audio/vo_g4_hint2.ogg",
+      "vo_g4_prompt": "assets/Audio/vo_g4_prompt.ogg",
+      "vo_g5_hint1": "assets/Audio/vo_g5_hint1.ogg",
+      "vo_g5_hint2": "assets/Audio/vo_g5_hint2.ogg",
+      "vo_g5_prompt": "assets/Audio/vo_g5_prompt.ogg",
+      "vo_g6_hint1": "assets/Audio/vo_g6_hint1.ogg",
+      "vo_g6_hint2": "assets/Audio/vo_g6_hint2.ogg",
+      "vo_g6_prompt": "assets/Audio/vo_g6_prompt.ogg",
+      "vo_g7_hint1": "assets/Audio/vo_g7_hint1.ogg",
+      "vo_g7_hint1_tail": "assets/Audio/vo_g7_hint1_tail.ogg",
+      "vo_g7_hint2": "assets/Audio/vo_g7_hint2.ogg",
+      "vo_g7_prompt": "assets/Audio/vo_g7_prompt.ogg",
+      "vo_g8_correct": "assets/Audio/vo_g8_correct.ogg",
+      "vo_g8_hint1": "assets/Audio/vo_g8_hint1.ogg",
+      "vo_g8_hint2": "assets/Audio/vo_g8_hint2.ogg",
+      "vo_g8_hint3": "assets/Audio/vo_g8_hint3.ogg",
+      "vo_g8_prompt": "assets/Audio/vo_g8_prompt.ogg",
+      "vo_g9_correct": "assets/Audio/vo_g9_correct.ogg",
+      "vo_g9_hint1": "assets/Audio/vo_g9_hint1.ogg",
+      "vo_g9_hint2": "assets/Audio/vo_g9_hint2.ogg",
+      "vo_g9_hint3": "assets/Audio/vo_g9_hint3.ogg",
+      "vo_g9_prompt": "assets/Audio/vo_g9_prompt.ogg",
+      "vo_landing": "assets/Audio/vo_landing.ogg",
+      "vo_matra_au": "assets/Audio/vo_matra_au.ogg",
+      "vo_matra_o": "assets/Audio/vo_matra_o.ogg",
+      "vo_meet_kaua": "assets/Audio/vo_meet_kaua.ogg",
+      "vo_meet_koyal": "assets/Audio/vo_meet_koyal.ogg",
+      "vo_meet_mor": "assets/Audio/vo_meet_mor.ogg",
+      "vo_meet_paudha": "assets/Audio/vo_meet_paudha.ogg",
+      "vo_name_daud": "assets/Audio/vo_name_daud.ogg",
+      "vo_name_dhol": "assets/Audio/vo_name_dhol.ogg",
+      "vo_name_ghoda": "assets/Audio/vo_name_ghoda.ogg",
+      "vo_name_hathauda": "assets/Audio/vo_name_hathauda.ogg",
+      "vo_name_kaua": "assets/Audio/vo_name_kaua.ogg",
+      "vo_name_khilona": "assets/Audio/vo_name_khilona.ogg",
+      "vo_name_mor": "assets/Audio/vo_name_mor.ogg",
+      "vo_name_paudha": "assets/Audio/vo_name_paudha.ogg",
+      "vo_name_tota": "assets/Audio/vo_name_tota.ogg",
+      "vo_name_w0917094b0932": "assets/Audio/vo_name_w0917094b0932.ogg",
+      "vo_name_w091a094c0915": "assets/Audio/vo_name_w091a094c0915.ogg",
+      "vo_name_w0928094c0915093e": "assets/Audio/vo_name_w0928094c0915093e.ogg",
+      "vo_ok_mark_au": "assets/Audio/vo_ok_mark_au.ogg",
+      "vo_ok_mark_o": "assets/Audio/vo_ok_mark_o.ogg",
+      "vo_ok_picture_daud": "assets/Audio/vo_ok_picture_daud.ogg",
+      "vo_ok_picture_ghoda": "assets/Audio/vo_ok_picture_ghoda.ogg",
+      "vo_ok_picture_hathauda": "assets/Audio/vo_ok_picture_hathauda.ogg",
+      "vo_ok_picture_tota": "assets/Audio/vo_ok_picture_tota.ogg",
+      "vo_ok_wb_dhol": "assets/Audio/vo_ok_wb_dhol.ogg",
+      "vo_ok_wb_mor": "assets/Audio/vo_ok_wb_mor.ogg",
+      "vo_ok_wb_paudha": "assets/Audio/vo_ok_wb_paudha.ogg",
+      "vo_ok_word_dhol": "assets/Audio/vo_ok_word_dhol.ogg",
+      "vo_ok_word_kaua": "assets/Audio/vo_ok_word_kaua.ogg",
+      "vo_ok_word_paudha": "assets/Audio/vo_ok_word_paudha.ogg",
+      "vo_ok_word_tota": "assets/Audio/vo_ok_word_tota.ogg",
+      "vo_onset_ghoda": "assets/Audio/vo_onset_ghoda.ogg",
+      "vo_onset_khilona": "assets/Audio/vo_onset_khilona.ogg",
+      "vo_pair_au": "assets/Audio/vo_pair_au.ogg",
+      "vo_pair_o": "assets/Audio/vo_pair_o.ogg",
+      "vo_rev_mark_au": "assets/Audio/vo_rev_mark_au.ogg",
+      "vo_rev_mark_o": "assets/Audio/vo_rev_mark_o.ogg",
+      "vo_rev_picture_daud": "assets/Audio/vo_rev_picture_daud.ogg",
+      "vo_rev_picture_ghoda": "assets/Audio/vo_rev_picture_ghoda.ogg",
+      "vo_rev_picture_hathauda": "assets/Audio/vo_rev_picture_hathauda.ogg",
+      "vo_rev_picture_tota": "assets/Audio/vo_rev_picture_tota.ogg",
+      "vo_rev_wb_dhol": "assets/Audio/vo_rev_wb_dhol.ogg",
+      "vo_rev_wb_mor": "assets/Audio/vo_rev_wb_mor.ogg",
+      "vo_rev_wb_paudha": "assets/Audio/vo_rev_wb_paudha.ogg",
+      "vo_rev_word_dhol": "assets/Audio/vo_rev_word_dhol.ogg",
+      "vo_rev_word_kaua": "assets/Audio/vo_rev_word_kaua.ogg",
+      "vo_rev_word_paudha": "assets/Audio/vo_rev_word_paudha.ogg",
+      "vo_rev_word_tota": "assets/Audio/vo_rev_word_tota.ogg",
+      "vo_sent_g10_dhol": "assets/Audio/vo_sent_g10_dhol.ogg",
+      "vo_sent_g10_hathauda": "assets/Audio/vo_sent_g10_hathauda.ogg",
+      "vo_sent_g10_tota": "assets/Audio/vo_sent_g10_tota.ogg",
+      "vo_sent_g8_ghoda": "assets/Audio/vo_sent_g8_ghoda.ogg",
+      "vo_sent_g8_kaua": "assets/Audio/vo_sent_g8_kaua.ogg",
+      "vo_sent_g8_mor": "assets/Audio/vo_sent_g8_mor.ogg",
+      "vo_sent_g9_dhol": "assets/Audio/vo_sent_g9_dhol.ogg",
+      "vo_sent_g9_khilona": "assets/Audio/vo_sent_g9_khilona.ogg",
+      "vo_sent_g9_mor": "assets/Audio/vo_sent_g9_mor.ogg",
+      "vo_t1_prompt": "assets/Audio/vo_t1_prompt.ogg",
+      "vo_t2_explain": "assets/Audio/vo_t2_explain.ogg",
+      "vo_t2_prompt": "assets/Audio/vo_t2_prompt.ogg",
+      "vo_t3_prompt": "assets/Audio/vo_t3_prompt.ogg",
+      "vo_t4_explain": "assets/Audio/vo_t4_explain.ogg",
+      "vo_t4_prompt": "assets/Audio/vo_t4_prompt.ogg",
+      "vo_t5_prompt": "assets/Audio/vo_t5_prompt.ogg",
+      "vo_try_again": "assets/Audio/vo_try_again.ogg",
+      "vo_pt_tutorial": "assets/Audio/vo_pt_tutorial.ogg",
+      "vo_pt_guided": "assets/Audio/vo_pt_guided.ogg",
+      "vo_pt_practice": "assets/Audio/vo_pt_practice.ogg",
+      "sfx_celebrate": "assets/Audio/sfx_celebrate.ogg",
+      "sfx_correct": "assets/Audio/sfx_correct.ogg",
+      "sfx_wrong": "assets/Audio/sfx_wrong.ogg",
+      "sfx_tap": "assets/Audio/sfx_tap.ogg",
+      "sfx_pop": "assets/Audio/sfx_pop.ogg"
+    },
+    "audio_text": {
+      "vo_t1_prompt": "आज हम ओ और औ की मात्रा वाले शब्द पढ़ेंगे।",
+      "vo_matra_o": "ओ की मात्रा",
+      "vo_matra_au": "औ की मात्रा",
+      "vo_pair_o": "यह है ओ। इसकी मात्रा देखिए।",
+      "vo_pair_au": "यह है औ। इसकी मात्रा देखिए।",
+      "vo_t2_prompt": "आइए, देखें कि ओ की मात्रा लगने से शब्द की आवाज़ कैसे बदलती है।",
+      "vo_base_ghada": "यह शब्द देखिए, घड़ा।",
+      "vo_onset_ghoda": "घ के साथ ओ की मात्रा लगाने पर, घो बनता है।",
+      "vo_name_ghoda": "घोड़ा",
+      "vo_t2_explain": "अब ड़ा जुड़ने पर, घोड़ा बनता है।",
+      "vo_meet_mor": "मोर, बोलकर देखिए। इसमें म पर ओ की मात्रा लगी है।",
+      "vo_meet_koyal": "कोयल, बोलकर देखिए। इसमें क पर ओ की मात्रा लगी है।",
+      "vo_t3_prompt": "आइए, ओ की मात्रा वाले कुछ शब्द देखें।",
+      "vo_t4_prompt": "आइए, देखें कि औ की मात्रा लगने से शब्द की आवाज़ कैसे बदलती है।",
+      "vo_base_khilna": "यह शब्द देखिए, खिलना।",
+      "vo_onset_khilona": "ल के साथ औ की मात्रा लगाने पर, लौ बनता है।",
+      "vo_name_khilona": "खिलौना",
+      "vo_t4_explain": "अब खि, लौ और ना को जोड़ने पर, खिलौना बनता है।",
+      "vo_meet_kaua": "कौआ, बोलकर देखिए। इसमें क पर औ की मात्रा लगी है।",
+      "vo_meet_paudha": "पौधा, बोलकर देखिए। इसमें प पर औ की मात्रा लगी है।",
+      "vo_t5_prompt": "आइए, औ की मात्रा वाले कुछ शब्द देखें।",
+      "vo_g1_prompt": "जिस डिब्बे में ओ की मात्रा वाला शब्द है, उस डिब्बे पर टैप कीजिए।",
+      "vo_g1_hint1": "फिर से पढ़िए। ओ की मात्रा वाले शब्द पर टैप कीजिए।",
+      "vo_g1_hint2": "ओ की मात्रा वाले शब्द पर टैप कीजिए।",
+      "vo_g1_hint3": "मोर शब्द में ओ की मात्रा है। मोर पर टैप कीजिए।",
+      "vo_g1_correct": "शाबाश! मोर शब्द में ओ की मात्रा है।",
+      "vo_name_mor": "मोर",
+      "vo_name_daud": "दौड़",
+      "vo_name_w091a094c0915": "चौक",
+      "vo_g2_prompt": "जिस डिब्बे में औ की मात्रा वाला शब्द है, उस डिब्बे पर टैप कीजिए।",
+      "vo_g2_hint1": "फिर से पढ़िए। औ की मात्रा वाले शब्द पर टैप कीजिए।",
+      "vo_g2_hint2": "औ की मात्रा वाले शब्द पर टैप कीजिए।",
+      "vo_g2_hint3": "कौआ शब्द में औ की मात्रा है। कौआ पर टैप कीजिए।",
+      "vo_g2_correct": "शाबाश! कौआ शब्द में औ की मात्रा है।",
+      "vo_name_dhol": "ढोल",
+      "vo_name_kaua": "कौआ",
+      "vo_name_w0917094b0932": "गोल",
+      "vo_g3_prompt": "जिस डिब्बे में ओ की मात्रा वाला शब्द है, उस डिब्बे पर टैप कीजिए।",
+      "vo_g3_hint1": "फिर से पढ़िए। ओ की मात्रा वाले शब्द पर टैप कीजिए।",
+      "vo_g3_hint2": "ओ की मात्रा वाले शब्द पर टैप कीजिए।",
+      "vo_g3_hint3": "तोता शब्द में ओ की मात्रा है। तोता पर टैप कीजिए।",
+      "vo_g3_correct": "शाबाश! तोता शब्द में ओ की मात्रा है।",
+      "vo_name_w0928094c0915093e": "नौका",
+      "vo_name_tota": "तोता",
+      "vo_g4_prompt": "हर शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।",
+      "vo_g4_hint1": "फिर से पढ़िए। इस शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।",
+      "vo_g4_hint2": "इस शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।",
+      "vo_name_paudha": "पौधा",
+      "vo_rev_word_paudha": "पौधा शब्द में औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
+      "vo_ok_word_paudha": "शाबाश! पौधा शब्द में औ की मात्रा है।",
+      "vo_rev_word_dhol": "ढोल शब्द में ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
+      "vo_ok_word_dhol": "शाबाश! ढोल शब्द में ओ की मात्रा है।",
+      "vo_rev_word_kaua": "कौआ शब्द में औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
+      "vo_ok_word_kaua": "शाबाश! कौआ शब्द में औ की मात्रा है।",
+      "vo_rev_word_tota": "तोता शब्द में ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
+      "vo_ok_word_tota": "शाबाश! तोता शब्द में ओ की मात्रा है।",
+      "vo_rev_mark_au": "यह औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
+      "vo_ok_mark_au": "शाबाश! यह औ की मात्रा है।",
+      "vo_rev_mark_o": "यह ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
+      "vo_ok_mark_o": "शाबाश! यह ओ की मात्रा है।",
+      "vo_g5_prompt": "सही मात्रा को सही डिब्बे में डालिए।",
+      "vo_g5_hint1": "फिर से देखिए। सही मात्रा को सही डिब्बे में डालिए।",
+      "vo_g5_hint2": "मात्रा का आकार ध्यान से देखिए। इसे सही डिब्बे में डालिए।",
+      "vo_rev_wb_mor": "मो लगाने से मोर बनता है। मो को खाली जगह में डालिए।",
+      "vo_ok_wb_mor": "शाबाश! मोर बन गया।",
+      "vo_rev_wb_dhol": "ढो लगाने से ढोल बनता है। ढो को खाली जगह में डालिए।",
+      "vo_ok_wb_dhol": "शाबाश! ढोल बन गया।",
+      "vo_rev_wb_paudha": "पौ लगाने से पौधा बनता है। पौ को खाली जगह में डालिए।",
+      "vo_ok_wb_paudha": "शाबाश! पौधा बन गया।",
+      "vo_g6_prompt": "चित्र देखकर सही अक्षर से शब्द पूरा कीजिए।",
+      "vo_g6_hint1": "फिर से देखिए। चित्र देखकर सही अक्षर से शब्द पूरा कीजिए।",
+      "vo_g6_hint2": "चित्र देखकर सही अक्षर से शब्द पूरा कीजिए।",
+      "vo_akshara_0": "मो",
+      "vo_akshara_1": "नौ",
+      "vo_akshara_2": "ढो",
+      "vo_akshara_3": "पौ",
+      "vo_akshara_4": "कौ",
+      "vo_g7_prompt": "चित्र का नाम सुनिए और उसे सही मात्रा वाले डिब्बे में डालिए।",
+      "vo_g7_hint1": "फिर से सुनिए।",
+      "vo_g7_hint2": "मात्रा देखिए। चित्र को सही मात्रा वाले डिब्बे में डालिए।",
+      "vo_g7_hint1_tail": "चित्र को सही मात्रा वाले डिब्बे में डालिए।",
+      "vo_rev_picture_daud": "दौड़ में औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
+      "vo_ok_picture_daud": "शाबाश! दौड़ में औ की मात्रा है।",
+      "vo_rev_picture_tota": "तोता में ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
+      "vo_ok_picture_tota": "शाबाश! तोता में ओ की मात्रा है।",
+      "vo_rev_picture_ghoda": "घोड़ा में ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
+      "vo_ok_picture_ghoda": "शाबाश! घोड़ा में ओ की मात्रा है।",
+      "vo_name_hathauda": "हथौड़ा",
+      "vo_rev_picture_hathauda": "हथौड़ा में औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
+      "vo_ok_picture_hathauda": "शाबाश! हथौड़ा में औ की मात्रा है।",
+      "vo_sent_g8_kaua": "पेड़ पर एक कौआ बैठा है।",
+      "vo_sent_g8_ghoda": "पेड़ पर एक घोड़ा बैठा है।",
+      "vo_sent_g8_mor": "पेड़ पर एक मोर बैठा है।",
+      "vo_g8_prompt": "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए। शब्द को खाली जगह में डालिए।",
+      "vo_g8_hint1": "फिर से देखिए। चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।",
+      "vo_g8_hint2": "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।",
+      "vo_g8_hint3": "चित्र में पेड़ पर एक कौआ बैठा है। कौआ को खाली जगह में डालिए।",
+      "vo_g8_correct": "शाबाश! पेड़ पर एक कौआ बैठा है।",
+      "vo_sent_g9_khilona": "बच्चे के पास एक खिलौना है।",
+      "vo_sent_g9_mor": "बच्चे के पास एक मोर है।",
+      "vo_sent_g9_dhol": "बच्चे के पास एक ढोल है।",
+      "vo_g9_prompt": "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए। शब्द को खाली जगह में डालिए।",
+      "vo_g9_hint1": "फिर से देखिए। चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।",
+      "vo_g9_hint2": "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।",
+      "vo_g9_hint3": "चित्र में बच्चे के पास एक खिलौना है। खिलौना को खाली जगह में डालिए।",
+      "vo_g9_correct": "शाबाश! बच्चे के पास एक खिलौना है।",
+      "vo_sent_g10_dhol": "आदमी के हाथ में एक ढोल है।",
+      "vo_sent_g10_hathauda": "आदमी के हाथ में एक हथौड़ा है।",
+      "vo_sent_g10_tota": "आदमी के हाथ में एक तोता है।",
+      "vo_g10_prompt": "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए। शब्द को खाली जगह में डालिए।",
+      "vo_g10_hint1": "फिर से देखिए। चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।",
+      "vo_g10_hint2": "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।",
+      "vo_g10_hint3": "चित्र में आदमी के हाथ में एक हथौड़ा है। हथौड़ा शब्द को खाली जगह में डालिए।",
+      "vo_g10_correct": "शाबाश! आदमी के हाथ में एक हथौड़ा है।",
+      "vo_cel_prompt": "शाबाश! आज हमने सीखा, ओ और औ की मात्रा पहचानना, और मात्रा वाले शब्द पढ़ना।",
+      "vo_landing": "हेलो दोस्त! मैं हूँ स्विफ्टी। आज हम मात्राओं के बारे में जानेंगे।",
+      "vo_try_again": "एक बार फिर सुनिए।"
+    },
+    "image": {
+      "obj_daud": "assets/Images/obj_daud.png",
+      "obj_dhol": "assets/Images/obj_dhol.png",
+      "obj_ghada": "assets/Images/obj_ghada.png",
+      "obj_ghoda": "assets/Images/obj_ghoda.png",
+      "obj_hathauda": "assets/Images/obj_hathauda.png",
+      "obj_kaua": "assets/Images/obj_kaua.png",
+      "obj_khilna": "assets/Images/obj_khilna.png",
+      "obj_khilna_bud": "assets/Images/obj_khilna_bud.png",
+      "obj_khilona": "assets/Images/obj_khilona.png",
+      "obj_koyal": "assets/Images/obj_koyal.png",
+      "obj_mor": "assets/Images/obj_mor.png",
+      "obj_paudha": "assets/Images/obj_paudha.png",
+      "obj_tota": "assets/Images/obj_tota.png",
+      "scn_hathauda": "assets/Images/scn_hathauda.png",
+      "scn_khel": "assets/Images/scn_khel.png",
+      "scn_ped_kaua": "assets/Images/scn_ped_kaua.png"
+    },
+    "audio_ext": "ogg",
+    "img_ext": "png"
+  },
+  "slides": [
+    {
+      "id": "T1",
+      "phase": "tutorial",
+      "eis": "enactive",
+      "type": "MATRA_INTRO",
+      "prompt_hi": "आज हम ओ और औ की मात्रा वाले शब्द पढ़ेंगे।",
+      "audio": {
+        "prompt": "vo_t1_prompt"
+      },
+      "data": {
+        "pairs": [
+          {
+            "letter": "ओ",
+            "matra": "ो",
+            "audio": "vo_pair_o"
+          },
+          {
+            "letter": "औ",
+            "matra": "ौ",
+            "audio": "vo_pair_au"
+          }
+        ],
+        "phonemes": {
+          "ो": "vo_matra_o",
+          "ौ": "vo_matra_au"
+        },
+        "auto": true
+      }
+    },
+    {
+      "id": "T2",
+      "phase": "tutorial",
+      "eis": "symbolic",
+      "type": "MATRA_BUILD",
+      "prompt_hi": "घड़ा में ओ की मात्रा लगाने पर घोड़ा बनता है।",
+      "audio": {
+        "prompt": "vo_t2_prompt",
+        "base": "vo_base_ghada",
+        "matra_name": "vo_matra_o",
+        "onset": "vo_onset_ghoda",
+        "result": "vo_name_ghoda",
+        "explain": "vo_t2_explain"
+      },
+      "data": {
+        "base_word": "घड़ा",
+        "consonant": "घ",
+        "matra": "ो",
+        "syllable": "घो",
+        "result_word": "घोड़ा",
+        "result_img": "obj_ghoda",
+        "result_emoji": "🐴",
+        "base_img": "obj_ghada",
+        "base_emoji": "🏺",
+        "base_img_from": null,
+        "travel": "down",
+        "cap_base": "यह शब्द देखिए, घड़ा",
+        "cap_mid": "घ के साथ ओ की मात्रा लगाने पर घो बनता है।",
+        "cap_result": "घो + ड़ा = घोड़ा"
+      }
+    },
+    {
+      "id": "T3",
+      "phase": "tutorial",
+      "eis": "iconic",
+      "type": "MEET_PAIR",
+      "prompt_hi": "ओ की मात्रा वाले शब्द पढ़िए।",
+      "audio": {
+        "prompt": "vo_t3_prompt"
+      },
+      "data": {
+        "examples": [
+          {
+            "word": "मोर",
+            "matra": "ो",
+            "img": "obj_mor",
+            "emoji": "🦚",
+            "audio_line": "vo_meet_mor",
+            "matra_audio": "vo_matra_o"
+          },
+          {
+            "word": "कोयल",
+            "matra": "ो",
+            "img": "obj_koyal",
+            "emoji": "🐦",
+            "audio_line": "vo_meet_koyal",
+            "matra_audio": "vo_matra_o"
+          }
+        ]
+      }
+    },
+    {
+      "id": "T4",
+      "phase": "tutorial",
+      "eis": "symbolic",
+      "type": "MATRA_BUILD",
+      "prompt_hi": "खिलना में औ की मात्रा लगाने पर खिलौना बनता है।",
+      "audio": {
+        "prompt": "vo_t4_prompt",
+        "base": "vo_base_khilna",
+        "matra_name": "vo_matra_au",
+        "onset": "vo_onset_khilona",
+        "result": "vo_name_khilona",
+        "explain": "vo_t4_explain"
+      },
+      "data": {
+        "base_word": "खिलना",
+        "consonant": "ल",
+        "matra": "ौ",
+        "syllable": "लौ",
+        "result_word": "खिलौना",
+        "result_img": "obj_khilona",
+        "result_emoji": "🧸",
+        "base_img": "obj_khilna",
+        "base_emoji": "🌸",
+        "base_img_from": "obj_khilna_bud",
+        "travel": "down",
+        "cap_base": "यह शब्द देखिए, खिलना",
+        "cap_mid": "ल के साथ औ की मात्रा लगाने पर लौ बनता है।",
+        "cap_result": "खि + लौ + ना = खिलौना"
+      }
+    },
+    {
+      "id": "T5",
+      "phase": "tutorial",
+      "eis": "iconic",
+      "type": "MEET_PAIR",
+      "prompt_hi": "औ की मात्रा वाले शब्द पढ़िए।",
+      "audio": {
+        "prompt": "vo_t5_prompt"
+      },
+      "data": {
+        "examples": [
+          {
+            "word": "कौआ",
+            "matra": "ौ",
+            "img": "obj_kaua",
+            "emoji": "🐦",
+            "audio_line": "vo_meet_kaua",
+            "matra_audio": "vo_matra_au"
+          },
+          {
+            "word": "पौधा",
+            "matra": "ौ",
+            "img": "obj_paudha",
+            "emoji": "🌱",
+            "audio_line": "vo_meet_paudha",
+            "matra_audio": "vo_matra_au"
+          }
+        ]
+      }
+    },
+    {
+      "id": "G1",
+      "phase": "guided",
+      "eis": "symbolic",
+      "type": "TRAIN_TAP",
+      "prompt_hi": "“ओ” की मात्रा वाले शब्द पर टैप कीजिए।",
+      "audio": {
+        "prompt": "vo_g1_prompt",
+        "hint1": "vo_g1_hint1",
+        "hint2": "vo_g1_hint2",
+        "hint3": "vo_g1_hint3",
+        "correct": "vo_g1_correct"
+      },
+      "data": {
+        "target": "मोर",
+        "matra": "ो",
+        "hint3_hand": true,
+        "coaches": [
+          {
+            "word": "मोर",
+            "correct": true,
+            "matra": "ो",
+            "audio": "vo_name_mor"
+          },
+          {
+            "word": "दौड़",
+            "correct": false,
+            "matra": "ौ",
+            "audio": "vo_name_daud"
+          },
+          {
+            "word": "चौक",
+            "correct": false,
+            "matra": "ौ",
+            "audio": "vo_name_w091a094c0915"
+          }
+        ]
+      }
+    },
+    {
+      "id": "G2",
+      "phase": "guided",
+      "eis": "symbolic",
+      "type": "TRAIN_TAP",
+      "prompt_hi": "“औ” की मात्रा वाले शब्द पर टैप कीजिए।",
+      "audio": {
+        "prompt": "vo_g2_prompt",
+        "hint1": "vo_g2_hint1",
+        "hint2": "vo_g2_hint2",
+        "hint3": "vo_g2_hint3",
+        "correct": "vo_g2_correct"
+      },
+      "data": {
+        "target": "कौआ",
+        "matra": "ौ",
+        "hint3_hand": true,
+        "coaches": [
+          {
+            "word": "ढोल",
+            "correct": false,
+            "matra": "ो",
+            "audio": "vo_name_dhol"
+          },
+          {
+            "word": "कौआ",
+            "correct": true,
+            "matra": "ौ",
+            "audio": "vo_name_kaua"
+          },
+          {
+            "word": "गोल",
+            "correct": false,
+            "matra": "ो",
+            "audio": "vo_name_w0917094b0932"
+          }
+        ]
+      }
+    },
+    {
+      "id": "G3",
+      "phase": "guided",
+      "eis": "symbolic",
+      "type": "TRAIN_TAP",
+      "prompt_hi": "“ओ” की मात्रा वाले शब्द पर टैप कीजिए।",
+      "audio": {
+        "prompt": "vo_g3_prompt",
+        "hint1": "vo_g3_hint1",
+        "hint2": "vo_g3_hint2",
+        "hint3": "vo_g3_hint3",
+        "correct": "vo_g3_correct"
+      },
+      "data": {
+        "target": "तोता",
+        "matra": "ो",
+        "hint3_hand": true,
+        "coaches": [
+          {
+            "word": "नौका",
+            "correct": false,
+            "matra": "ौ",
+            "audio": "vo_name_w0928094c0915093e"
+          },
+          {
+            "word": "तोता",
+            "correct": true,
+            "matra": "ो",
+            "audio": "vo_name_tota"
+          },
+          {
+            "word": "कौआ",
+            "correct": false,
+            "matra": "ौ",
+            "audio": "vo_name_kaua"
+          }
+        ]
+      }
+    },
+    {
+      "id": "G4",
+      "phase": "guided",
+      "eis": "enactive",
+      "type": "TRAIN_SORT",
+      "prompt_hi": "हर शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।",
+      "audio": {
+        "prompt": "vo_g4_prompt",
+        "hint1": "vo_g4_hint1",
+        "hint2": "vo_g4_hint2"
+      },
+      "data": {
+        "kind": "word",
+        "shuffle": false,
+        "hint3_hand": true,
+        "bins": [
+          {
+            "key": "ो",
+            "label": "ओ"
+          },
+          {
+            "key": "ौ",
+            "label": "औ"
+          }
+        ],
+        "cards": [
+          {
+            "bin": "ौ",
+            "word": "पौधा",
+            "img": "obj_paudha",
+            "emoji": "🌱",
+            "audio": "vo_name_paudha",
+            "reveal": "vo_rev_word_paudha",
+            "correct": "vo_ok_word_paudha"
+          },
+          {
+            "bin": "ो",
+            "word": "ढोल",
+            "img": "obj_dhol",
+            "emoji": "🥁",
+            "audio": "vo_name_dhol",
+            "reveal": "vo_rev_word_dhol",
+            "correct": "vo_ok_word_dhol"
+          },
+          {
+            "bin": "ौ",
+            "word": "कौआ",
+            "img": "obj_kaua",
+            "emoji": "🐦",
+            "audio": "vo_name_kaua",
+            "reveal": "vo_rev_word_kaua",
+            "correct": "vo_ok_word_kaua"
+          },
+          {
+            "bin": "ो",
+            "word": "तोता",
+            "img": "obj_tota",
+            "emoji": "🦜",
+            "audio": "vo_name_tota",
+            "reveal": "vo_rev_word_tota",
+            "correct": "vo_ok_word_tota"
+          }
+        ]
+      }
+    },
+    {
+      "id": "G5",
+      "phase": "guided",
+      "eis": "enactive",
+      "type": "TRAIN_SORT",
+      "prompt_hi": "सही मात्रा को सही डिब्बे में डालिए।",
+      "audio": {
+        "prompt": "vo_g5_prompt",
+        "hint1": "vo_g5_hint1",
+        "hint2": "vo_g5_hint2"
+      },
+      "data": {
+        "kind": "matra",
+        "shuffle": false,
+        "hint3_hand": true,
+        "bins": [
+          {
+            "key": "ो",
+            "label": "ओ"
+          },
+          {
+            "key": "ौ",
+            "label": "औ"
+          }
+        ],
+        "cards": [
+          {
+            "bin": "ौ",
+            "word": "◌ौ",
+            "img": null,
+            "emoji": null,
+            "audio": "vo_matra_au",
+            "reveal": "vo_rev_mark_au",
+            "correct": "vo_ok_mark_au"
+          },
+          {
+            "bin": "ो",
+            "word": "◌ो",
+            "img": null,
+            "emoji": null,
+            "audio": "vo_matra_o",
+            "reveal": "vo_rev_mark_o",
+            "correct": "vo_ok_mark_o"
+          }
+        ]
+      }
+    },
+    {
+      "id": "G6",
+      "phase": "guided",
+      "eis": "enactive",
+      "type": "WORD_BUILD",
+      "prompt_hi": "चित्र देखकर सही अक्षर से शब्द पूरा कीजिए।",
+      "audio": {
+        "prompt": "vo_g6_prompt",
+        "hint1": "vo_g6_hint1",
+        "hint2": "vo_g6_hint2"
+      },
+      "data": {
+        "slots": [
+          {
+            "word": "मोर",
+            "post": "र",
+            "answer": "मो",
+            "matra": "ो",
+            "img": "obj_mor",
+            "emoji": "🦚",
+            "audio": "vo_name_mor",
+            "reveal": "vo_rev_wb_mor",
+            "correct": "vo_ok_wb_mor"
+          },
+          {
+            "word": "ढोल",
+            "post": "ल",
+            "answer": "ढो",
+            "matra": "ो",
+            "img": "obj_dhol",
+            "emoji": "🥁",
+            "audio": "vo_name_dhol",
+            "reveal": "vo_rev_wb_dhol",
+            "correct": "vo_ok_wb_dhol"
+          },
+          {
+            "word": "पौधा",
+            "post": "धा",
+            "answer": "पौ",
+            "matra": "ौ",
+            "img": "obj_paudha",
+            "emoji": "🌱",
+            "audio": "vo_name_paudha",
+            "reveal": "vo_rev_wb_paudha",
+            "correct": "vo_ok_wb_paudha"
+          }
+        ],
+        "options": [
+          "मो",
+          "नौ",
+          "ढो",
+          "पौ",
+          "कौ"
+        ],
+        "shuffle": false,
+        "hint3_hand": false,
+        "option_audio": {
+          "मो": "vo_akshara_0",
+          "नौ": "vo_akshara_1",
+          "ढो": "vo_akshara_2",
+          "पौ": "vo_akshara_3",
+          "कौ": "vo_akshara_4"
+        }
+      }
+    },
+    {
+      "id": "G7",
+      "phase": "guided",
+      "eis": "enactive",
+      "type": "TRAIN_SORT",
+      "prompt_hi": "चित्र का नाम सुनिए और उसे सही मात्रा वाले डिब्बे में डालिए।",
+      "audio": {
+        "prompt": "vo_g7_prompt",
+        "hint1": "vo_g7_hint1",
+        "hint2": "vo_g7_hint2",
+        "hint1_tail": "vo_g7_hint1_tail"
+      },
+      "data": {
+        "kind": "picture",
+        "shuffle": false,
+        "hint3_hand": false,
+        "bins": [
+          {
+            "key": "ो",
+            "label": "ओ"
+          },
+          {
+            "key": "ौ",
+            "label": "औ"
+          }
+        ],
+        "cards": [
+          {
+            "bin": "ौ",
+            "word": "दौड़",
+            "img": "obj_daud",
+            "emoji": "🏃",
+            "audio": "vo_name_daud",
+            "reveal": "vo_rev_picture_daud",
+            "correct": "vo_ok_picture_daud"
+          },
+          {
+            "bin": "ो",
+            "word": "तोता",
+            "img": "obj_tota",
+            "emoji": "🦜",
+            "audio": "vo_name_tota",
+            "reveal": "vo_rev_picture_tota",
+            "correct": "vo_ok_picture_tota"
+          },
+          {
+            "bin": "ो",
+            "word": "घोड़ा",
+            "img": "obj_ghoda",
+            "emoji": "🐴",
+            "audio": "vo_name_ghoda",
+            "reveal": "vo_rev_picture_ghoda",
+            "correct": "vo_ok_picture_ghoda"
+          },
+          {
+            "bin": "ौ",
+            "word": "हथौड़ा",
+            "img": "obj_hathauda",
+            "emoji": "🔨",
+            "audio": "vo_name_hathauda",
+            "reveal": "vo_rev_picture_hathauda",
+            "correct": "vo_ok_picture_hathauda"
+          }
+        ]
+      }
+    },
+    {
+      "id": "G8",
+      "phase": "guided",
+      "eis": "symbolic",
+      "type": "SENTENCE_COMPLETE",
+      "prompt_hi": "सही शब्द चुनकर वाक्य पूरा कीजिए।",
+      "audio": {
+        "prompt": "vo_g8_prompt",
+        "hint1": "vo_g8_hint1",
+        "hint2": "vo_g8_hint2",
+        "hint3": "vo_g8_hint3",
+        "correct": "vo_g8_correct"
+      },
+      "data": {
+        "sentence_pre": "पेड़ पर एक ",
+        "sentence_post": " बैठा है।",
+        "answer": "कौआ",
+        "matra": "ौ",
+        "hint3_hand": false,
+        "scene_img": "scn_ped_kaua",
+        "scene_emoji": "🐦",
+        "options": [
+          {
+            "word": "कौआ",
+            "img": "obj_kaua",
+            "emoji": "🐦",
+            "audio": "vo_name_kaua",
+            "sent": "vo_sent_g8_kaua"
+          },
+          {
+            "word": "घोड़ा",
+            "img": "obj_ghoda",
+            "emoji": "🐴",
+            "audio": "vo_name_ghoda",
+            "sent": "vo_sent_g8_ghoda"
+          },
+          {
+            "word": "मोर",
+            "img": "obj_mor",
+            "emoji": "🦚",
+            "audio": "vo_name_mor",
+            "sent": "vo_sent_g8_mor"
+          }
+        ]
+      }
+    },
+    {
+      "id": "G9",
+      "phase": "guided",
+      "eis": "symbolic",
+      "type": "SENTENCE_COMPLETE",
+      "prompt_hi": "सही शब्द चुनकर वाक्य पूरा कीजिए।",
+      "audio": {
+        "prompt": "vo_g9_prompt",
+        "hint1": "vo_g9_hint1",
+        "hint2": "vo_g9_hint2",
+        "hint3": "vo_g9_hint3",
+        "correct": "vo_g9_correct"
+      },
+      "data": {
+        "sentence_pre": "बच्चे के पास एक ",
+        "sentence_post": " है।",
+        "answer": "खिलौना",
+        "matra": "ौ",
+        "hint3_hand": false,
+        "scene_img": "scn_khel",
+        "scene_emoji": "🧸",
+        "options": [
+          {
+            "word": "खिलौना",
+            "img": "obj_khilona",
+            "emoji": "🧸",
+            "audio": "vo_name_khilona",
+            "sent": "vo_sent_g9_khilona"
+          },
+          {
+            "word": "मोर",
+            "img": "obj_mor",
+            "emoji": "🦚",
+            "audio": "vo_name_mor",
+            "sent": "vo_sent_g9_mor"
+          },
+          {
+            "word": "ढोल",
+            "img": "obj_dhol",
+            "emoji": "🥁",
+            "audio": "vo_name_dhol",
+            "sent": "vo_sent_g9_dhol"
+          }
+        ]
+      }
+    },
+    {
+      "id": "G10",
+      "phase": "guided",
+      "eis": "symbolic",
+      "type": "SENTENCE_COMPLETE",
+      "prompt_hi": "सही शब्द चुनकर वाक्य पूरा कीजिए।",
+      "audio": {
+        "prompt": "vo_g10_prompt",
+        "hint1": "vo_g10_hint1",
+        "hint2": "vo_g10_hint2",
+        "hint3": "vo_g10_hint3",
+        "correct": "vo_g10_correct"
+      },
+      "data": {
+        "sentence_pre": "आदमी के हाथ में एक ",
+        "sentence_post": " है।",
+        "answer": "हथौड़ा",
+        "matra": "ौ",
+        "hint3_hand": false,
+        "scene_img": "scn_hathauda",
+        "scene_emoji": "🔨",
+        "options": [
+          {
+            "word": "ढोल",
+            "img": "obj_dhol",
+            "emoji": "🥁",
+            "audio": "vo_name_dhol",
+            "sent": "vo_sent_g10_dhol"
+          },
+          {
+            "word": "हथौड़ा",
+            "img": "obj_hathauda",
+            "emoji": "🔨",
+            "audio": "vo_name_hathauda",
+            "sent": "vo_sent_g10_hathauda"
+          },
+          {
+            "word": "तोता",
+            "img": "obj_tota",
+            "emoji": "🦜",
+            "audio": "vo_name_tota",
+            "sent": "vo_sent_g10_tota"
+          }
+        ]
+      }
+    },
+    {
+      "id": "CEL",
+      "phase": "independent",
+      "eis": "iconic",
+      "type": "CELEBRATION",
+      "prompt_hi": "शाबाश! आज हमने सीखा, ओ और औ की मात्रा पहचानना, और मात्रा वाले शब्द पढ़ना।",
+      "audio": {
+        "prompt": "vo_cel_prompt"
+      },
+      "data": {}
+    }
+  ]
+}

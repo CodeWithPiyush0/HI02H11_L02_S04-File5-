@@ -1,0 +1,1475 @@
+{
+ "ladder": {
+  "G1": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_tap_prompt_o"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(दौड़)",
+    "clips": [
+     "vo_tap_h1_o"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(चौक)",
+    "clips": [
+     "vo_name_mor",
+     "vo_name_daud",
+     "vo_name_chauk",
+     "vo_tap_h2_o"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 3,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(दौड़)",
+    "clips": [
+     "vo_g1_h3"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 1,
+     "locked": 0,
+     "marks": 3,
+     "nav": false,
+     "nudge": 1,
+     "out": 2,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "right(मोर)",
+    "clips": [],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 3,
+     "nav": true,
+     "nudge": 1,
+     "out": 2,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ],
+  "G2": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_tap_prompt_au"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(ढोल)",
+    "clips": [
+     "vo_tap_h1_au"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(गोल)",
+    "clips": [
+     "vo_name_dhol",
+     "vo_name_kaua",
+     "vo_name_gol",
+     "vo_tap_h2_au"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 3,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(ढोल)",
+    "clips": [
+     "vo_g2_h3"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 1,
+     "locked": 0,
+     "marks": 3,
+     "nav": false,
+     "nudge": 1,
+     "out": 2,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "right(कौआ)",
+    "clips": [],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 3,
+     "nav": true,
+     "nudge": 1,
+     "out": 2,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ],
+  "G3": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_tap_prompt_o"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(नौका)",
+    "clips": [
+     "vo_tap_h1_o"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(कौआ)",
+    "clips": [
+     "vo_name_nauka",
+     "vo_name_tota",
+     "vo_name_kaua",
+     "vo_tap_h2_o"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 3,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(नौका)",
+    "clips": [
+     "vo_g3_h3"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 1,
+     "locked": 0,
+     "marks": 3,
+     "nav": false,
+     "nudge": 1,
+     "out": 2,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "right(तोता)",
+    "clips": [],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 3,
+     "nav": true,
+     "nudge": 1,
+     "out": 2,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ],
+  "G4": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_g4_prompt",
+     "vo_name_paudha",
+     "vo_name_dhol",
+     "vo_name_kaua",
+     "vo_name_tota"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(पौधा)",
+    "clips": [
+     "vo_g4_h1",
+     "vo_name_paudha"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(पौधा)",
+    "clips": [
+     "vo_name_paudha",
+     "vo_g4_h2"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(पौधा)",
+    "clips": [
+     "vo_rev_word_paudha",
+     "vo_name_paudha"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 1,
+     "hand": 1,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 0,
+     "wait": 3,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "4th drop on wrong coach (locked)",
+    "clips": [
+     "vo_name_paudha"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 1,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 0,
+     "wait": 3,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "right(पौधा)",
+    "clips": [],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 1,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ],
+  "G5": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_g5_prompt"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(◌ौ)",
+    "clips": [
+     "vo_g5_h1"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(◌ौ)",
+    "clips": [
+     "vo_g5_h2"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(◌ौ)",
+    "clips": [
+     "vo_rev_mark_au"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 1,
+     "hand": 1,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 0,
+     "wait": 1,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "4th drop on wrong coach (locked)",
+    "clips": [],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 1,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 0,
+     "wait": 1,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "right(◌ौ)",
+    "clips": [],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 1,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ],
+  "G6": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_wb_prompt"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(नौ on _र)",
+    "clips": [
+     "vo_g6_h1",
+     "vo_ak_nau"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(कौ on _र)",
+    "clips": [
+     "vo_ak_kau",
+     "vo_wb_prompt"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(नौ on _र)",
+    "clips": [
+     "vo_rev_wb_mor",
+     "vo_ak_nau"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 1,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 0,
+     "wait": 4,
+     "wbpulse": 1
+    }
+   },
+   {
+    "step": "right(मो)",
+    "clips": [
+     "vo_ok_wb_mor"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 1,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ],
+  "G7": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_g7_prompt",
+     "vo_name_daud",
+     "vo_name_tota",
+     "vo_name_ghoda",
+     "vo_name_hathauda"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(दौड़)",
+    "clips": [
+     "vo_g7_h1",
+     "vo_name_daud",
+     "vo_g7_h1_tail"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(दौड़)",
+    "clips": [
+     "vo_name_daud",
+     "vo_g7_h2"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 1,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 1,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(दौड़)",
+    "clips": [
+     "vo_rev_picture_daud",
+     "vo_name_daud"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 1,
+     "hand": 0,
+     "locked": 0,
+     "marks": 1,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 1,
+     "wait": 3,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "4th drop on wrong coach (locked)",
+    "clips": [
+     "vo_name_daud"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 1,
+     "hand": 0,
+     "locked": 0,
+     "marks": 1,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 1,
+     "wait": 3,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "right(दौड़)",
+    "clips": [],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 1,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ],
+  "G8": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_g8_sent_b",
+     "vo_sc_prompt"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(घोड़ा)",
+    "clips": [
+     "vo_name_ghoda",
+     "vo_name_ghoda",
+     "vo_sc_h1"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(मोर)",
+    "clips": [
+     "vo_name_mor",
+     "vo_name_mor",
+     "vo_g8_try_kaua",
+     "vo_g8_try_ghoda",
+     "vo_g8_try_mor",
+     "vo_sc_h2"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(घोड़ा)",
+    "clips": [
+     "vo_name_ghoda",
+     "vo_name_ghoda",
+     "vo_g8_h3"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 1,
+     "glow": 0,
+     "hand": 0,
+     "locked": 2,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "right(कौआ)",
+    "clips": [
+     "vo_name_kaua",
+     "vo_name_kaua"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 2,
+     "marks": 0,
+     "nav": true,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ],
+  "G9": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_g9_sent_b",
+     "vo_sc_prompt"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(मोर)",
+    "clips": [
+     "vo_name_mor",
+     "vo_name_mor",
+     "vo_sc_h1"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(ढोल)",
+    "clips": [
+     "vo_name_dhol",
+     "vo_name_dhol",
+     "vo_g9_try_khilona",
+     "vo_g9_try_mor",
+     "vo_g9_try_dhol",
+     "vo_sc_h2"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(मोर)",
+    "clips": [
+     "vo_name_mor",
+     "vo_name_mor",
+     "vo_g9_h3"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 1,
+     "glow": 0,
+     "hand": 0,
+     "locked": 2,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "right(खिलौना)",
+    "clips": [
+     "vo_name_khilona",
+     "vo_name_khilona"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 2,
+     "marks": 0,
+     "nav": true,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ],
+  "G10": [
+   {
+    "step": "entry",
+    "clips": [
+     "vo_g9_sent_b",
+     "vo_sc_prompt"
+    ],
+    "state": {
+     "attempts": 0,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss1(ढोल)",
+    "clips": [
+     "vo_name_dhol",
+     "vo_name_dhol",
+     "vo_sc_h1"
+    ],
+    "state": {
+     "attempts": 1,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss2(तोता)",
+    "clips": [
+     "vo_name_tota",
+     "vo_name_tota",
+     "vo_g10_try_dhol",
+     "vo_g10_try_hathauda",
+     "vo_g10_try_tota",
+     "vo_sc_h2"
+    ],
+    "state": {
+     "attempts": 2,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 0,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "miss3(ढोल)",
+    "clips": [
+     "vo_name_dhol",
+     "vo_name_dhol",
+     "vo_g10_h3"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 1,
+     "glow": 0,
+     "hand": 0,
+     "locked": 2,
+     "marks": 0,
+     "nav": false,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   },
+   {
+    "step": "right(हथौड़ा)",
+    "clips": [
+     "vo_name_hathauda",
+     "vo_name_hathauda"
+    ],
+    "state": {
+     "attempts": 3,
+     "big": 0,
+     "blankglow": 0,
+     "glow": 0,
+     "hand": 0,
+     "locked": 2,
+     "marks": 0,
+     "nav": true,
+     "nudge": 0,
+     "out": 0,
+     "revealword": 0,
+     "wait": 0,
+     "wbpulse": 0
+    }
+   }
+  ]
+ },
+ "first_try": {
+  "G1": {
+   "entry": [
+    "vo_tap_prompt_o"
+   ],
+   "clips": [
+    "vo_g1_correct"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 1,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G2": {
+   "entry": [
+    "vo_tap_prompt_au"
+   ],
+   "clips": [
+    "vo_g2_correct"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 1,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G3": {
+   "entry": [
+    "vo_tap_prompt_o"
+   ],
+   "clips": [
+    "vo_g3_correct"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 1,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G4D": {
+   "entry": [
+    "vo_g4d_prompt",
+    "vo_name_ghoda",
+    "vo_name_khilona",
+    "vo_name_ghoda"
+   ],
+   "clips": [
+    "vo_g4d_ghoda",
+    "vo_name_khilona",
+    "vo_g4d_khilona",
+    "vo_g4d_end"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 2,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G4": {
+   "entry": [
+    "vo_g4_prompt",
+    "vo_name_paudha",
+    "vo_name_dhol",
+    "vo_name_kaua",
+    "vo_name_tota"
+   ],
+   "clips": [
+    "vo_ok_word_paudha",
+    "vo_ok_word_dhol",
+    "vo_ok_word_kaua",
+    "vo_ok_word_tota"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 4,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G5": {
+   "entry": [
+    "vo_g5_prompt"
+   ],
+   "clips": [
+    "vo_ok_mark_au",
+    "vo_ok_mark_o"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 2,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G6": {
+   "entry": [
+    "vo_wb_prompt"
+   ],
+   "clips": [
+    "vo_ok_wb_mor",
+    "vo_ok_wb_dhol",
+    "vo_ok_wb_paudha"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 3,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G7": {
+   "entry": [
+    "vo_g7_prompt",
+    "vo_name_daud",
+    "vo_name_tota",
+    "vo_name_ghoda",
+    "vo_name_hathauda"
+   ],
+   "clips": [
+    "vo_ok_picture_daud",
+    "vo_ok_picture_tota",
+    "vo_ok_picture_ghoda",
+    "vo_ok_picture_hathauda"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 0,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G8": {
+   "entry": [
+    "vo_g8_sent_b",
+    "vo_sc_prompt"
+   ],
+   "clips": [
+    "vo_name_kaua",
+    "vo_name_kaua",
+    "vo_g8_correct"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 0,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G9": {
+   "entry": [
+    "vo_g9_sent_b",
+    "vo_sc_prompt"
+   ],
+   "clips": [
+    "vo_name_khilona",
+    "vo_name_khilona",
+    "vo_g9_correct"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 0,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  },
+  "G10": {
+   "entry": [
+    "vo_g9_sent_b",
+    "vo_sc_prompt"
+   ],
+   "clips": [
+    "vo_name_hathauda",
+    "vo_name_hathauda",
+    "vo_g10_correct"
+   ],
+   "state": {
+    "attempts": 0,
+    "big": 0,
+    "blankglow": 0,
+    "glow": 0,
+    "hand": 0,
+    "locked": 0,
+    "marks": 0,
+    "nav": true,
+    "nudge": 0,
+    "out": 0,
+    "revealword": 0,
+    "wait": 0,
+    "wbpulse": 0
+   }
+  }
+ },
+ "errors": [],
+ "console": [
+  "http://127.0.0.1:8915/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+  "http://127.0.0.1:8915/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)"
+ ]
+}

@@ -1,0 +1,7 @@
+/* Swiftie celebration kit — the sprite fills its host's HEIGHT; the art is 420/358 of the host so the
+   jump's head-room rises above the host box (the layout box, and anything placed under it, keeps the
+   standard 358 px mascot geometry). Give the host a height (e.g. 358px) and a width (~300px). */
+.swc-sprite{position:relative;width:100%;height:100%;animation:swcPop .55s cubic-bezier(.34,1.5,.6,1);}
+.swc-sprite .swc-art{position:absolute;left:50%;bottom:0;height:117.3%;transform:translateX(-50%);
+  background-repeat:no-repeat;background-size:600% 600%;filter:drop-shadow(0 12px 22px rgba(0,47,118,.22));}
+@keyframes swcPop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}

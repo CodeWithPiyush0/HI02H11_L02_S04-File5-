@@ -1,0 +1,23 @@
+[
+  {
+    "gate": "tutorial",
+    "phase": "tutorial",
+    "title": "चलिए, शुरू करें!",
+    "file": "gate_tutorial.png",
+    "before_page": 2
+  },
+  {
+    "gate": "guided",
+    "phase": "guided",
+    "title": "चलिए, साथ में करें!",
+    "file": "gate_guided.png",
+    "before_page": 7
+  },
+  {
+    "gate": "round3",
+    "phase": "independent",
+    "title": "अब आपकी बारी!",
+    "file": "gate_round3.png",
+    "before_page": 17
+  }
+]

@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="../swiftie_celebration.css">
+<body style="margin:0;background:#FDE9A8"><div id="h" style="width:300px;height:358px;margin:80px auto 0"></div>
+<script src="../swiftie_celebration.js"></script>
+<script>
+Promise.all([fetch('../sheets/cel_meta.json').then(r=>r.json()), fetch('_test_track.json').then(r=>r.json())]).then(([meta,tr])=>{
+  const au = new Audio('_test_vo.ogg'); window.__au = au;
+  window.__go = ()=>{ au.play(); window.__p = SwiftieCelebration.play({host:document.getElementById('h'), meta, base:'../sheets/', bits:tr.bits, step_ms:tr.step_ms, audio:au}); };
+  window.__ready = true; window.__meta = meta; window.__bits = tr.bits;
+});
+</script>
