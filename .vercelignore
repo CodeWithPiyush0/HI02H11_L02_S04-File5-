@@ -1,0 +1,35 @@
+# Only the built lesson (3_BUILD/) needs to reach Vercel. vercel.json's rewrites point `/` and
+# `/assets/*` at it. Everything below is authoring material and would otherwise be publicly
+# fetchable at its path (and ~100 MB of dead weight on every deploy).
+
+# ---- SECRETS: 3_BUILD/.env holds the Gemini key; never upload it --------------
+.env
+.env.*
+**/.env
+**/.env.*
+
+# ---- authoring folders ----------------------------------------------------------
+1_SPEC/
+2_BUILT_REVIEW_DECK/
+2_REVIEW_DECK/
+4_ENGINE/
+5_SCREENSHOTS/
+_DRAFT_ORIGINAL/
+celebration_kit/
+.vscode/
+
+# ---- dev-only files that may sit inside 3_BUILD ---------------------------------
+3_BUILD/_review_shots/
+3_BUILD/_audition/
+3_BUILD/_quarantine/
+3_BUILD/_build_report.json
+3_BUILD/_vo_script.json
+
+# ---- documents and scratch ------------------------------------------------------
+*.pptx
+*.xlsx
+*.md
+~$*
+__pycache__/
+*.py
+*.pyc

@@ -26,6 +26,13 @@ cd 3_BUILD && python -m http.server 8000
 # open http://127.0.0.1:8000/HI02H11_L02_S04.html
 ```
 
+## Deploy (Vercel)
+
+Deploy the repo root as-is (framework preset **Other**, no build command, no output directory).
+`vercel.json` serves `3_BUILD/HI02H11_L02_S04.html` at `/` and maps `/assets/*` to
+`3_BUILD/assets/*`; `.vercelignore` uploads only `3_BUILD/` (never `.env`). Commit both files;
+`.vercel/` (created by `vercel link`) stays local and is git-ignored.
+
 ## Rebuild
 
 ```bash
