@@ -95,3 +95,44 @@ screen by screen against a live capture of File3 and changed, so the File3 look 
 The stroke-only look is one card switch (`chip_strokes: true`) if the SME asks for it back.
 Content, VO and the deck's hint ladder are unchanged. Re-driven: 10/10 screens, right-first-time on
 all 11 test screens, 0 console errors.
+
+## Round 3 (2026-10-07) — File3's r103–r108 brought over
+
+The developer: "apply the same changes we did in File3's last two pushes (5685f05, f97402a)" — with
+three rulings: **follow this lesson's deck** where File3's change differs, **use the standard
+celebration line**, and **skip the runner game** (not in this lesson). File3's engine changes were
+merged into `4_ENGINE/` with a 3-way merge (base = File3 at b1a0883, so File3's runner-game fixes
+r101/r102 stay out), then `inject_train.py` and the builder were re-run.
+
+| File3 | change | here |
+|---|---|---|
+| r103 | cover: no disabled play button - it appears (pops in, then pulses) only once the greeting has finished | ✅ engine |
+| r103 | pages 3, 5: picture 220 → 270 px | ✅ measured 270 × 270 |
+| r103 | pages 9 → 10 are one train: no departure after the demo, no arrival on page 10 | ✅ `keep_train_next` on G4D; page 10 mounts parked, not entering |
+| r103 | bigger drop area: a coach catches a drop anywhere on the whole coach (+26 px) | ✅ pages 10, 11, 13 (card on the roof label: placed) and page 12 (letter on the roof label and low by the wheels: placed) |
+| r103 | Hint 2 on pages 10 / 13 reads every remaining option | ⛔ **not taken** - this lesson's deck wins: page 10 reads only the wrongly dropped word, page 13 keeps that picture's word until it is placed (`h2_read_bins:false`, `h2_keep_word`) - unchanged |
+| r103 | page 15 «मैंने» removed | — not in this lesson |
+| r103/r104/r105/r108 | transition text appears with the voice, centred, typed one akshara at a time **only while its words are spoken** (`title_voice_ms`, measured from the clip by the builder), always complete by the end of the line | ✅ the same kit clips as File3 (byte-identical), so File3's cue/duration values |
+| r105 | celebration line «बहुत बढ़िया, दोस्त! तुमने कमाल कर दिया!» | ✅ was the deck's recap «शाबाश! आज हमने सीखा…»; `vo_cel_prompt` = File3's recording of the same line (Leda, −16 LUFS, 2.94 s); lip-sync track re-measured |
+| r106 | Swifty rises first, then speaks (`talk_at_ms` 1960) | ✅ already so |
+| r106 | celebration: she jumps and celebrates first (silent), then speaks, lip-synced | ✅ `1_SPEC/_cel_wrap.js` = File3's current wrapper |
+| r107 | transition Swifty's beak moves with the line (sheet `assets/UI/swifty_gate_talk.webp`, 836 KB, built from the gate art) | ✅ builder `gate_talk()` |
+| r107 | the play button sounds on the press, not on release | ✅ engine |
+| r101/r102 | runner-game fixes | — no runner game in this lesson |
+
+**Measured** (served unless noted):
+- **Ladder regression:** `_drive_ladder_s04.py` on this build and on the previous one: every ladder
+  record identical (10 test screens, miss → miss → miss → right and right-first-time). The only
+  difference: after the page 9 demo, page 10 now starts at once (same train), so its intro follows
+  the demo in the log.
+- **Assets:** `_verify_assets.py`: 0 FAIL, 0 WARN.
+- **Transitions:**
+  - beak = track 97.8–99.4 % (frame-accurate), one opening per syllable (15 / 19 / 5), 0 open-beak
+    frames before or after the line, the bird's box identical before and after the switch;
+  - «चलिए,» types 4.04–4.36 s and «शुरू करें!» 4.75–5.21 s into the clip, the full line 0.46–0.60 s
+    before the clip ends - from the cover's play button, served and opened as a file; guided and
+    practice likewise inside their voiced stretches.
+- **Celebration:** the jump plays 0.5–1.5 s with no voice, the line starts as she lands; mouth = track
+  100 % on the kit's clock; sheets शाबाश → talk → idle; 0 open-mouth frames after the line.
+- **Play button:** the sound starts 1 ms after the press (was ~140 ms, on release), once.
+- **Console:** no errors (only the server's missing favicon).

@@ -1112,7 +1112,13 @@
        Capturing the mount's epoch and checking it before running the callback closes that. */
     const myGen = _voGen;
     state.trainDepart = null;          /* [r26] cleared per mount; set once the train exists */
+    /* [r103] THE SAME TRAIN STAYS. When the page before handed its train on (keep_train_next), this
+       page's train is already standing there: no arrival, and the page does not slide in either. */
+    const kept = !!window.__ltKeepTrain && CARD.slides[state.idx] && window.__ltKeepTrain === CARD.slides[state.idx].id;
+    window.__ltKeepTrain = null;
+    if(kept) requestAnimationFrame(()=>{ const sh = document.getElementById("slideHost"); if(sh) sh.classList.remove("slide-in"); });
     const tc = TrainChrome.mount(host, {
+      entry:       kept ? false : undefined,
       coaches: n,
       coach_label: (opts.labels || []).map(h => (h == null || h === "") ? null : { html: h }),
       coach_body:  (opts.bodies || []).map(h => ({ html: h || "" })),
@@ -1128,11 +1134,15 @@
       const body = tc.body(i);
       body.classList.add("tr-body");          /* makeDraggable hit-tests this */
       body.dataset.idx = String(i);
+      /* [r103] a coach catches a drop anywhere on the whole coach - roof, label, wheels - and a
+         little around it (see _zoneAt in the engine) */
+      if(opts.dropZone) body._hitRect = ()=> _padRect(el.getBoundingClientRect(), 26);
       return { el, body: tc.faceEls[i], zone: body, label: tc.labelEls[i] };
     });
     /* [r26] the engine drives the departure through this, without knowing about trains */
     state.trainDepart = (done)=> tc.depart(done);
     return {
+      kept,
       wrap: tc.shell, rail: tc.rail, coaches, chrome: tc,
       /* run `fn` once the train has stopped — immediately if it already has, and never at all
          if the screen has moved on in the meantime */
@@ -1275,6 +1285,11 @@
     el.style.width = "0px"; el.style.paddingLeft = el.style.paddingRight = "0";
     el.style.marginRight = (-gap) + "px"; el.style.opacity = "0";
     setTimeout(()=>{ if(el.isConnected) el.style.display = "none"; }, 360);
+  }
+
+  /* [r103] a screen rect grown by `p` px on every side */
+  function _padRect(r, p){
+    return { left:r.left - p, top:r.top - p, right:r.right + p, bottom:r.bottom + p };
   }
 
   function finishSlide(slide, train, silent, signal){
@@ -1436,7 +1451,7 @@
       /* SME round 3, on the picture-sort screen: "Coach labels उ and ऊ appear one by one."
          Settled by default (engine fact 1) — `tr-lblseq` only drives the staggered fade-in, so a
          frozen capture still photographs BOTH labels rather than an empty coach roof. */
-      requestAnimationFrame(()=> train.coaches.forEach((c, i) => {
+      if(!train.kept) requestAnimationFrame(()=> train.coaches.forEach((c, i) => {   /* [r103] kept: already up */
         c.label.style.setProperty("--tr-lbl-delay", (i * 340) + "ms");
         c.label.classList.add("tr-lblseq");
       }));
@@ -1750,6 +1765,10 @@
           if(k >= tiles.length){
             if(nh){ nh.classList.remove("show", "hint-glow"); nh.style.animation = ""; }
             return sayOpt(A(slide, "outro"), ()=>{ state.demoRunning = false;
+              /* [r103] Yasir: pages 9 and 10 are one train - the demo hands its train to the
+                 activity: no departure here, no arrival there; only the options change */
+              if(d.keep_train_next && CARD.slides[state.idx + 1]){
+                state.trainDepart = null; window.__ltKeepTrain = CARD.slides[state.idx + 1].id; }
               finishSlide(slide, train, true, "sort_demo_done"); });
           }
           const tile = tiles[k++];
@@ -2943,6 +2962,9 @@
                               && !tile.classList.contains("snapped"))
           say(clip(tile.dataset.audio), ()=>{}); };
 
+        /* [r103] each blank catches a drop anywhere on its coach and a little around it */
+        document.querySelectorAll("#slideHost .wb-blank").forEach(b => { const c = train.coaches[+b.dataset.idx];
+          if(c && !b._hitRect) b._hitRect = ()=> _padRect(c.el.getBoundingClientRect(), 26); });
         makeDraggable(tile, (zone)=>{
           if(hintBusy) return;                      /* a demonstration is speaking */
           const blank = zone.closest(".wb-blank"); if(!blank) return;

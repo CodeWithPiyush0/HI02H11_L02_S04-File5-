@@ -63,8 +63,49 @@
     if(!box) return r;
     if(img) img.style.display = "none";
     box.innerHTML = "";
-    SwiftieCelebration.play({ host: box, meta: EA.meta, base: EA.base,
-                              bits: EA.track.bits, step_ms: EA.track.step_ms, audio: clock });
+    /* [r106] SHE JUMPS AND CELEBRATES FIRST, THEN SPEAKS. Yasir: "in the last celebration screen Swifty
+       jumps and celebrates, then starts speaking - the VO should only play when she starts speaking".
+       So the line is NOT played by the page on arrival (ownsAudio): the jump - the kit's own शाबाश
+       sheet, its standing frames and its jump frames - plays first, silent but for the celebration
+       sound; then the line starts and the kit's player takes over, with a track arranged so that it
+       finishes the landing over the clip's lead-in and then lip-syncs the WHOLE line on the talk
+       sheet (a 25 ms stand-in "first word" stops the kit spending the real first words on a jump). */
+    state.ownsAudio = true;
+    const M = EA.meta, S = M.shabaash, COLS = M.cols || 6;
+    const sp = document.createElement("div"); sp.className = "swc-sprite";
+    sp.innerHTML = '<div class="swc-art"></div>'; box.appendChild(sp);
+    const art = sp.firstChild; art.style.aspectRatio = M.fw + " / " + M.fh;
+    art.style.backgroundImage = 'url("' + EA.base + S.src + '")';
+    const showF = (i)=>{ const c = i % COLS, rr = Math.floor(i / COLS);
+      art.style.backgroundPosition = (c * 100 / (COLS - 1)) + "% " + (rr * 100 / (COLS - 1)) + "%";
+      sp.dataset.sheet = "shabaash"; sp.dataset.f = i; };
+    const frames = S.pre.concat(S.word), FMS = 45;          /* ~22 fps: 30 frames, 1.35 s */
+    showF(frames[0]);
+    const bits = EA.track.bits, lead = Math.max(0, bits.indexOf("1"));
+    const step = EA.track.step_ms || 25;
+    const bits2 = "1" + "00000000" + bits.slice(lead);      /* stand-in word, 200 ms gap, the line */
+    const shift = (9 - lead) * step / 1000;                 /* keeps the line on the clip's clock */
+    const clock2 = {
+      get paused(){ return clock.paused; }, get ended(){ return clock.ended; },
+      get currentTime(){ const t = clock.currentTime; return t > 0 ? Math.max(0.001, t + shift) : 0; }
+    };
+    const t0 = performance.now();
+    (function jump(){
+      if(!sp.isConnected || CARD.slides[state.idx] !== slide) return;
+      const k = Math.floor((performance.now() - t0) / FMS);
+      if(k < frames.length){ showF(frames[k]); requestAnimationFrame(jump); return; }
+      /* the jump is over: the line starts, and the kit takes over the moment it is sounding */
+      const src = (typeof audioFor === "function") ? audioFor(slide, "prompt") : null;
+      if(src) play(src, ()=>{});
+      const h = SwiftieCelebration.play({ host: box, meta: M, base: EA.base, bits: bits2, step_ms: step, audio: clock2 });
+      h.el.style.animation = "none"; h.el.style.position = "absolute"; h.el.style.inset = "0";
+      h.el.style.visibility = "hidden";
+      (function swap(){
+        if(!h.el.isConnected) return;
+        if(h.el.dataset.t !== undefined || h.el.dataset.sheet === "idle"){ h.el.style.visibility = ""; sp.remove(); return; }
+        requestAnimationFrame(swap);
+      })();
+    })();
     return r;
   };
 })();

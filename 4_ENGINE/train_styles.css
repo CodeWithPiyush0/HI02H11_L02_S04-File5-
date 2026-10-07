@@ -131,6 +131,9 @@
 .mp-pic{ opacity:0; display:inline-block; line-height:0; }
 .mp-pic.mp-in{ opacity:1; }
 .mp-img{ width:146px; height:146px; object-fit:contain; }
+/* [r103] Yasir: "in page 3 and page 5 increase the size of the object's image a little" - their
+   picture is the meet-pic-box one (MEET_PAIR examples), 220 -> 270 px */
+.meet-pic-box.mex-pic .pic-img{ width:270px; height:270px; }
 .mp-emoji{ font-size:108px; line-height:1; }
 /* the callout was almost unreadable at opacity .35 before its cue; .62 keeps it legible */
 .mp-callout{ opacity:.62; display:inline-flex; align-items:center; gap:10px;
@@ -1023,6 +1026,15 @@ body.vo-lock .coach-body.dd-zone > .coach-face{ pointer-events:none !important; 
 
 /* ---------- (1) the next button's arrow ---------- */
 .nav-btn::after{content:"\2192";font-size:52px;line-height:1;}
+/* [r103] the transition's text, held until Swiftee says it - then it pops in */
+#phaseGateTitle{ transition:opacity .25s ease, transform .35s cubic-bezier(.34,1.5,.6,1); }
+/* [r105] every transform here keeps the title's own translateX(-50%) - r103/r104 dropped it, so the
+   text started at the screen's centre line instead of being centred on it */
+#phaseGateTitle.pg-title-wait{ opacity:0; transform:translateX(-50%) scale(.85); }
+/* [r104] the typewriter: the line is up at once, each akshara fades in on its beat */
+#phaseGateTitle.pg-typing{ transition:none; transform:translateX(-50%); }
+#phaseGateTitle .pg-tw{ opacity:0; transition:opacity .09s linear; }
+#phaseGateTitle .pg-tw.on{ opacity:1; }
 /* [r97] Yasir: "when the VO is finished we enable the next button - I want it to pulsate". It pulses
    for as long as it is live (the engine marks a live arrow .active and enables it; a disabled one
    never pulses). The pill is centred with translateX(-50%), so every frame keeps that. */
@@ -1043,7 +1055,17 @@ body.vo-lock .coach-body.dd-zone > .coach-face{ pointer-events:none !important; 
   0%,100%{ transform:translateX(-50%) scale(1); }
   50%    { transform:translateX(-50%) scale(1.09); }
 }
-.sg-btn.lt-play-shown:not(.sg-waiting):not(:disabled){ animation:ltPlayPulse 1.3s ease-in-out infinite; }
+/* [r103] Yasir: "when the VO is finished then only the play button will be visible - we don't need a
+   disabled play button". Not on screen before the greeting has finished, nor while a replay of it
+   plays; each time it becomes ready it pops in, then pulses. */
+.sg-btn:not(.lt-play-shown), .sg-btn.sg-waiting{ visibility:hidden; opacity:0; }
+@keyframes ltPlayIn{
+  0%  { opacity:0; transform:translateX(-50%) scale(.4); }
+  70% { opacity:1; transform:translateX(-50%) scale(1.06); }
+  100%{ opacity:1; transform:translateX(-50%) scale(1); }
+}
+.sg-btn.lt-play-shown:not(.sg-waiting):not(:disabled){
+  animation:ltPlayIn .45s cubic-bezier(.34,1.4,.6,1) both, ltPlayPulse 1.3s ease-in-out .45s infinite; }
 .sg-btn.lt-play-shown:not(.sg-waiting):not(:disabled):active{ animation:none; }
 @media (prefers-reduced-motion:reduce){ .sg-btn.lt-play-shown{ animation:none !important; } }
 .end-btn::after{content:"\2192";font-size:52px;line-height:1;}
@@ -1615,6 +1637,11 @@ body.auto-next #navBtn{ visibility:hidden; pointer-events:none; }
    pgPeek slide-up would rise it twice; and the frame is cropped to the bird, so the height clamp
    applies to the bird itself rather than to a mostly-empty square. */
 .phase-gate #phaseGateImg.pg-card{ animation:none; height:clamp(200px,30vh,290px); }
+/* [r107] from her first speaking frame the gate bird is drawn lip-synced (engine _gateLips) on a
+   canvas that takes the animation's exact place: same height clamp, its own 505x440 aspect */
+.phase-gate #phaseGateCv{ display:none; height:clamp(200px,30vh,290px); width:auto; pointer-events:none; }
+.phase-gate.pg-talking #phaseGateImg{ display:none; }
+.phase-gate.pg-talking #phaseGateCv{ display:block; }
 
 /* [r73/r74] the cover's text title sits above the train, so the steam passes behind it */
 #sgTitle.lt-title-front{ position:relative; z-index:6; }
