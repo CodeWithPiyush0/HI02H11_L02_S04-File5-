@@ -85,11 +85,12 @@ SCENE = {
     "scn_hathauda": "\U0001F528",
 }
 # Hint 2 on the sentence screens glows the part of the picture the sentence is about, as
-# fractions of the ARTWORK (cx, cy, rx, ry). Read off the shipped 1024x1024 scenes.
+# fractions of the ARTWORK (cx, cy, rx, ry).
 SCENE_GLOW = {
-    "scn_ped_kaua": [[0.540, 0.500, 0.250, 0.250]],   # the crow on its branch
-    "scn_khel":     [[0.470, 0.660, 0.230, 0.230]],   # the pull-along duck, wheels and string
-    "scn_hathauda": [[0.655, 0.340, 0.160, 0.230]],   # the hammer in his hand
+    # re-measured 2026-10-07 on the developer's new scenes (1024 wide, ~5:4)
+    "scn_ped_kaua": [[0.545, 0.350, 0.215, 0.250]],   # the crow on its branch
+    "scn_khel":     [[0.460, 0.640, 0.225, 0.300]],   # the pull-along duck, wheels and string
+    "scn_hathauda": [[0.590, 0.320, 0.095, 0.175]],   # the hammer in his hand
 }
 NAME = {O: "ओ", AU: "औ"}
 SLUG = {O: "o", AU: "au"}
@@ -1002,6 +1003,14 @@ def main():
             _h.update(open(os.path.join(AUD_DIR, _f), "rb").read())
     html = html.replace("__AUDIO_V_STAMP__", _h.hexdigest()[:12])
     html = html.replace("__MR_AUDIO_V_STAMP__", _h.hexdigest()[:12])
+    # the same for the pictures: a redrawn picture keeps its name, so its URL has to change
+    _hi = hashlib.sha1()
+    for _f in sorted(os.listdir(IMG_DIR)):
+        _hi.update(_f.encode("utf-8")); _hi.update(open(os.path.join(IMG_DIR, _f), "rb").read())
+    html = html.replace("__IMG_V_STAMP__", _hi.hexdigest()[:12])
+    html = re.sub(r'(<link rel="preload" as="image"[^>]*href="assets/Images/[^"?]+)"',
+                  lambda m: m.group(1) + '?v=' + _hi.hexdigest()[:12] + '"', html)
+    print("  OK  picture stamp %s" % _hi.hexdigest()[:12])
     open(os.path.join(BUNDLE, CODE + ".html"), "w", encoding="utf-8").write(html)
     open(os.path.join(BUNDLE, "card.json"), "w", encoding="utf-8").write(payload + "\n")
     write_vo_list()

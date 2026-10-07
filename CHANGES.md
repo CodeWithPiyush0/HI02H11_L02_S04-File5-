@@ -136,3 +136,29 @@ r101/r102 stay out), then `inject_train.py` and the builder were re-run.
   100 % on the kit's clock; sheets शाबाश → talk → idle; 0 open-mouth frames after the line.
 - **Play button:** the sound starts 1 ms after the press (was ~140 ms, on release), once.
 - **Console:** no errors (only the server's missing favicon).
+
+## Round 3 (2026-10-07) — the developer's new pictures
+
+Six files supplied in `3_BUILD/assets/Images/` (originals kept in `1_SPEC/art_src/2026-10-07_supplied/`):
+three object strips were cut into single transparent pictures, and three scenes were resized to
+1024 px wide.
+
+| new picture | replaces |
+|---|---|
+| crow · potted plant · drum | `obj_kaua` · `obj_paudha` · `obj_dhol` |
+| parrot · hammer · running boy | `obj_tota` · `obj_hathauda` · `obj_daud` |
+| koel on a branch · pink flower · toy car | `obj_koyal` · `obj_khilna` · `obj_khilona` |
+| crow in a tree · boy with pull-along duck · carpenter | `scn_ped_kaua` · `scn_khel` · `scn_hathauda` |
+
+| horse · clay pot · peacock (`Cheerful Horse, Clay Pot, and Peacock Trio.png`, found in Downloads) | `obj_ghoda` · `obj_ghada` · `obj_mor` |
+
+Hint 2's scene glow re-measured on the three new scenes (`SCENE_GLOW`). Only `obj_khilna_bud` (the
+bud on page 5) is still the old art — no new bud was supplied.
+
+**Pictures are now cache-busted** (`?v=<hash of assets/Images>`), like the audio already was: before
+this, a browser (or Vercel's 1-day cache) that had seen the old pictures kept showing them after the
+files were replaced.
+
+⚑ **The खिलौना picture is now a toy car, but page 15's scene shows a toy duck** — the deck asks for
+the option to match the scene. ⚑ **The bud on page 5 is the old flat red one**, so it opens into a
+glossy pink flower of a different style.

@@ -5478,10 +5478,14 @@ function sortSeqReveal(tray, slide){
   autoPlayChain(slide, ()=> setTimeout(step, 250));               // prompt chain FULLY, then tiles one at a time
   setTimeout(()=>{ if(CARD.slides[state.idx] === slide) enableAll(); }, 16000);   // global safety net — never soft-lock
 }
+/* [S04] CACHE-BUST EVERY PICTURE, the same way _av() does for audio. A redrawn picture keeps its
+   filename, so a browser that has seen the old one keeps showing it. __IMG_V is stamped by the
+   builder from the CONTENT of assets/Images, so it moves exactly when a picture changes. */
+var __IMG_V = "__IMG_V_STAMP__";
 function imgOrEmoji(imgKey, emoji, imgClass, emojiClass){
   if(imgKey){
     const fb = String(emoji||"❓").replace(/'/g,"");
-    return `<img class="${imgClass}" src="assets/Images/${imgKey}.${IMG_EXT}" alt="" `+
+    return `<img class="${imgClass}" src="assets/Images/${imgKey}.${IMG_EXT}?v=${__IMG_V}" alt="" `+
       `onerror="var s=document.createElement('span');s.className='${emojiClass}';s.textContent='${fb}';this.replaceWith(s);">`;
   }
   return `<span class="${emojiClass}">${emoji||"❓"}</span>`;
@@ -5496,7 +5500,7 @@ function letterCell(letter){
    picture at a uniform size (weight is not visual — the child uses known heaviness / the balance cue). */
 function imgOrEmojiSized(img, emoji, px){
   const fb = String(emoji||"❓").replace(/'/g,"");
-  if(img) return `<img class="ord-obj-img" style="width:${px}px;height:${px}px" src="assets/Images/${img}.${IMG_EXT}" alt="" `+
+  if(img) return `<img class="ord-obj-img" style="width:${px}px;height:${px}px" src="assets/Images/${img}.${IMG_EXT}?v=${__IMG_V}" alt="" `+
     `onerror="var s=document.createElement('span');s.className='ord-obj-emoji';s.style.fontSize='${Math.round(px*0.82)}px';s.textContent='${fb}';this.replaceWith(s);">`;
   return `<span class="ord-obj-emoji" style="font-size:${Math.round(px*0.82)}px">${emoji||"❓"}</span>`;
 }

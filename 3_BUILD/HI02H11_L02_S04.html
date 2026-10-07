@@ -3962,7 +3962,7 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
 
 /* == TRAIN STYLES :: END == */
 </style>
-<link rel="preload" as="image" fetchpriority="high" href="assets/Images/obj_ghoda.png"><link rel="preload" as="image" fetchpriority="high" href="assets/Images/obj_khilona.png">
+<link rel="preload" as="image" fetchpriority="high" href="assets/Images/obj_ghoda.png?v=3aba101504c6"><link rel="preload" as="image" fetchpriority="high" href="assets/Images/obj_khilona.png?v=3aba101504c6">
 <style id="bundleLetterGlow">
 .sg-ex-letter{
   box-shadow:0 0 0 6px rgba(255,206,46,.65),0 0 18px 4px rgba(252,188,24,.50),
@@ -5233,9 +5233,9 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
     "hint3_hand": false,
     "scene_glow": [
      [
-      0.54,
-      0.5,
-      0.25,
+      0.545,
+      0.35,
+      0.215,
       0.25
      ]
     ]
@@ -5289,10 +5289,10 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
     "hint3_hand": false,
     "scene_glow": [
      [
-      0.47,
-      0.66,
-      0.23,
-      0.23
+      0.46,
+      0.64,
+      0.225,
+      0.3
      ]
     ]
    }
@@ -5345,10 +5345,10 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
     "hint3_hand": false,
     "scene_glow": [
      [
-      0.655,
-      0.34,
-      0.16,
-      0.23
+      0.59,
+      0.32,
+      0.095,
+      0.175
      ]
     ]
    }
@@ -6880,10 +6880,14 @@ function sortSeqReveal(tray, slide){
   autoPlayChain(slide, ()=> setTimeout(step, 250));               // prompt chain FULLY, then tiles one at a time
   setTimeout(()=>{ if(CARD.slides[state.idx] === slide) enableAll(); }, 16000);   // global safety net — never soft-lock
 }
+/* [S04] CACHE-BUST EVERY PICTURE, the same way _av() does for audio. A redrawn picture keeps its
+   filename, so a browser that has seen the old one keeps showing it. __IMG_V is stamped by the
+   builder from the CONTENT of assets/Images, so it moves exactly when a picture changes. */
+var __IMG_V = "3aba101504c6";
 function imgOrEmoji(imgKey, emoji, imgClass, emojiClass){
   if(imgKey){
     const fb = String(emoji||"❓").replace(/'/g,"");
-    return `<img class="${imgClass}" src="assets/Images/${imgKey}.${IMG_EXT}" alt="" `+
+    return `<img class="${imgClass}" src="assets/Images/${imgKey}.${IMG_EXT}?v=${__IMG_V}" alt="" `+
       `onerror="var s=document.createElement('span');s.className='${emojiClass}';s.textContent='${fb}';this.replaceWith(s);">`;
   }
   return `<span class="${emojiClass}">${emoji||"❓"}</span>`;
@@ -6898,7 +6902,7 @@ function letterCell(letter){
    picture at a uniform size (weight is not visual — the child uses known heaviness / the balance cue). */
 function imgOrEmojiSized(img, emoji, px){
   const fb = String(emoji||"❓").replace(/'/g,"");
-  if(img) return `<img class="ord-obj-img" style="width:${px}px;height:${px}px" src="assets/Images/${img}.${IMG_EXT}" alt="" `+
+  if(img) return `<img class="ord-obj-img" style="width:${px}px;height:${px}px" src="assets/Images/${img}.${IMG_EXT}?v=${__IMG_V}" alt="" `+
     `onerror="var s=document.createElement('span');s.className='ord-obj-emoji';s.style.fontSize='${Math.round(px*0.82)}px';s.textContent='${fb}';this.replaceWith(s);">`;
   return `<span class="ord-obj-emoji" style="font-size:${Math.round(px*0.82)}px">${emoji||"❓"}</span>`;
 }
