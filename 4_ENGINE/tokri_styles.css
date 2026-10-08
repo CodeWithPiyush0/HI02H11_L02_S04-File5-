@@ -1,0 +1,1033 @@
+/* ==========================================================================================
+   MATRA TOKRI - «मात्रा टोकरी» slide. Everything below is scoped to that slide's own class
+   names; the only generic selector the game carried (.drop) is scoped to .mt-game so it
+   cannot reach the engine's .blk.drop, and its #nudgeHand was renamed #mtNudgeHand because
+   this engine already owns that id.
+   ========================================================================================== */
+/* ===== FLN ANIMATION KIT: nudge-press BEGIN ===== */
+@keyframes nhTapNew{
+  0%,100%{transform:translateY(0) scale(1);}
+  45%{transform:translateY(6px) scale(.93);}
+  62%{transform:translateY(6px) scale(.93);}   /* contact HELD 45->62% */
+}
+@keyframes demoTapNew{0%,100%{transform:scale(1);}48%{transform:scale(.9);}64%{transform:scale(.9);}}
+@keyframes nhPress{0%,100%{transform:scale(1);}40%,58%{transform:scale(.9);}}
+@keyframes nhFx{0%,34%{opacity:0;transform:scale(.55);}46%{opacity:1;transform:scale(1);}
+  58%{opacity:1;transform:scale(1.02);}78%,100%{opacity:0;transform:scale(1.12);}}
+
+/* [r25 · SME] A celebration is not the game: no basket, no word cloud, no catch line, no
+   hand. Everything the child played WITH goes; the scene and the cheer stay.
+   TWO states share the rule, because there are two celebrations on this slide:
+     .mt-ended    - the game is won, the last screen before the lesson walks on
+     .mt-cheering - [r26] a matra level is finished and Swifty comes on between rounds. The
+                    basket sat under her the whole time, and finishRound() did not call
+                    clearDrops() until AFTER the cheer, so any word still in the air hung
+                    there behind her too. */
+.mt-game.mt-ended #basket,      .mt-game.mt-cheering #basket,
+.mt-game.mt-ended #basket-front,.mt-game.mt-cheering #basket-front,
+.mt-game.mt-ended .drop-tile,   .mt-game.mt-cheering .drop-tile,
+.mt-game.mt-ended .catch-line,  .mt-game.mt-cheering .catch-line,
+.mt-game.mt-ended #mtNudgeHand, .mt-game.mt-cheering #mtNudgeHand{display:none !important;}
+#mtNudgeHand{position:absolute;width:86px;height:108px;pointer-events:none;
+  opacity:0;transition:opacity .2s ease;z-index:40;}
+#mtNudgeHand.show{opacity:1;}
+#mtNudgeHand img{width:100%;height:100%;object-fit:contain;
+  animation:nhTapNew 1.3s ease-in-out infinite;}
+/* ===== FLN ANIMATION KIT: nudge-press END ===== */
+/* ===== FLN ANIMATION KIT: nudge-ripple BEGIN ===== */
+/* Each layer is on a 120-unit square canvas centred on the ripple origin, so
+   background-size:contain + transform-origin:50% 50% scales it about the fingertip.
+   GEOMETRY. [r25 · SME] The game shipped with its own white-and-blue hand pointing
+   up-LEFT; every other screen in this lesson nudges with assets/UI/nudge_hand_new.svg,
+   a skin-toned hand with a yellow cuff pointing straight UP, and one game using a
+   different hand read as a different product. The art is swapped; the numbers below
+   are re-measured for it, not carried over.
+   #mtNudgeHand is 86x108. Rasterised into that box with object-fit:contain and the
+   ink scanned for its topmost rows, the fingertip sits at:
+       mt_hand_nudge.webp  172x181  ->  (13, 11)   <- matches the 13.8/12.0 this
+                                                      comment used to record, which is
+                                                      what validates the measurement
+       nudge_hand_new.svg   75x94   ->  (33,  7)
+   So the tip moves +20 right and -4 up, and NUDGE_OPTS is shifted by exactly that
+   much to keep the finger on the same point of the basket.
+   The 94.6px FX square is offset to centre on the tip: left = 33 - 47.3, top = 7 - 47.3. */
+#mtNudgeHand .nh-tapfx{position:absolute;width:94.6px;height:94.6px;
+  left:-14.3px;top:-40.3px;pointer-events:none;}
+#mtNudgeHand .nh-tapfx i{position:absolute;inset:0;display:block;
+  background-repeat:no-repeat;background-position:center;background-size:contain;
+  transform-origin:50% 50%;opacity:0;}
+#mtNudgeHand .nh-tapfx .fx-ro{background-image:url(assets/UI/mt_nudge_fx_ring_outer.svg);
+  animation:nhRippleOuter 1.3s ease-out infinite;}
+#mtNudgeHand .nh-tapfx .fx-ri{background-image:url(assets/UI/mt_nudge_fx_ring_inner.svg);
+  animation:nhRippleInner 1.3s ease-out infinite;}
+#mtNudgeHand .nh-tapfx .fx-sp{background-image:url(assets/UI/mt_nudge_fx_sparks.svg);
+  animation:nhSparkPop 1.3s ease-out infinite;}
+
+/* inner leads, outer trails - one ripple rolling out */
+@keyframes nhRippleInner{0%,38%{opacity:0;transform:scale(.30);}47%{opacity:1;transform:scale(.74);}
+  70%{opacity:.5;transform:scale(1.10);}90%,100%{opacity:0;transform:scale(1.34);}}
+@keyframes nhRippleOuter{0%,45%{opacity:0;transform:scale(.55);}56%{opacity:.95;transform:scale(.88);}
+  78%{opacity:.4;transform:scale(1.20);}96%,100%{opacity:0;transform:scale(1.46);}}
+@keyframes nhSparkPop{0%,42%{opacity:0;transform:scale(.55);}52%{opacity:1;transform:scale(1);}
+  68%{opacity:1;transform:scale(1.06);}86%,100%{opacity:0;transform:scale(1.18);}}
+/* ===== FLN ANIMATION KIT: nudge-ripple END ===== */
+/* ===== FLN ANIMATION KIT: answer-tempo BEGIN ===== */
+/* ONE tempo for all answer feedback. Both effects derive every duration from these
+   two numbers, so they cannot drift apart - change --fx-beat and the whole pair
+   retimes together; change --fx-reward and only the correct beat moves.
+   --fx-beat is the shipped buzzShake tempo (.4s) and is the anchor: the wrong
+   answer runs exactly one beat, the correct answer runs --fx-reward of them. */
+:root{
+  --fx-beat:.4s;
+  --fx-reward:2;
+}
+/* ===== FLN ANIMATION KIT: answer-tempo END ===== */
+/* ===== FLN ANIMATION KIT: correct-select BEGIN ===== */
+/* NO RINGS. The confirm is the tile's own border turning green, the tile pressing
+   in and popping back, and a few sparks lifting off its top edge - nothing else.
+   Earlier passes had a ring converging inward and two halos pulsing outward; both
+   were cut. On a small tile any extra ring reads as a flicker rather than as part
+   of the tile, and the confetti (recipe 7) already covers the celebratory register.
+   Every duration derives from --ckT, so retiming the beat is one number. */
+.ck-correct{
+  --ckT:calc(var(--fx-beat) * var(--fx-reward));   /* 2 beats = 800ms */
+  overflow:visible !important;                  /* the halo leaves the box - see Gotchas */
+  z-index:6;                                    /* ...and must not slide under a neighbour */
+  /* HOUSE RULE: the green outline IS the correct-mark. No fill, no tick.
+     Put on the tile's OWN border, as recipe 9 does - a separate ring layer would
+     sit inside the existing border and leave a grey rim around it. It also means
+     the mark survives `transition:none!important`: a killed transition still lands
+     on its end value, where a killed `animation ... both` never applies one (R5). */
+  background:var(--ck-face,#fff) !important;
+  border-color:var(--correct,#00B132) !important;
+  box-shadow:0 6px 16px rgba(0,177,50,.16) !important;
+  /* 70ms, matched with .wg-wrong: the verdict colour is the most important thing
+     on screen and must land inside the ~100ms "instantaneous" window. The softness
+     comes from the motion, not from ramping the colour. */
+  transition:border-color .07s linear, box-shadow .2s ease !important;
+  /* NOT the house cubic-bezier(.34,1.5,.6,1): a timing function runs between
+     EVERY pair of keyframes, so an overshooting spring applied to a four-stop
+     pop overshoots four times and the anticipation dip never reads. The spring
+     is already shaped by the percentages below - the easing just joins them. */
+  animation:ckPop calc(var(--ckT) * .68) ease-in-out both;
+}
+.ck-correct::after{content:none !important;display:none !important;}   /* no tick */
+
+.ck-fx{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;}
+.ck-fx > i{position:absolute;inset:0;border-radius:inherit;}
+
+/* THE CROWN - sparks over the TOP ARC only. A full 360 ring competes with the
+   screen-wide confetti; a crown stays local and reads as lift. */
+.ck-crown{overflow:visible;}
+.ck-crown i{position:absolute;left:50%;top:50%;width:var(--ss);height:var(--ss);
+  margin:calc(var(--ss) / -2) 0 0 calc(var(--ss) / -2);
+  background:var(--ck-spark,#FFC93C);
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,
+                    50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  animation:ckSpark calc(var(--ckT) * .72) cubic-bezier(.15,.7,.35,1)
+            calc(var(--ckT) * .27) both;}
+
+@keyframes ckPop{
+  0%  {transform:scale(1);}
+  11% {transform:scale(.966);}    /* ANTICIPATION - the tap presses the tile in  */
+  50% {transform:scale(1.055);}   /* peak, 272ms at the default tempo            */
+  72% {transform:scale(.992);}    /* one counter-bounce: a spring decays         */
+  100%{transform:scale(1);}
+}
+/* --x0/--y0 put each spark ON the tile's edge to begin with. Launching from the
+   centre (the obvious version) sends every spark straight across the digit the
+   child is reading - the sparks are decoration and must never cross the content. */
+@keyframes ckSpark{
+  0%  {transform:translate(var(--x0),var(--y0)) scale(.3) rotate(0deg);opacity:0;}
+  25% {opacity:1;}
+  100%{transform:translate(var(--sx),var(--sy)) scale(1) rotate(var(--sr));opacity:0;}
+}
+/* R5 - the decoration goes, the MARK stays. The border-color above already
+   survives the kill-switch; these just stop the dead layers rendering as
+   stationary green hoops parked at their `both` start state. */
+html.no-anim .ck-crown{display:none;}
+@media (prefers-reduced-motion: reduce){
+  .ck-crown{display:none;}
+}
+/* ===== FLN ANIMATION KIT: correct-select END ===== */
+/* ===== FLN ANIMATION KIT: wrong-select BEGIN ===== */
+/* Two states, because the fleet has two: `.wg-wrong` is a TRANSIENT correction that
+   RELEASES the tile back to tappable, `.wg-out` is elimination and stays. */
+.wg-wrong,.wg-out{
+  --wgT:var(--fx-beat);                         /* exactly one beat */
+  overflow:visible !important;
+  z-index:5;
+  background:var(--wg-face,#fff) !important;    /* no red flood */
+  border-color:var(--wrong,#F93544) !important;
+  transition:border-color .07s linear !important;   /* matched with .ck-correct */
+}
+.wg-wrong::after,.wg-out::after{content:none !important;display:none !important;}  /* no cross */
+.wg-wrong{box-shadow:0 6px 16px rgba(249,53,68,.16) !important;
+  animation:wgNo var(--wgT) ease-in-out both;}
+.wg-out{pointer-events:none;box-shadow:none !important;
+  animation:wgNoOut calc(var(--wgT) * 1.6) ease-in-out both,
+            wgFade  calc(var(--wgT) * 1.6) ease-out both;}
+
+.wg-fx{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;}
+.wg-fx > i{position:absolute;inset:0;border-radius:inherit;}
+/* one soft outward pulse, so the "no" has a source instead of just a wobble */
+.wg-pulse{border:3px solid var(--wrong,#F93544);
+  animation:wgPulse calc(var(--wgT) * .62) ease-out both;}
+.wg-out .wg-pulse{animation-duration:calc(var(--wgT) * .5);}
+
+/* Lateral buzz at the shipped tempo - buzzShake .4s, +-9 then +-6
+   (MTKGA01/style.css:662). Keeping that character matters more than being clever:
+   an earlier pass here pivoted the tile about its base like a head shaking "no",
+   which is truer to the gesture but reads slow and soft beside the rest of the
+   fleet.
+   What this DOES change is the decay. -9 -> +8 -> -5.5 -> +3 -> 0, where msShake
+   holds a flat +-7 for four beats: real oscillation loses energy, and a constant
+   amplitude reads as a machine buzzing rather than as a correction.
+   ease-in-out, because a turning point is a turning point - velocity is zero at
+   each reversal. */
+@keyframes wgNo{
+  0%  {transform:translateX(0);}
+  18% {transform:translateX(-9px);}
+  38% {transform:translateX(8px);}
+  60% {transform:translateX(-5.5px);}
+  80% {transform:translateX(3px);}
+  100%{transform:translateX(0);}
+}
+/* Same shake, then it settles SMALLER and stays there. One element owns exactly
+   ONE transform animation - a second `animation` also touching transform would
+   silently win outright and drop the shake. That is why the fade below is
+   filter + opacity only. */
+@keyframes wgNoOut{
+  0%  {transform:translateX(0)     scale(1);}
+  11% {transform:translateX(-9px)  scale(1);}
+  24% {transform:translateX(8px)   scale(1);}
+  37% {transform:translateX(-5.5px)scale(1);}
+  50% {transform:translateX(3px)   scale(1);}
+  62% {transform:translateX(0)     scale(1);}
+  100%{transform:translateX(0)     scale(.965);}
+}
+/* Recede by DESATURATING, not by dimming. The shipped opacity:.5 makes the tile's
+   own word or digit unreadable on a low-brightness tablet in a bright classroom -
+   which is exactly why a later rule already forces it back to opacity:1 !important
+   in MTKGA01 and MTKGA01_S03. This keeps the content legible and still recedes. */
+@keyframes wgFade{
+  0%,52%{filter:saturate(1);opacity:1;}
+  100%  {filter:saturate(.3);opacity:.72;}
+}
+@keyframes wgPulse{
+  0%  {transform:scale(1.02);opacity:.65;}
+  100%{transform:scale(1.16);opacity:0;}
+}
+/* THE RELEASE needs a class of its own. Dropping .wg-wrong also drops the
+   transition declared on it, so the red would snap off in one frame; .wg-rel is
+   added just before .wg-wrong comes off and outlives it by one transition, which
+   is what turns the release into a fade. It also needs no knowledge of whatever
+   neutral border colour the host activity uses. */
+.wg-rel{transition:border-color .22s ease, box-shadow .22s ease !important;}
+
+/* R5 - the red mark rides border-color, so it survives the kill-switch. What has
+   to survive in JS is the RELEASE: animationend never fires under no-anim, so the
+   class comes off on a timeout instead, or the tile stays red forever. */
+html.no-anim .wg-pulse{display:none;}
+html.no-anim .wg-out{opacity:.72;filter:saturate(.3);}
+@media (prefers-reduced-motion: reduce){
+  .wg-pulse{display:none;}
+  .wg-out{opacity:.72;filter:saturate(.3);}
+}
+/* ===== FLN ANIMATION KIT: wrong-select END ===== */
+/* ===== FLN ANIMATION KIT: object-outline BEGIN ===== */
+/* "Tap the right thing", where every target is a DIFFERENT shape.
+
+   TWO ENGINES, one set of state classes. `.is-correct` / `.is-wrong` / `.is-muted`
+   mean the same thing and are driven the same way whichever engine a target uses,
+   so a game can mix them in one scene:
+
+     .ol-alpha  the object is its OWN element with real transparency. The outline is
+                computed from its alpha by the browser - no traced path, no exported
+                ring, any silhouette, and it stays correct if the art is replaced.
+                It CAN wiggle: the outline is the element's own filter, so it travels
+                with the art.
+
+     .ol-band   the object is a REGION of a baked scene raster. It cannot be moved or
+                filtered on its own, so the outline is a pre-baked full-frame ring
+                painted through a mask, and the wrong-answer beat is a FLASH, not a
+                wiggle. Transforming it would slide the ring off the art it traces -
+                see Gotchas, this is the defect the whole approach exists to avoid.
+
+   Colour is the only thing a state changes: everything reads --ol-c. */
+.ol{
+  --ol-w:4px;                       /* stroke thickness, design px */
+  --ol-soft:5px;                    /* separation glow; set 0 on low-end devices */
+  --ol-idle:#FFFFFF;                /* "this is tappable" */
+  --ol-c:var(--ol-idle);            /* the ONE property a state changes */
+  --ol-amp:8px;                     /* wiggle travel */
+  --olT:var(--fx-beat,.4s);         /* SAME tempo token as recipes 19 + 20 */
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.ol.is-correct{--ol-c:var(--correct,#00B132);}
+.ol.is-wrong  {--ol-c:var(--wrong,#F93544);}
+.ol.is-muted  {--ol-c:rgba(255,255,255,.30);--ol-soft:0px;}
+
+/* ---------- ENGINE A - outline from the object's own alpha ---------- */
+/* FOUR axis-aligned zero-blur passes. Chained drop-shadows dilate, so four axis
+   passes give a clean square-kernel dilation of exactly --ol-w. Do NOT "improve"
+   this by adding the four diagonals: each pass also shadows the previous passes'
+   output, so diagonals compound and the stroke blooms to ~2x thickness and welds
+   shut the gaps between a character's arm and body. Measured, not guessed.
+   The fifth pass is a soft glow - it is what separates a white outline from a
+   pale background in a busy scene. Set --ol-soft:0 to drop it (4 passes). */
+.ol-alpha{
+  filter:
+    drop-shadow( var(--ol-w) 0 0 var(--ol-c))
+    drop-shadow(calc(var(--ol-w) * -1) 0 0 var(--ol-c))
+    drop-shadow(0  var(--ol-w) 0 var(--ol-c))
+    drop-shadow(0 calc(var(--ol-w) * -1) 0 var(--ol-c))
+    drop-shadow(0 0 var(--ol-soft) var(--ol-c));
+  /* 70ms at the default beat - matched with the tile marks in recipes 19/20.
+     This is a ONE-OFF transition on a single element, not a running animation:
+     the kit's standing objection to animating `filter` is about the landing sky
+     doing it forever on ~87 elements, which is a different thing. */
+  transition:filter calc(var(--olT) * .175) linear;
+  transform-origin:var(--ol-origin,50% 100%);   /* scene objects rest on something */
+}
+.ol-alpha.is-wrong  {animation:olNo  var(--olT) ease-in-out both;}
+.ol-alpha.is-correct{animation:olYes calc(var(--olT) * 1.35) ease-in-out both;}
+
+/* Same decaying lateral buzz as the tile wrong-answer (recipe 20), to the same
+   ratios, so the two mechanics speak one language. Amplitude is a variable
+   because a 60px object and a 300px character cannot share a pixel figure. */
+@keyframes olNo{
+  0%  {transform:translateX(0);}
+  18% {transform:translateX(calc(var(--ol-amp) * -1));}
+  38% {transform:translateX(calc(var(--ol-amp) * .89));}
+  60% {transform:translateX(calc(var(--ol-amp) * -.61));}
+  80% {transform:translateX(calc(var(--ol-amp) * .33));}
+  100%{transform:translateX(0);}
+}
+/* Same shape as ckPop (recipe 19): anticipation dip, peak, one counter-bounce. */
+@keyframes olYes{
+  0%  {transform:scale(1);}
+  11% {transform:scale(.97);}
+  50% {transform:scale(1.06);}
+  72% {transform:scale(.995);}
+  100%{transform:scale(1);}
+}
+
+/* ---------- ENGINE B - pre-baked ring band over a scene raster ---------- */
+/* No preview tile: the band demo was removed from index.html. These rules are
+   kept so the block stays one pasteable unit and matches recipe 21 verbatim. */
+/* One full-frame alpha per object, painted through as a mask, so a single asset
+   serves idle, correct, wrong and muted just by changing the colour under it. */
+.ol-band{
+  position:absolute; inset:0; pointer-events:none;
+  background:var(--ol-c);
+  -webkit-mask:var(--ol-band) center/100% 100% no-repeat;
+          mask:var(--ol-band) center/100% 100% no-repeat;
+  transition:background-color calc(var(--olT) * .175) linear, opacity .2s ease;
+  filter:drop-shadow(0 0 var(--ol-soft) var(--ol-c));
+}
+/* NEVER put a transform on this. It is a full-frame mask over the scene, so any
+   scale or translate slides the ring off the art it is tracing - which is exactly
+   the "untidy outline" defect. The wrong-answer beat is a flash on OPACITY, which
+   is composited and cannot move the ring. */
+.ol-band.is-wrong  {animation:olBandNo var(--olT) linear both;}
+.ol-band.is-correct{animation:olBandYes calc(var(--olT) * 1.35) ease-out both;}
+@keyframes olBandNo{
+  0%,100%{opacity:1;} 20%,60%{opacity:.28;} 40%,80%{opacity:1;}
+}
+@keyframes olBandYes{
+  0%{opacity:.55;} 30%{opacity:1;} 100%{opacity:1;}
+}
+
+/* R5 - the outline is INFORMATION. Colour rides a custom property and a
+   transition, both of which survive the kill-switch (a killed transition still
+   lands on its end value). Only the motion is dropped. */
+html.no-anim .ol-alpha,html.no-anim .ol-band{animation:none !important;}
+@media (prefers-reduced-motion: reduce){
+  .ol-alpha,.ol-band{animation:none !important;}
+}
+/* ===== FLN ANIMATION KIT: object-outline END ===== */
+  /* ==================== PER-GAME THEME ====================
+     मात्रा टोकरी — a sunny garden. Words drift down out of the sky; the child
+     slides the basket to collect only the words carrying the matra being asked
+     for. Three rounds: आ, then इ, then ई. */
+  .mt-game {
+    --game-bg-from: #CFEEFF;
+    --game-bg-to:   #8FD3F4;
+    /* R8 — the kit's answer-feedback tokens. Recipes 19, 20 and 21 all read these. */
+    --correct: #00B132;
+    --wrong:   #F93544;
+  }
+
+  /* Full-screen feel (mirrors Akshar Varsha): no padding, no rounded corners. */
+  /* The page behind the stage. Letterbox is only visible when the display is
+     not 16:9, and black reads as broken — so the surround is painted with the
+     SAME artwork the stage is showing, scaled to cover the window. Because it
+     is the identical image, every colour in the margin matches the edge it
+     touches exactly; only the scale differs, which is far quieter than a
+     hand-mixed gradient trying to match two different backgrounds.
+     It follows the screen: the cover art while the title is up, the play plate
+     once the game starts (body.is-start is dropped in startGame). */
+  /* THE BACKDROP IS THE SLIDE'S, NOT THE PAGE'S. In the standalone build these three rules
+     painted html, body and .stage, which is fine when the game IS the page. Here they would
+     repaint the whole lesson on every screen, so the plate moved onto .mt-game instead.
+     .mt-game is also the game's own stage: it takes the full 1333x750 the physics assume
+     (STAGE_W/STAGE_H, HEADER_H 96, CATCH_Y 517 are all absolute in that box), and its
+     z-index deliberately creates a STACKING CONTEXT so the game's internal z-indexes - which
+     go up to 205 - stay inside it and cannot cover the lesson's आगे button. */
+
+/* ------------------------------------------------------------------------------------------
+   RESTORED from the standalone build's shared/core.css. I skipped that whole stylesheet on the
+   assumption the engine had equivalents - it does for the stage and the buttons, but core.css
+   is ALSO where this game's HUD is laid out, and dropping it left .stats unpositioned so the
+   progress bar fell from the right-hand side to the top-left. Scoped to .mt-game, and the
+   --pal-* tokens it depends on come with it. */
+.mt-game {
+  --pal-navy-300:#002F76; --pal-navy-200:#335991; --pal-blue-300:#386AF6; --pal-blue-200:#7196FF;
+  --pal-cyan-100:#94FEF6; --pal-yellow-300:#FCB717; --pal-white:#FFFFFF; --pal-radius-full:9999px;
+  --pal-font-ui:"Readex Pro","Noto Sans Devanagari",system-ui,sans-serif;
+  --pal-font-hi:"Noto Sans Devanagari","Readex Pro",system-ui,sans-serif;
+}
+.mt-game .game-header{position:absolute;top:0;left:0;right:0;padding:0 28px;z-index:5;}
+/* RIGHT, as it was: absolute to the header, not a flex child of it */
+.mt-game .stats{position:absolute;right:28px;top:50%;transform:translateY(-50%);
+  display:flex;gap:12px;align-items:center;}
+.mt-game .stat-chip{background:var(--pal-white);border:2px solid var(--pal-navy-300);
+  border-radius:var(--pal-radius-full);padding:8px 18px;font-family:var(--pal-font-ui);
+  font-weight:700;font-size:18px;color:var(--pal-navy-300);display:flex;align-items:center;
+  gap:8px;box-shadow:0 4px 0 var(--pal-navy-300);}
+.mt-game .stat-chip.score{background:var(--pal-yellow-300);}
+.mt-game .stat-chip svg{width:22px;height:22px;}
+.mt-game .stars{display:inline-flex;gap:4px;}
+.mt-game .star{width:24px;height:24px;color:var(--pal-yellow-300);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .2s;filter:grayscale(1) opacity(.35);}
+.mt-game .star.lit{filter:none;transform:scale(1.15);}
+.mt-game .star.lit.just-lit{animation:starPop .5s ease;}
+@keyframes starPop{0%{transform:scale(.3) rotate(-20deg);}60%{transform:scale(1.4) rotate(10deg);}
+  100%{transform:scale(1.15) rotate(0);}}
+.mt-game .feedback-pop{position:absolute;left:50%;top:35%;
+  transform:translate(-50%,-50%) scale(0);font-family:var(--pal-font-hi);font-weight:800;
+  font-size:72px;color:var(--pal-navy-300);
+  text-shadow:0 4px 0 var(--pal-yellow-300),0 8px 18px rgba(0,47,118,.25);
+  z-index:100;pointer-events:none;opacity:0;}
+.mt-game .feedback-pop.show{animation:feedbackPop 1s ease forwards;}
+@keyframes feedbackPop{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(-15deg);opacity:0;}
+  40%{transform:translate(-50%,-50%) scale(1.2) rotate(5deg);opacity:1;}
+  70%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1;}
+  100%{transform:translate(-50%,-50%) scale(1.1) rotate(0);opacity:0;}}
+
+/* ===== FLN ANIMATION KIT: confetti BEGIN ===== */
+.fx-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:60;}
+.fx-confetti .p{position:absolute;top:0;left:var(--x);
+  animation:cfFall var(--fall) linear var(--delay) both;}
+/* Sway shares the rock's PERIOD and lags it by a quarter cycle. A fluttering plate
+   slides in the direction it is tilted - the swing and the rock are one motion, not
+   two independent ones. The negative delay is what creates the quarter-cycle lag. */
+.fx-confetti .w{display:block;perspective:600px;
+  animation:cfGlide var(--rockT) linear var(--delay) infinite both;}
+.fx-confetti .f{display:block;position:relative;transform-style:preserve-3d;
+  width:calc(var(--w) * var(--z));height:calc(var(--h) * var(--z));
+  opacity:var(--dim,1);
+  animation:cfRock var(--rockT) linear var(--delay) infinite both;}
+/* the minority that actually goes end-over-end */
+.fx-confetti .f.tum{animation:cfTumble var(--rockT) linear var(--delay) infinite both;}
+/* two real faces: front bright, back the same hue darkened */
+.fx-confetti .f::before,.fx-confetti .f::after{content:"";position:absolute;inset:0;
+  border-radius:inherit;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+.fx-confetti .f::before{background:var(--c);}
+.fx-confetti .f::after{background:var(--c2);transform:rotateY(180deg);}
+/* Shape mix. Sizes are deliberately far apart - at 7-11px a rectangle and a square are
+   indistinguishable while tumbling, which makes the whole field read as "all squares". */
+.fx-confetti .sq{--w:8px;  --h:8px;  border-radius:1px;}   /* square    1:1   */
+.fx-confetti .rc{--w:6px;  --h:13px; border-radius:1px;}   /* rectangle 1:2.2 */
+.fx-confetti .ln{--w:2.5px;--h:16px; border-radius:2px;}   /* line      1:6.4 */
+.fx-confetti .st{--w:11px; --h:11px;}                      /* star - needs a few
+                                 more px than the rest for its points to read */
+/* clip-path goes on the FACES, not on .f - clip-path on .f would force
+   transform-style to flat and kill the two-sided tumble */
+.fx-confetti .st::before,.fx-confetti .st::after{
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,
+                    50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
+
+/* LINEAR - terminal velocity. `both` is load-bearing: without it delayed pieces
+   sit in a visible row on the top edge until their delay elapses.
+   --drift gives each piece a gentle lean, as if in a faint air current. */
+@keyframes cfFall{
+  0%{transform:translate(0,-40px);opacity:0;}
+  5%{opacity:1;}
+  86%{opacity:1;}
+  100%{transform:translate(var(--drift,0px),var(--dist,820px));opacity:0;}
+}
+/* GLIDE + BOB. Real flutter is NOT sinusoidal: the plate glides at near-constant
+   attitude, then turns sharply. Long glide, quick reversal, linear timing - the
+   keyframe percentages do the shaping.
+   The Y term is vertical speed modulation: the plate falls SLOWER broadside during
+   the glide (max drag) and quicker through the flip (edge-on, min drag). That
+   hesitate-then-drop is what the eye reads as paper. */
+@keyframes cfGlide{
+  0%  {transform:translate(calc(var(--sway) * -1), 0);}
+  45% {transform:translate(var(--sway), calc(var(--bob) * -1));}
+  50% {transform:translate(var(--sway), 0);}
+  95% {transform:translate(calc(var(--sway) * -1), calc(var(--bob) * -1));}
+  100%{transform:translate(calc(var(--sway) * -1), 0);}
+}
+/* FLUTTER - the default, ~78% of pieces. Rocks about ONE axis, capped well short of
+   edge-on, so the face stays toward the viewer. ease-in-out because a turning point
+   is a turning point: it decelerates at max tilt, like any pendulum. */
+/* FLIP. Holds attitude through the glide, then snaps over in 5% of the cycle.
+   Phase-locked to cfGlide by construction - both start at the beginning of a glide,
+   so no offset delay: the flip lands exactly on the direction reversal. */
+@keyframes cfRock{
+  0%  {transform:rotateZ(var(--tilt)) rotateY(var(--yaw)) rotateX(var(--amp));}
+  45% {transform:rotateZ(var(--tilt)) rotateY(var(--yaw)) rotateX(calc(var(--amp) * 0.86));}
+  50% {transform:rotateZ(var(--tilt)) rotateY(var(--yaw)) rotateX(calc(var(--amp) * -1));}
+  95% {transform:rotateZ(var(--tilt)) rotateY(var(--yaw)) rotateX(calc(var(--amp) * -0.86));}
+  100%{transform:rotateZ(var(--tilt)) rotateY(var(--yaw)) rotateX(var(--amp));}
+}
+/* TUMBLE - the other ~22%. One half revolution, face to face. The keyframes dwell
+   near the faces and sweep through edge-on in 16% of the cycle, because a real plate
+   hangs broadside where drag is highest and flips fast through the low-drag edge. */
+@keyframes cfTumble{
+  0%  {transform:rotateZ(var(--tilt)) rotateY(var(--yaw)) rotateX(0deg);}
+  42% {transform:rotateZ(var(--tilt)) rotateY(var(--yaw)) rotateX(72deg);}
+  58% {transform:rotateZ(var(--tilt)) rotateY(var(--yaw)) rotateX(108deg);}
+  100%{transform:rotateZ(var(--tilt)) rotateY(var(--yaw)) rotateX(180deg);}
+}
+/* ===== FLN ANIMATION KIT: confetti END ===== */
+
+/* THE LETTERBOX. The stage is a fixed 16:9 box, so on any other aspect there is a margin above
+   and below it, and it was showing the page's own #F2F7FA - a hard near-white band against the
+   sky at the top and the grass at the bottom. The standalone build solved this by painting the
+   PAGE with the same plate at `cover`, so every colour in the margin matches the edge it touches;
+   that is better than any single gradient, because the band has to meet sky at one end and grass
+   at the other. Those rules were dropped in the port because they painted html/body globally and
+   would have repainted all 17 slides. Same idea, gated on a class that exists only while the
+   arcade is mounted. Lives on BODY, not in the stage: .stage carries a transform, which would
+   capture a fixed layer and shrink it back to the stage box.
+   NOT the plate at `cover`: that scales it independently of the stage's own copy, so the horizon
+   landed at a different height in the margin than in the scene and stepped at the seam. The
+   gradient is written by paintPageEdge() from the stage's MEASURED box instead - see there. */
+body.mt-page{ background:#7FC2FE; }
+
+/* WHILE THE ARCADE IS BEING PLAYED IT OWNS THE STAGE. The lesson's chrome is laid out for a
+   card-and-options screen and collides with an arcade: the आगे button sits at bottom-centre,
+   which is exactly where the basket is, and Swiftee's circle sits top-left on the catch-track.
+   Both are hidden for the duration. आगे comes back the moment the third round is done - that
+   is the child's only way out, so it must not stay hidden a frame longer than the game runs. */
+.stage.mt-play .nav-btn,
+.stage.mt-play .mascot-wrap,
+.stage.mt-play .header-row { visibility: hidden; }
+
+  .mt-game {
+    position: absolute; left: 0; top: 0; width: 1333px; height: 750px;
+    z-index: 5;                     /* under .nav-btn (10), over the slide stage */
+    background: url("assets/UI/mt_bg_plate.webp") center / 100% 100% no-repeat;
+    overflow: hidden;
+  }
+  /* (the game's own title backdrop lived here; that page is removed, and body.is-start is the
+     LESSON's landing state - painting it would have replaced the cover behind the train) */
+  /* The sky, the sun glow and the grass are one painted plate now. Its horizon
+     was aligned to y=465 when it was exported (assets/_finish_art.py) — the
+     same line the old 62% gradient stop sat on — so .basket, CATCH_Y and the
+     catch line all still land where they did. The sun is painted into the
+     plate, so the radial-gradient that used to sit on top is gone rather than
+     doubled. 100% 100% not cover: the plate IS 1333x750, the stage's own size. */
+  /* (.stage no longer carries the plate - see .mt-game above) */
+
+  /* The sky-drift layers (recipe 1) are position:fixed, but .stage carries a
+     transform, so .stage IS their containing block — inset:0 resolves to the
+     stage box, which is what we want. Nothing to override. */
+
+  /* ==================== HEADER ==================== */
+  .game-header { height: 96px; }
+  /* Nothing to read up here any more, so the pill IS the matra chip. It is the
+     one thing on screen that says which matra we are hunting; the sentence that
+     used to sit beside it is now vo-round-*.mp3. */
+  .game-title { background: none; border: 0; padding: 0; box-shadow: none; gap: 0; }
+  /* The header carries the progress bar and NOTHING else. The matra chip that
+     used to sit here is gone: the matra is spoken at the start of every round
+     and shown big in the round banner, and a permanent chip up here was one
+     more thing occupying the strip the words now fall through.
+     (assets/UI/mt_matra_box.webp is consequently unused.) */
+
+  /* Five slots — one per word still to collect this round — on the painted
+     bar. The plank already draws the five empty sockets, so a dot is invisible
+     until it is filled; `left` values are the socket centres MEASURED off
+     progress_bar.webp (20.76 / 34.71 / 48.80 / 63.19 / 77.49% of its width,
+     49.2% down) and converted against this 260px box, less half a dot. Nothing
+     here is eyeballed — a dot half off its socket is glaring. */
+  .catch-track {
+    position: relative;
+    display: block;
+    width: 260px;
+    height: 84px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: url("assets/UI/mt_progress_bar.webp") center / 100% 100% no-repeat;
+    filter: drop-shadow(0 4px 6px rgba(0, 47, 118, 0.28));
+  }
+  .catch-dot {
+    position: absolute;
+    top: 30px;                 /* 49.2% of 84, less half a dot */
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: transparent;   /* the socket in the art IS the empty state */
+    border: 0;
+    transition: background 0.25s, box-shadow 0.25s;
+  }
+  .catch-dot:nth-child(1) { left: 43px;  }
+  .catch-dot:nth-child(2) { left: 79px;  }
+  .catch-dot:nth-child(3) { left: 116px; }
+  .catch-dot:nth-child(4) { left: 153px; }
+  .catch-dot:nth-child(5) { left: 190px; }
+  .catch-dot.done {
+    background:
+      radial-gradient(circle at 34% 28%, rgba(255,255,255,0.7) 0%, transparent 55%),
+      var(--correct);
+    box-shadow: 0 0 8px rgba(0, 177, 50, 0.8), inset 0 -3px 0 rgba(0,0,0,0.18);
+  }
+  .catch-dot.just-done { animation: dotPop 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes dotPop {
+    0%   { transform: scale(0.4); }
+    60%  { transform: scale(1.5); }
+    100% { transform: scale(1.18); }
+  }
+
+  /* ==================== PLAY AREA ==================== */
+  .play-area {
+    position: absolute;
+    top: 96px; left: 0; right: 0; bottom: 0;
+    /* VISIBLE, not hidden. The play area starts below the 96px header, so a
+       clipped one made every word pop into existence at that line instead of
+       drifting in from the top of the screen. The stage clips anyway, so
+       nothing escapes; words now slide in from the very top edge and pass
+       behind the header, which is why the header had to be cleared out. */
+    overflow: visible;
+    user-select: none;
+    touch-action: none;
+    /* The cursor stays VISIBLE. It was hidden on the idea that "the basket IS
+       the cursor", but the basket eases towards the pointer rather than sitting
+       on it and stops at the stage edges, so with nothing on screen to point at,
+       a player whose pointer had drifted off had no way to see why the basket
+       had stopped following. */
+  }
+
+  /* NO SCENERY CLOUDS IN THE PLAY AREA. The falling words are themselves
+     clouds, so a sky with decorative clouds in it puts the thing to be read and
+     the thing to be ignored in the same shape — a child scanning for a word has
+     to rule out every cloud first. The sky here stays empty; cover_bg keeps its
+     painted clouds because nothing falls on the title screen.
+     (assets/UI/cloud_a|b|c.webp are consequently unused.) */
+
+  /* The grass band and its horizon line used to be drawn here, at top:369px
+     (= 465 minus the 96px header). Both are painted into bg_plate.webp now, so
+     the CSS versions are gone — leaving them would lay a second horizon and a
+     second blade texture over the plate's own. */
+
+  /* ==================== FALLING WORD ====================
+     .drop is the MOVER — JS owns its transform for the fall. .drop-tile is the
+     visual, and it is the element recipes 19/20 act on: their olNo/ckPop are
+     transforms and would overwrite the fall if they shared one element. */
+  .mt-game .drop {
+    position: absolute;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 2;
+    will-change: transform;
+  }
+  /* FIXED size, not width-follows-the-word. The cloud is one painted raster, so
+     letting the box grow with the word would stretch the art by up to a third
+     between the shortest and longest word and the lobes would visibly smear.
+     Every chip is the same 204x128 instead and the font does the adapting —
+     which is also what the reference art does. JS reads these two off
+     TILE_W/TILE_H rather than measuring, so there is still one source of truth. */
+  .drop-tile {
+    position: relative;
+    width: 204px;
+    height: 128px;
+    display: grid;
+    place-items: center;
+    font-family: var(--pal-font-hi);
+    font-weight: 800;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--pal-navy-300);
+    /* The word must stay readable in every state — that is the house rule the
+       kit's correct/wrong pair is built around. No fill, no tick, no cross. */
+    white-space: nowrap;
+    /* The tile has no box of its own: the cloud IS the chip. Recipes 19/20
+       force `background:var(--ck-face)!important` during the answer beat, so
+       both face variables are pinned transparent — left at their #fff default
+       they would paint a white rectangle straight over the cloud. */
+    background: none;
+    border: 0;
+    --ck-face: transparent;
+    --wg-face: transparent;
+  }
+  .drop-tile.long { font-size: 33px; }
+
+  /* ONE cloud raster, recoloured per word by hue-rotate. The art is pink at
+     hue 339 (fill and outline both, measured), so each --cloud-hue below is a
+     rotation FROM that, not an absolute hue. Rotating the whole image keeps the
+     fill, the darker outline and the glossy highlights in their original
+     relationship — the highlights are unsaturated, so they stay white. */
+  .drop-tile .dt-cloud {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: url("assets/UI/mt_word_cloud.webp") center / 100% 100% no-repeat;
+    filter: hue-rotate(var(--cloud-hue, 0deg)) saturate(1.2);
+    /* 70ms, the same figure recipes 19/20 use for border-color — the verdict
+       colour has to land inside the ~100ms "instantaneous" window. */
+    transition: filter 0.07s linear;
+  }
+  .drop-tile .dt-word { position: relative; z-index: 1; }
+
+  /* THE MARK IS AN OUTLINE ROUND THE CLOUD. The kit puts correct/wrong on the
+     tile's border-color, and this tile has no border — so the verdict is drawn
+     the way the basket's is, by recipe 21 engine A: four zero-blur drop-shadows
+     off the art's own ALPHA. The shadow colour is stated after hue-rotate in
+     the chain, so the rotation does not drag green towards yellow.
+     Same colours, same tempo, same house rule: outline only, no fill flood,
+     the word stays readable throughout. */
+  .drop-tile.ck-correct .dt-cloud {
+    filter: hue-rotate(var(--cloud-hue, 0deg)) saturate(1.2)
+            drop-shadow(5px 0 0 var(--correct)) drop-shadow(-5px 0 0 var(--correct))
+            drop-shadow(0 5px 0 var(--correct)) drop-shadow(0 -5px 0 var(--correct));
+  }
+  .drop-tile.wg-wrong .dt-cloud {
+    filter: hue-rotate(var(--cloud-hue, 0deg)) saturate(1.2)
+            drop-shadow(5px 0 0 var(--wrong)) drop-shadow(-5px 0 0 var(--wrong))
+            drop-shadow(0 5px 0 var(--wrong)) drop-shadow(0 -5px 0 var(--wrong));
+  }
+  .drop-tile.wg-rel .dt-cloud { transition: filter 0.22s ease; }
+  /* Both states also force a rectangular box-shadow and a rectangular pulse
+     ring, which read as a glitch around a cloud silhouette. */
+  .drop-tile.ck-correct,
+  .drop-tile.wg-wrong { box-shadow: none !important; }
+  .drop-tile .wg-pulse { display: none; }
+
+  /* Caught: the chip sinks into the basket. Runs on .drop (the mover), so it
+     never collides with ckPop / wgNo on .drop-tile. */
+  /* Caught: the word goes INTO the basket, and the basket is what hides it.
+     .drop is z-index 2, .basket is 4, and .drop is a stacking context of its
+     own (positioned + z-index) so the tile's ck-correct z-index:6 stays inside
+     it — meaning anything that gets below the rim is simply occluded.
+
+     NEVER FADE THIS. The previous version ran opacity to 0 while the chip was
+     still at rim height, so the word visibly dissolved in mid-air and the
+     descent underneath it was never seen. Worse, it shrank about its own centre
+     while barely moving, so at 30% scale it sat ABOVE the rim, not in the bowl.
+     Two things fix it and both are needed: stay opaque the whole way, and
+     translate far enough that the shrunken chip's centre clears the rim.
+
+     It is also paced in three beats rather than two. The catch fires when the
+     chip's BOTTOM reaches the rim, so at 0% the chip is already sitting on the
+     basket with its lower edge occluded — go straight down from there and the
+     whole descent is over before the eye finds it. So: a small lift while it
+     shrinks (still clear of the rim, so you see it become small enough to fit),
+     then the drop.
+
+     Geometry, at CATCH_Y 517 and a 128px chip (so --catch-y is ~389). The
+     bowl's mouth runs roughly y 496-547, and that band is the whole point: the
+     word is drawn OVER the dark interior there, between .basket (z4) and
+     .basket-front (z6).
+       22%  scale .92 -> spans y 386-504, wholly above the rim, visibly shrinking
+       55%  scale .58 -> spans y 456-530, lower half now inside the bowl
+       100% scale .22 -> spans y 557-585, below the mouth, hidden by the near rim
+     The element is removed after the animation, not faded out. */
+  /* z-index 5 from the MOMENT OF THE CATCH, not from the start of the sink.
+     The catch freezes the word at the rim and holds it there for 420ms while the
+     confirm beat plays, and .sink only lands after that — so hanging the z-index
+     off .sink left the word sitting BEHIND the basket for those 420ms and then
+     jumping in front of it. That jump is the word "dipping behind the basket
+     before going in".
+     Above the back basket (4) so the word shows against the bowl's interior,
+     below .basket-front (6) so the near rim still covers it. Still not
+     permanent: a MISSED word never gets .caught, so it cannot sail over the
+     basket on its way to the grass. */
+  /* The transform comes from the SAME two vars the sink animation reads, so a
+     caught word can be steered by rewriting --catch-x while it is held. Without
+     this the held word keeps the static transform positionDrop last wrote and
+     cannot follow the basket at all. */
+  .drop.caught { z-index: 5; transform: translate(var(--catch-x), var(--catch-y)); }
+  .drop.sink { animation: dropSink 0.62s cubic-bezier(0.38, 0.02, 0.6, 1) forwards; }
+  @keyframes dropSink {
+    0%   { transform: translate(var(--catch-x), var(--catch-y)) scale(1) rotate(0deg); opacity: 1; }
+    22%  { transform: translate(var(--catch-x), calc(var(--catch-y) - 8px))  scale(0.92) rotate(-4deg); opacity: 1; }
+    55%  { transform: translate(var(--catch-x), calc(var(--catch-y) + 40px)) scale(0.58) rotate(3deg); opacity: 1; }
+    100% { transform: translate(var(--catch-x), calc(var(--catch-y) + 118px)) scale(0.22) rotate(-2deg); opacity: 1; }
+  }
+
+  /* ==================== CATCH SPARKLE ====================
+     Fired at the rim as the word goes in. z-index 5 puts it ABOVE the basket
+     (4) so the sparks read as coming up out of the bowl, not from behind it. */
+  /* Above .basket-front (6) as well — the sparks come UP OUT of the bowl. */
+  .sparkle { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 7; }
+  .sparkle i {
+    position: absolute; left: 0; top: 0;
+    width: var(--sz); height: var(--sz);
+    margin: calc(var(--sz) / -2) 0 0 calc(var(--sz) / -2);
+    background: var(--sc);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
+                       50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    /* The glow is what makes these read as magic rather than as confetti, and
+       it is what lifts a pale spark off the pale wicker underneath it. */
+    filter: drop-shadow(0 0 6px rgba(255, 214, 92, 0.95));
+    animation: spkFly var(--t) cubic-bezier(0.12, 0.7, 0.3, 1) both;
+  }
+  @keyframes spkFly {
+    0%   { transform: translate(0, 0) scale(0.2) rotate(0deg); opacity: 0; }
+    18%  { opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(var(--s2)) rotate(var(--r)); opacity: 0; }
+  }
+  html.no-anim .sparkle { display: none; }
+  @media (prefers-reduced-motion: reduce) { .sparkle { display: none; } }
+  /* Wrong word caught: the chip is tossed back out of the basket. */
+  .drop.eject { animation: dropEject 0.6s ease-out forwards; }
+  @keyframes dropEject {
+    0%   { transform: translate(var(--catch-x), var(--catch-y)) scale(1) rotate(0deg); opacity: 1; }
+    45%  { transform: translate(calc(var(--catch-x) + var(--eject-dx)), calc(var(--catch-y) - 110px)) scale(0.9) rotate(var(--eject-r)); opacity: 1; }
+    100% { transform: translate(calc(var(--catch-x) + var(--eject-dx) * 1.7), calc(var(--catch-y) + 60px)) scale(0.6) rotate(calc(var(--eject-r) * 2)); opacity: 0; }
+  }
+  /* Missed: lands on the grass and fades. */
+  .drop.land { animation: dropLand 0.45s ease-out forwards; }
+  @keyframes dropLand {
+    0%   { transform: translate(var(--start-x), var(--start-y)) scale(1); opacity: 1; }
+    100% { transform: translate(var(--start-x), calc(var(--start-y) + 10px)) scaleY(0.55) scaleX(1.15); opacity: 0; }
+  }
+
+  /* ==================== BASKET ====================
+     Three layers on purpose:
+       .basket        JS owns translateX (horizontal motion)
+       .basket-lift   the catch bounce — a transform of its own
+       svg.ol.ol-alpha  recipe 21 engine A: outline from the art's own alpha,
+                        plus olNo (wiggle) / olYes (pop). Recipe 21's gotcha is
+                        exactly this: placement must live on a wrapper, never on
+                        the outlined element. */
+  /* 206x155 is the new art's own 1.333 aspect (372x279); the first basket was
+     1.192, so the box changed with it and so did every constant derived from
+     it — BASKET_W, BASKET_CATCH_HALF, CATCH_Y and the catch line. */
+  .basket {
+    position: absolute;
+    bottom: 26px;
+    left: 0;
+    width: 206px;
+    height: 155px;
+    pointer-events: none;
+    z-index: 4;
+    will-change: transform;
+  }
+  .basket-lift { display: block; width: 100%; height: 100%; }
+  .basket-lift.bounce { animation: basketBounce 0.4s ease; }
+  @keyframes basketBounce {
+    0%   { transform: translateY(0); }
+    38%  { transform: translateY(-15px); }
+    68%  { transform: translateY(-4px); }
+    100% { transform: translateY(0); }
+  }
+  /* Recipe 21 engine A goes on a DIV that wraps the SVG, not on the <svg> itself.
+     A CSS filter on the div still derives the outline from the alpha of whatever
+     it renders — the basket art — and a div has offsetWidth, which the recipe's
+     objectOutline.set() needs for its forced reflow. SVGElement has no
+     offsetWidth, so reading it there is a no-op and re-firing the wiggle on the
+     same frame would silently not restart. */
+  .basket .ol {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: none;    /* keep the box transparent: the alpha must be the art */
+    /* The basket sits on the ground, so it should pop from its base (recipe 21). */
+    --ol-origin: 50% 100%;
+    --ol-w: 4px;
+    --ol-amp: 11px;      /* a 186px object needs more travel than a 60px one */
+  }
+  /* 372x312 export into a 186x156 box — the same 1.192 aspect, so 100%/100%
+     fills it without distorting the art. */
+  .basket .ol img { display: block; width: 100%; height: 100%; }
+  /* Ground shadow — sells "resting on the grass". Outside the outlined element
+     so the alpha outline does not trace the shadow. */
+  .basket::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 72%;
+    height: 20px;
+    background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(0, 0, 0, 0.36) 0%, transparent 70%);
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* The front half of the basket — see the markup for why this exists.
+     30.2% is measured, not chosen: in basket.webp the bowl's dark mouth opens
+     at 5% of the art's height, is widest at 20.6% (which is where CATCH_Y comes
+     from) and closes at 30.2%. Clipping there means this layer holds exactly
+     the near rim and the woven body, and the word stays visible against the
+     interior for the ~47px above it.
+     A straight inset is enough even though the rim's inner edge is an arc: the
+     layer is a pixel-exact copy, so the cut is invisible: all it changes is
+     where the word gets occluded, and by then the word is small and centred. */
+  .basket-front {
+    position: absolute;
+    bottom: 26px;
+    left: 0;
+    width: 206px;
+    height: 155px;
+    pointer-events: none;
+    z-index: 6;
+    will-change: transform;
+  }
+  /* The front half has to repeat EVERY transform the back half performs or the
+     basket visibly comes apart — the catch bounce alone lifts the back layer
+     15px, and it fires at exactly the moment a word is landing, which is when
+     anyone would be looking. So it carries the same .basket-lift wrapper and
+     the same recipe 21 animations.
+     What it must NOT carry is the .ol-alpha FILTER: a second alpha-derived
+     outline would trace this piece's own silhouette, drawing a coloured ring
+     along the cut arc, straight across the middle of the basket. The back layer
+     is the whole basket and owns the outline; this one owns only the motion. */
+  .basket-front .bf-art {
+    display: block;
+    width: 100%;
+    height: 100%;
+    --olT: var(--fx-beat, 0.4s);
+    --ol-amp: 11px;                 /* identical to .basket .ol, or olNo desyncs */
+    transform-origin: 50% 100%;
+  }
+  .basket-front .bf-art.is-wrong   { animation: olNo  var(--olT) ease-in-out both; }
+  .basket-front .bf-art.is-correct { animation: olYes calc(var(--olT) * 1.35) ease-in-out both; }
+  html.no-anim .basket-front .bf-art { animation: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    .basket-front .bf-art { animation: none !important; }
+  }
+  .basket-front img { display: block; width: 100%; height: 100%; }
+
+  /* Catch zone hint */
+  /* Sits 10px below the rim, as it always has (654 play-area px - 527). */
+  .catch-line {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 127px;
+    height: 2px;
+    background: repeating-linear-gradient(90deg,
+      rgba(255,255,255,0.55) 0,
+      rgba(255,255,255,0.55) 12px,
+      transparent 12px,
+      transparent 24px);
+    z-index: 3;
+    pointer-events: none;
+  }
+  /* ==================== ROUND BANNER ==================== */
+  .round-banner {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%) scale(0.6);
+    background: rgba(255,255,255,0.97);
+    border: 5px solid var(--pal-navy-300);
+    border-radius: 50%;
+    width: 260px; height: 260px;
+    display: grid; place-items: center;
+    padding: 0;
+    text-align: center;
+    box-shadow: 0 10px 0 var(--pal-navy-300), 0 22px 40px rgba(0,47,118,0.3);
+    z-index: 120;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .round-banner .rb-matra {
+    font-family: var(--pal-font-hi);
+    font-weight: 900;
+    font-size: 132px;
+    line-height: 1;
+    color: var(--pal-yellow-300);
+    text-shadow: 0 6px 0 var(--pal-navy-300);
+  }
+  .round-banner.show { animation: rbShow 2.4s ease forwards; }
+  @keyframes rbShow {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+    14%  { opacity: 1; transform: translate(-50%, -50%) scale(1.06); }
+    22%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    82%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+  }
+
+  /* ==================== LEVEL CELEBRATION ====================
+     Shown between rounds while ONE clip both praises and gives the next
+     instruction. It sits under the round banner (120) so the banner still
+     reads on top when the next round opens. */
+  /* FIXED, and parented to <body> by the module - not absolute inside .mt-game. The wash has to
+     cover the WHOLE SCREEN including the letterbox, and .stage carries a transform, so a fixed
+     layer created inside it is captured and snaps back to the stage box. Moving the node out is
+     the only way it can reach the margins. z-index clears the stage and the nav button. */
+  .level-cheer {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.55);
+  }
+  .level-cheer.show { display: flex; animation: lcFade 0.35s ease; }
+  @keyframes lcFade { from { opacity: 0; } to { opacity: 1; } }
+  .lc-fx { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+  /* Two elements, because each owns exactly one transform: the wrapper springs
+     in, the image bobs afterwards. On one element the bob would silently win
+     and the entrance would never play. */
+  .level-cheer .lc-mascot {
+    position: relative;
+    z-index: 2;
+    width: 320px;
+    filter: drop-shadow(0 16px 20px rgba(0, 47, 118, 0.32));
+    animation: lcPop 0.62s cubic-bezier(0.34, 1.5, 0.6, 1) both;
+  }
+  .level-cheer .lc-mascot img {
+    width: 100%;
+    display: block;
+    animation: mascotBob 2s ease-in-out 0.62s infinite;
+  }
+  @keyframes lcPop {
+    0%   { transform: translateY(70px) scale(0.55); opacity: 0; }
+    60%  { transform: translateY(-12px) scale(1.06); opacity: 1; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+  }
+
+  /* ==================== SCORE POPUP ==================== */
+  .score-popup {
+    position: absolute;
+    font-family: var(--pal-font-ui);
+    font-weight: 800;
+    font-size: 30px;
+    color: #FFD93C;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5), 0 0 14px rgba(255, 217, 60, 0.8);
+    pointer-events: none;
+    z-index: 7;
+    transform: translate(-50%, 0);
+  }
+
+  /* The mascot and the three matra chips are GONE from this screen — markup and
+     rules both. The cover is wordmark + play button and nothing else. The core
+     stylesheet still carries .ts-mascot / .ts-cloud rules;
+  /* The core rules lift a box-shadow with the button on hover/press;
+  /* Round chrome has no business on the end screen — the overlay is
+     translucent, so it ghosted through. */
+  body.is-end .game-header,
+  .mt-game.mt-done .play-area { display: none; }
+
+  /* Recipe 8 paints into this, and recipe 7's confetti is hosted here too so
+     it lands IN FRONT of the overlay. 1333x750 is the design grid, stretched
+     by CSS. */
+  body.mt-page #confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 205;
+  }
+

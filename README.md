@@ -54,6 +54,6 @@ Checks: `cd 3_BUILD && PYTHONUTF8=1 python ../1_SPEC/_verify_assets.py` ·
 
 ## Open items
 
-- **Independent round** (word-catch game after «अब आपकी बारी!») is not built yet.
-- **Hint-3 hand on pages 12–16** waits on Ankita: `HINT3_HAND` in the builder.
+- **Independent round:** «मात्रा टोकरी» (File2's word-catch game) is built after page 16; see `CHANGES.md` Round 6.
+- **Hint logic** is File3's current ladder (hand at Hint 3 on every test screen); re-sync `4_ENGINE/` if File3 changes again.
 - **Size:** `3_BUILD` is not optimised (raw-WAV audio). Re-encode to Opus on a copy before delivery.

@@ -38,7 +38,7 @@
  "phase_distribution": {
   "tutorial": 5,
   "guided": 11,
-  "practice": 1
+  "practice": 2
  },
  "ui_sfx": {
   "play": "sfx_play_button",
@@ -267,6 +267,21 @@
    "vo_meet_koyal": "assets/Audio/vo_meet_koyal.ogg",
    "vo_meet_mor": "assets/Audio/vo_meet_mor.ogg",
    "vo_meet_paudha": "assets/Audio/vo_meet_paudha.ogg",
+   "vo_mt_cheer_au": "assets/Audio/vo_mt_cheer_au.ogg",
+   "vo_mt_done": "assets/Audio/vo_mt_done.ogg",
+   "vo_mt_intro": "assets/Audio/vo_mt_intro.ogg",
+   "vo_mt_round_au": "assets/Audio/vo_mt_round_au.ogg",
+   "vo_mt_round_o": "assets/Audio/vo_mt_round_o.ogg",
+   "vo_mt_w_chauk": "assets/Audio/vo_mt_w_chauk.ogg",
+   "vo_mt_w_daud": "assets/Audio/vo_mt_w_daud.ogg",
+   "vo_mt_w_dhol": "assets/Audio/vo_mt_w_dhol.ogg",
+   "vo_mt_w_gol": "assets/Audio/vo_mt_w_gol.ogg",
+   "vo_mt_w_kaua": "assets/Audio/vo_mt_w_kaua.ogg",
+   "vo_mt_w_koyal": "assets/Audio/vo_mt_w_koyal.ogg",
+   "vo_mt_w_mausam": "assets/Audio/vo_mt_w_mausam.ogg",
+   "vo_mt_w_mor": "assets/Audio/vo_mt_w_mor.ogg",
+   "vo_mt_w_paudha": "assets/Audio/vo_mt_w_paudha.ogg",
+   "vo_mt_w_tota": "assets/Audio/vo_mt_w_tota.ogg",
    "vo_name_chauk": "assets/Audio/vo_name_chauk.ogg",
    "vo_name_daud": "assets/Audio/vo_name_daud.ogg",
    "vo_name_dhol": "assets/Audio/vo_name_dhol.ogg",
@@ -329,7 +344,9 @@
    "sfx_next_button": "assets/Audio/sfx_next_button.ogg",
    "sfx_train_arrive": "assets/Audio/sfx_train_arrive.ogg",
    "sfx_train_move": "assets/Audio/sfx_train_move.ogg",
-   "sfx_whistle": "assets/Audio/sfx_whistle.ogg"
+   "sfx_whistle": "assets/Audio/sfx_whistle.ogg",
+   "sfx_mt_burst": "assets/Audio/sfx_mt_burst.ogg",
+   "sfx_chime": "assets/Audio/sfx_chime.ogg"
   },
   "audio_text": {
    "vo_pair_o": "यह है ओ। इसकी मात्रा देखिए।",
@@ -451,6 +468,21 @@
    "vo_g10_h1": "फिर से पढ़िए। चित्र देखिए, आदमी के हाथ में क्या है? सही शब्द चुनकर वाक्य पूरा कीजिए।",
    "vo_g10_h3": "आदमी के हाथ में एक हथौड़ा है। हथौड़ा चुनिए।",
    "vo_g10_correct": "शाबाश! आदमी के हाथ में एक हथौड़ा है।",
+   "vo_mt_round_o": "ओ की मात्रा वाले शब्दों को टोकरी में डालिए।",
+   "vo_mt_w_mor": "मोर",
+   "vo_mt_w_dhol": "ढोल",
+   "vo_mt_w_gol": "गोल",
+   "vo_mt_w_koyal": "कोयल",
+   "vo_mt_w_tota": "तोता",
+   "vo_mt_round_au": "अब औ की मात्रा वाले शब्दों को टोकरी में डालिए।",
+   "vo_mt_cheer_au": "बहुत बढ़िया! अब औ की मात्रा वाले शब्दों को टोकरी में डालिए।",
+   "vo_mt_w_kaua": "कौआ",
+   "vo_mt_w_paudha": "पौधा",
+   "vo_mt_w_daud": "दौड़",
+   "vo_mt_w_chauk": "चौक",
+   "vo_mt_w_mausam": "मौसम",
+   "vo_mt_done": "शाबाश! आपने सभी मात्राओं के सही शब्दों को टोकरी में रख लिया है।",
+   "vo_mt_intro": "टोकरी को उँगली से इधर-उधर ले जाइए।",
    "vo_cel_prompt": "बहुत बढ़िया, दोस्त! तुमने कमाल कर दिया!",
    "vo_landing": "हेलो दोस्त! मैं हूँ स्विफ्टी। आज हम मात्राओं के बारे में जानेंगे।",
    "vo_try_again": "एक बार फिर सुनिए।",
@@ -1235,6 +1267,135 @@
       0.095,
       0.175
      ]
+    ]
+   }
+  },
+  {
+   "id": "MT1",
+   "phase": "practice",
+   "eis": "enactive",
+   "type": "MATRA_TOKRI",
+   "prompt_hi": "",
+   "audio": {
+    "prompt": "vo_mt_intro"
+   },
+   "data": {
+    "no_heading": true,
+    "rounds": [
+     {
+      "matra": "◌ो",
+      "vo": "vo_mt_round_o",
+      "words": [
+       {
+        "w": "मोर",
+        "id": "mor"
+       },
+       {
+        "w": "ढोल",
+        "id": "dhol"
+       },
+       {
+        "w": "गोल",
+        "id": "gol"
+       },
+       {
+        "w": "कोयल",
+        "id": "koyal"
+       },
+       {
+        "w": "तोता",
+        "id": "tota"
+       }
+      ],
+      "other": [
+       "कौआ",
+       "पौधा",
+       "दौड़",
+       "चौक",
+       "मौसम",
+       "चौकी"
+      ]
+     },
+     {
+      "matra": "◌ौ",
+      "vo": "vo_mt_round_au",
+      "words": [
+       {
+        "w": "कौआ",
+        "id": "kaua"
+       },
+       {
+        "w": "पौधा",
+        "id": "paudha"
+       },
+       {
+        "w": "दौड़",
+        "id": "daud"
+       },
+       {
+        "w": "चौक",
+        "id": "chauk"
+       },
+       {
+        "w": "मौसम",
+        "id": "mausam"
+       }
+      ],
+      "other": [
+       "मोर",
+       "ढोल",
+       "गोल",
+       "कोयल",
+       "तोता",
+       "टोपी"
+      ],
+      "cheer": "vo_mt_cheer_au"
+     }
+    ],
+    "done_audio": "vo_mt_done",
+    "clips": [
+     {
+      "audio": "vo_mt_round_o"
+     },
+     {
+      "audio": "vo_mt_round_au"
+     },
+     {
+      "audio": "vo_mt_cheer_au"
+     },
+     {
+      "audio": "vo_mt_done"
+     },
+     {
+      "audio": "vo_mt_w_mor"
+     },
+     {
+      "audio": "vo_mt_w_dhol"
+     },
+     {
+      "audio": "vo_mt_w_gol"
+     },
+     {
+      "audio": "vo_mt_w_koyal"
+     },
+     {
+      "audio": "vo_mt_w_tota"
+     },
+     {
+      "audio": "vo_mt_w_kaua"
+     },
+     {
+      "audio": "vo_mt_w_paudha"
+     },
+     {
+      "audio": "vo_mt_w_daud"
+     },
+     {
+      "audio": "vo_mt_w_chauk"
+     },
+     {
+      "audio": "vo_mt_w_mausam"
+     }
     ]
    }
   },

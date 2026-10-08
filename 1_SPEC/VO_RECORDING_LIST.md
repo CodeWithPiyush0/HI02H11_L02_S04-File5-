@@ -1,6 +1,6 @@
 # HI02H11_L02_S04 (ओ / औ) · «मात्राओं की रेल» — VO recording list
 
-124 clips. Shown text == spoken text; record exactly this. Register is आप.
+139 clips. Shown text == spoken text; record exactly this. Register is आप.
 
 | clip id | spoken text |
 |---|---|
@@ -80,6 +80,21 @@
 | `vo_meet_koyal` | कोयल, बोलकर देखिए। इसमें क पर ओ की मात्रा लगी है। |
 | `vo_meet_mor` | मोर, बोलकर देखिए। इसमें म पर ओ की मात्रा लगी है। |
 | `vo_meet_paudha` | पौधा, बोलकर देखिए। इसमें प पर औ की मात्रा लगी है। |
+| `vo_mt_cheer_au` | बहुत बढ़िया! अब औ की मात्रा वाले शब्दों को टोकरी में डालिए। |
+| `vo_mt_done` | शाबाश! आपने सभी मात्राओं के सही शब्दों को टोकरी में रख लिया है। |
+| `vo_mt_intro` | टोकरी को उँगली से इधर-उधर ले जाइए। |
+| `vo_mt_round_au` | अब औ की मात्रा वाले शब्दों को टोकरी में डालिए। |
+| `vo_mt_round_o` | ओ की मात्रा वाले शब्दों को टोकरी में डालिए। |
+| `vo_mt_w_chauk` | चौक |
+| `vo_mt_w_daud` | दौड़ |
+| `vo_mt_w_dhol` | ढोल |
+| `vo_mt_w_gol` | गोल |
+| `vo_mt_w_kaua` | कौआ |
+| `vo_mt_w_koyal` | कोयल |
+| `vo_mt_w_mausam` | मौसम |
+| `vo_mt_w_mor` | मोर |
+| `vo_mt_w_paudha` | पौधा |
+| `vo_mt_w_tota` | तोता |
 | `vo_name_chauk` | चौक |
 | `vo_name_daud` | दौड़ |
 | `vo_name_dhol` | ढोल |
@@ -146,3 +161,5 @@
 - `sfx_train_arrive`
 - `sfx_train_move`
 - `sfx_whistle`
+- `sfx_mt_burst`
+- `sfx_chime`

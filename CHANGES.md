@@ -205,3 +205,35 @@ Proof — both lessons driven by the same script, miss → miss → miss → rig
 each clip reduced to its role (prompt / hint1 / hint2 / hint3 / name / letter / try / correct) and
 each step's hand, glow, lock and आगे state compared: **10 of 10 screens identical** (3 tap, word
 sort, mark sort, word build, picture sort, 3 sentences). 0 errors.
+
+## Round 6 (2026-10-08) — «मात्रा टोकरी», the independent round, after page 16
+
+The developer: "extract the tokri matra game from [File2] and implement the exact same game after
+page 16 — just the words according to this file (ओ, औ), rest exactly the same".
+
+Source: `github.com/khugshalharshvardhan/HI02H11_L02_S01_DEV_HANDOFF-file2-` at `e737324` (cloned
+fresh — the local FIle2 copy is behind GitHub and has uncommitted edits, so it was not touched).
+
+- **Engine** (`4_ENGINE/tokri_module.js`, `tokri_styles.css`, injected by `inject_train.py`): File2's
+  `MATRA_TOKRI` module and the five FLN-kit pieces it uses (nudge, correct-select, wrong-select,
+  object-outline, confetti), verbatim. Changed only: the rounds come from the card; right/wrong
+  play this lesson's own feedback sounds (`sfx_fb_*` — File2's code asks for "the lesson's OWN
+  feedback bed"); `_mtAudioSrc` / `_mtSfx` stand in for two File2 engine helpers this engine lacks;
+  File2's one global CSS rule (`#confetti`) is limited to the game page. `mountSlide` got File2's
+  one-line `__slideCleanup` call so the game stops when its screen is left.
+- **Assets:** File2's `mt_*` art and `sfx_mt_burst` / `sfx_chime`.
+- **Content:** two rounds (File2 has three, one per matra it teaches):
+  - ओ — मोर, ढोल, गोल, कोयल, तोता · distractors कौआ, पौधा, दौड़, चौक, मौसम, चौकी
+  - औ — कौआ, पौधा, दौड़, चौक, मौसम · distractors मोर, ढोल, गोल, कोयल, तोता, टोपी
+  (from the SME's 12 + 12; a build guard fails if a word sits in the wrong list)
+- **VO:** File2's wording in this lesson's आप register — «टोकरी को उँगली से इधर-उधर ले जाइए।»,
+  «ओ की मात्रा वाले शब्दों को टोकरी में डालिए।», «बहुत बढ़िया! अब औ की मात्रा वाले शब्दों को टोकरी में
+  डालिए।», «शाबाश! आपने सभी मात्राओं के सही शब्दों को टोकरी में रख लिया है।». 8 word clips reused,
+  7 new (Leda). EAR-CHECK: `vo_mt_w_koyal` (wrapper), `vo_mt_w_mausam` (danda).
+- **Flow:** page 16 → «अब आपकी बारी!» → the game → celebration (the deck's order).
+
+Verified by playing it (`1_SPEC/_drive_tokri.py`, real clip lengths): gate shown, tutorial hand on the
+basket, a wrong word ringed red and tossed out, 5 ओ words → Swifty's cheer → 5 औ words → win →
+celebration; 0 errors. The same script on File2's own build gives the same clip sequence (including
+the intro being heard three times at the start — File2's own behaviour). `_verify_assets.py`:
+`0 FAIL   0 WARN`. Screens: `5_SCREENSHOTS/tokri/`.

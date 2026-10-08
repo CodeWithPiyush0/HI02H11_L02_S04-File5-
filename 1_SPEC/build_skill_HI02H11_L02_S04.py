@@ -41,14 +41,15 @@ AUD_DIR  = os.path.join(BUNDLE, "assets", "Audio")
 CARD_TAG = re.compile(r'(<script type="application/json" id="cardData">)(.*?)(</script>)', re.S)
 VER_RE   = re.compile(r'ENGINE_VERSION\s*=\s*["\']([^"\']+)["\']')
 
-TRAIN_MODULES = ["TRAIN_TAP", "TRAIN_SORT", "MATRA_BUILD", "MEET_PAIR", "MATRA_PAIRS",
+TRAIN_MODULES = ["TRAIN_TAP", "TRAIN_SORT", "MATRA_BUILD", "MEET_PAIR", "MATRA_PAIRS", "MATRA_TOKRI",
                  "WORD_BUILD", "SENTENCE_COMPLETE"]
 STOCK_MODULES = ["CELEBRATION"]
 COPY_AUDIO = ["vo_pt_tutorial", "vo_pt_guided", "vo_pt_practice",
               "sfx_celebrate", "sfx_correct", "sfx_wrong", "sfx_tap", "sfx_pop",
               "sfx_fb_correct", "sfx_fb_incorrect",
               "sfx_play_button", "sfx_next_button",
-              "sfx_train_arrive", "sfx_train_move", "sfx_whistle"]
+              "sfx_train_arrive", "sfx_train_move", "sfx_whistle",
+              "sfx_mt_burst", "sfx_chime"]           # «मात्रा टोकरी»: File2's own round-complete burst
 
 O, AU = "ो", "ौ"
 
@@ -484,6 +485,51 @@ def s_sentence(sid, scene, pre, post, answer, options, ask):
                      "scene_glow": SCENE_GLOW.get(scene, [])}}
 
 
+# ---------------------------------------------------------------- «मात्रा टोकरी»
+# [2026-10-08] The developer: "extract the tokri matra game from [File2] and implement the exact same
+# game after page 16 - just the words according to this file (ओ, औ), rest exactly the same".
+# File2's game (HI02H11_L02_S01, commit e737324) has one round per matra it teaches - ा, ि, ी - of
+# five words each; this lesson teaches two, so two rounds: ो, then ौ. Words from the SME's list
+# for this round (deck position 21: 12 ओ + 12 औ). As in File2, a round's distractors are the OTHER
+# round's words, never its own matra. VO is File2's wording in this lesson's आप register.
+TOKRI_ROUNDS = [
+    (O, [("मोर", "mor"), ("ढोल", "dhol"), ("गोल", "gol"), ("कोयल", "koyal"), ("तोता", "tota")],
+        ["कौआ", "पौधा", "दौड़", "चौक", "मौसम", "चौकी"]),
+    (AU, [("कौआ", "kaua"), ("पौधा", "paudha"), ("दौड़", "daud"), ("चौक", "chauk"), ("मौसम", "mausam")],
+         ["मोर", "ढोल", "गोल", "कोयल", "तोता", "टोपी"]),
+]
+
+
+def s_tokri(sid):
+    rounds = []
+    for k, (m, words, other) in enumerate(TOKRI_ROUNDS):
+        r = {"matra": "◌" + m,
+             "vo": vo("vo_mt_round_" + SLUG[m],
+                      ("अब " if k else "") + "%s की मात्रा वाले शब्दों को टोकरी में डालिए।" % NAME[m]),
+             "words": [{"w": w, "id": i} for w, i in words],
+             "other": list(other)}
+        if k:
+            # praise for the round just finished PLUS this round's instruction, ONE clip (File2)
+            r["cheer"] = vo("vo_mt_cheer_" + SLUG[m],
+                            "बहुत बढ़िया! अब %s की मात्रा वाले शब्दों को टोकरी में डालिए।" % NAME[m])
+        for w, i in words:
+            vo("vo_mt_w_" + i, w)
+        bad = [w for w, _ in words if m not in w] + [w for w in other if m in w]
+        if bad:
+            sys.exit("X  tokri round %s: words in the wrong list: %s" % (NAME[m], bad))
+        rounds.append(r)
+    done = vo("vo_mt_done", "शाबाश! आपने सभी मात्राओं के सही शब्दों को टोकरी में रख लिया है।")
+    # File2: every clip the module will reach for is declared here too, so the engine warms it and
+    # the receipt checks it - the word clips are named in code ('s-' + id) and would be invisible
+    clips = [r["vo"] for r in rounds] + [r["cheer"] for r in rounds if r.get("cheer")] + [done]
+    clips += ["vo_mt_w_" + w["id"] for r in rounds for w in r["words"]]
+    return {"id": sid, "phase": "practice", "eis": "enactive", "type": "MATRA_TOKRI",
+            "prompt_hi": "",                  # File2 X2: nothing written on screen, the VO carries it
+            "audio": {"prompt": vo("vo_mt_intro", "टोकरी को उँगली से इधर-उधर ले जाइए।")},
+            "data": {"no_heading": True, "rounds": rounds, "done_audio": done,
+                     "clips": [{"audio": c} for c in clips]}}
+
+
 def build_slides():
     S = []
     # ---- tutorial ·  deck pages 2-6 ----------------------------------------------------
@@ -512,7 +558,8 @@ def build_slides():
                         ["खिलौना", "मोर", "ढोल"], "बच्चे के पास क्या है"))
     S.append(s_sentence("G10", "scn_hathauda", "आदमी के हाथ में एक ", " है।", "हथौड़ा",
                         ["ढोल", "हथौड़ा", "तोता"], "आदमी के हाथ में क्या है"))
-    # ---- the independent round (deck position 21) is not in this build — see the header ----
+    # ---- the independent round · «मात्रा टोकरी» (deck position 21) -----------------------
+    S.append(s_tokri("MT1"))
     # [File3 r105] the developer: the standard end-screen dialogue, as in File3 (was the deck's recap
     # «शाबाश! आज हमने सीखा, ओ और औ की मात्रा पहचानना, और मात्रा वाले शब्द पढ़ना।»). Its तुमने passes
     # guard_register, which matches तुम only as a whole word.
@@ -622,7 +669,7 @@ def guard_engine(src):
 def guard_flow(slides):
     want = (["MATRA_PAIRS", "MATRA_BUILD", "MEET_PAIR", "MATRA_BUILD", "MEET_PAIR"]
             + ["TRAIN_TAP"] * 3 + ["TRAIN_SORT"] * 3 + ["WORD_BUILD", "TRAIN_SORT"]
-            + ["SENTENCE_COMPLETE"] * 3 + ["CELEBRATION"])
+            + ["SENTENCE_COMPLETE"] * 3 + ["MATRA_TOKRI", "CELEBRATION"])
     got = [s["type"] for s in slides]
     if got != want:
         sys.exit("X  flow guard:\n   want %s\n   got  %s" % (want, got))
@@ -720,7 +767,7 @@ def guard_audio(slides, card):
             if v and v not in declared:
                 miss.append("%s.%s -> %s" % (s["id"], k, v))
         items = (d.get("cards") or []) + (d.get("slots") or [])
-        for group in ("cards", "slots", "options", "examples", "pairs", "coaches"):
+        for group in ("cards", "slots", "options", "examples", "pairs", "coaches", "clips"):
             for it in d.get(group, []) or []:
                 if not isinstance(it, dict):
                     continue
