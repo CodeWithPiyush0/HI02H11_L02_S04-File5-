@@ -1627,7 +1627,7 @@ body.auto-next #navBtn{ visibility:hidden; pointer-events:none; }
    sg-waiting swaps the art for the grey disc instead of recolouring a pill.
    ============================================================================================ */
 .sg-btn, .sg-btn.sg-waiting{
-  width:116px; min-width:0; height:116px; padding:0; border:none; border-radius:50%; font-size:0; color:transparent;
+  width:140px; min-width:0; height:140px; padding:0; border:none; border-radius:50%; font-size:0; color:transparent;
   background:url("assets/Images/play_btn.svg") center/contain no-repeat; box-shadow:none; }
 .sg-btn::after{ content:none; }
 .sg-btn.sg-waiting{ background-image:url("assets/Images/play_btn_disabled.svg"); }
@@ -1917,3 +1917,5 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
 .sc-blank.sc-ask{ animation:scAsk .9s ease-in-out 2; }
 @keyframes scAsk{ 0%,100%{ box-shadow:none; } 50%{ box-shadow:0 0 0 6px rgba(62,134,224,.28); } }
 @media (prefers-reduced-motion:reduce){ .sc-blank.sc-ask{ animation:none; } }
+/* [S04] the 140px play button sat over the cover's track ties: 28px lower (bottom 40 -> 12) clears them */
+.sg-btn, .sg-btn.sg-waiting{ bottom:12px; }

@@ -3669,7 +3669,7 @@ body.auto-next #navBtn{ visibility:hidden; pointer-events:none; }
    sg-waiting swaps the art for the grey disc instead of recolouring a pill.
    ============================================================================================ */
 .sg-btn, .sg-btn.sg-waiting{
-  width:116px; min-width:0; height:116px; padding:0; border:none; border-radius:50%; font-size:0; color:transparent;
+  width:140px; min-width:0; height:140px; padding:0; border:none; border-radius:50%; font-size:0; color:transparent;
   background:url("assets/Images/play_btn.svg") center/contain no-repeat; box-shadow:none; }
 .sg-btn::after{ content:none; }
 .sg-btn.sg-waiting{ background-image:url("assets/Images/play_btn_disabled.svg"); }
@@ -3959,6 +3959,8 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
 .sc-blank.sc-ask{ animation:scAsk .9s ease-in-out 2; }
 @keyframes scAsk{ 0%,100%{ box-shadow:none; } 50%{ box-shadow:0 0 0 6px rgba(62,134,224,.28); } }
 @media (prefers-reduced-motion:reduce){ .sc-blank.sc-ask{ animation:none; } }
+/* [S04] the 140px play button sat over the cover's track ties: 28px lower (bottom 40 -> 12) clears them */
+.sg-btn, .sg-btn.sg-waiting{ bottom:12px; }
 
 /* ==========================================================================================
    MATRA TOKRI - «मात्रा टोकरी» slide. Everything below is scoped to that slide's own class
@@ -4994,6 +4996,13 @@ body.mt-page{ background:#7FC2FE; }
   }
 
 
+
+/* [S04] MTG2A04_L02_S01's confetti layer (style.css [13]): it covers the whole window and its pieces
+   are sized with the stage (--scale) at 1.5x the kit's size. */
+.fx-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5000;--fx-size:1.5;}
+.fx-layer .fx-confetti .f{width:calc(var(--w) * var(--z) * var(--scale, 1) * var(--fx-size, 1));
+  height:calc(var(--h) * var(--z) * var(--scale, 1) * var(--fx-size, 1));}
+
 /* == TRAIN STYLES :: END == */
 </style>
 <link rel="preload" as="image" fetchpriority="high" href="assets/Images/pic_kaam.png"><link rel="preload" as="image" fetchpriority="high" href="assets/Images/pic_naak.png"></head>
@@ -5095,6 +5104,9 @@ body.mt-page{ background:#7FC2FE; }
   <div class="dev-banner" id="devBanner"></div>
 
 </div></div>
+<!-- [S04] CORRECT-ANSWER CONFETTI (FLN kit recipe 7, from MTG2A04_L02_S01) - body-level, so it falls over the
+     whole window rather than being clipped to the scaled stage. -->
+<div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
 
 
 <!-- PHASE-TRANSITION PEEK GATE - [20a PT-3] BODY-LEVEL so position:fixed covers the FULL
@@ -18376,6 +18388,22 @@ SlideModules.MATRA_TOKRI = {
   }
 };
 
+
+
+/* ==========================================================================================
+   [S04] CORRECT-ANSWER CONFETTI from MTG2A04_L02_S01 (app.js "FLN ANIMATION KIT: confetti
+   (call site)"), as the developer asked: "extract the same confetti effect (animation)".
+   The kit's recipe 7 (FLNMotion.confetti, byte-identical in both lessons) with MTG2A04's own
+   settings: stars / rectangles / lines / squares, ~100 pieces over the WHOLE window (#fxLayer,
+   body-level), 1.5x size, the slower fall [1.6, 2.6], on every correct answer (phases:[]).
+   It replaces this engine's side-cannon confettiCannon(); every call site is unchanged.
+   (MTG2A04 also plays sfx_confetti here - left out: the ask was the animation only.)
+   ========================================================================================== */
+confettiCannon = function(){
+  var sl = CARD.slides[state.idx] || {};
+  if(window.FLNMotion && FLNMotion.confetti)
+    FLNMotion.confetti.burst({ host: "#fxLayer", phase: sl.phase, phases: [], count: 100, fall: [1.6, 2.6] });
+};
 
 /* == TRAIN MODULE SET :: END == */
 

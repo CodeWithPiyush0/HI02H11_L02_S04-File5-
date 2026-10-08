@@ -23,6 +23,9 @@ css = io.open(os.path.join(SCRATCH, "train_styles.css"), encoding="utf-8").read(
 # [S04] «मात्रा टोकरी», ported from File2 (HI02H11_L02_S01): its module + kit pieces, and its styles
 js  += "\n" + io.open(os.path.join(SCRATCH, "tokri_module.js"), encoding="utf-8").read()
 css += "\n" + io.open(os.path.join(SCRATCH, "tokri_styles.css"), encoding="utf-8").read()
+# [S04] MTG2A04_L02_S01's correct-answer confetti (call site + layer)
+js  += "\n" + io.open(os.path.join(SCRATCH, "confetti_mtg.js"), encoding="utf-8").read()
+css += "\n" + io.open(os.path.join(SCRATCH, "confetti_mtg.css"), encoding="utf-8").read()
 src = io.open(ENGINE, encoding="utf-8").read()
 
 # ---- closing-tag guard ---------------------------------------------------------------------

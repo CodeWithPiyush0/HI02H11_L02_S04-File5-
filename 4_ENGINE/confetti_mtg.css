@@ -1,0 +1,6 @@
+
+/* [S04] MTG2A04_L02_S01's confetti layer (style.css [13]): it covers the whole window and its pieces
+   are sized with the stage (--scale) at 1.5x the kit's size. */
+.fx-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5000;--fx-size:1.5;}
+.fx-layer .fx-confetti .f{width:calc(var(--w) * var(--z) * var(--scale, 1) * var(--fx-size, 1));
+  height:calc(var(--h) * var(--z) * var(--scale, 1) * var(--fx-size, 1));}
