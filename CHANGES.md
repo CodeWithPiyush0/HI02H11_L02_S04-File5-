@@ -162,3 +162,46 @@ files were replaced.
 ⚑ **The खिलौना picture is now a toy car, but page 15's scene shows a toy duck** — the deck asks for
 the option to match the scene. ⚑ **The bud on page 5 is the old flat red one**, so it opens into a
 glossy pink flower of a different style.
+
+## Round 4 (2026-10-07) — hint logic made identical to File3
+
+The developer: "its hint logic will also be exact same" as File3. The deck's own ladder (rounds 1–3)
+is replaced by File3's, line for line, with ओ / औ in place of उ / ऊ. Only the words differ.
+
+| screen | Hint 1 | Hint 2 | Hint 3 |
+|---|---|---|---|
+| taps (7–9) | «फिर से पढ़िए। जिस शब्द में ओ की मात्रा आ रही है, उस पर टैप कीजिए।» | the three words read with their matras lit, then «जिस शब्द में ओ की मात्रा है…» | «देखिए, मोर में ओ की मात्रा है। मोर पर टैप कीजिए।» + hand + others locked |
+| word sort (10) | «फिर से पढ़िए। शब्द में कौन-सी मात्रा है…» | the word + its matra, then the coach labels «ओ», «औ», then «पौधा में औ की मात्रा है। अब यही मात्रा ऊपर डिब्बों पर खोजिए…» | «पौधा को औ की मात्रा वाले डिब्बे में डालिए।» + hand |
+| mark sort (11) | «फिर से देखिए। मात्रा को ध्यान से देखिए…» | each letter read with its matra shown beside it, «ओ की मात्रा ो है और औ की मात्रा ौ है…» | «ओ की मात्रा को ओ वाले डिब्बे में डालिए।» + hand |
+| word build (12) | «फिर से देखिए। चित्र का नाम सोचिए…» | the three picture names read, blanks blinking, «नाम ध्यान से सुनिए…» | «मो को मोर वाले डिब्बे में डालिए। मो, र… मोर।» + hand |
+| picture sort (13) | «फिर से सुनिए। चित्र का नाम ध्यान से सुनिए…» | the word shown under the picture for that beat, «दौड़ में औ की मात्रा है। अब इसे सही मात्रा वाली बोगी में डालिए।» | «दौड़ को औ की मात्रा वाली बोगी में डालिए।» + hand |
+| sentences (14–16) | «फिर से पढ़िए। चित्र देखिए, पेड़ पर कौन बैठा है? …» | all three sentences + scene glow, «जो वाक्य सही लग रहा है, वही शब्द चुनिए।» | «पेड़ पर एक कौआ बैठा है। कौआ चुनिए।» + hand + others locked |
+
+Also File3's: the hand at Hint 3 on **every** test screen (replaces the 2026-10-06 "no hand on 12–16"),
+a correct answer after two misses is silent, options shuffle on every visit, misses count per
+card on word-build, and the sentence screens play only the instruction on entry (no paused
+reading). The mark-sort cards say «ओ की मात्रा» / «औ की मात्रा» as they appear, as in File3.
+
+VO: 55 hint clips — 11 recovered from earlier recordings by matching text, 44 new (Gemini, Leda).
+`_verify_assets.py`: `0 FAIL   0 WARN` (it caught one truncated take, `vo_g4_h3_dhol`, replaced).
+Driven: all 10 test screens miss→miss→miss→right and right-first-time; 0 errors.
+
+**EAR-CHECK** — Leda refused these lines twice, so they are on another voice (File3 had 8 such):
+`vo_letter_o`, `vo_letter_au`, `vo_g5_h3_o`, `vo_g7_h2_daud`, `vo_g7_h2_tota`, `vo_g7_h2_ghoda` (Aoede),
+`vo_g7_h2_hathauda`, `vo_g7_h3_ghoda` (Kore), `vo_g7_h3_hathauda`, `vo_g4_h3_dhol` (Kore).
+
+## Round 5 (2026-10-08) — rebased on File3's CURRENT engine
+
+File3 had moved on after round 4 (its commits of 2026-10-06/07, r101–r109). Its hint changes
+(r103: page 10's Hint 2 reads every word still in the tray; page 13's Hint 2 shows every remaining
+picture's word; bigger drop areas on every coach; the demo hands its train to the sort page) were
+missing here. `4_ENGINE/train_modules.js`, `train_styles.css` and `lesson_template.html` are now
+File3's current files plus ONLY this lesson's additions: the ो/ौ stroke highlight, the अक्षर-safe
+word split (घड़ा), the bud → flower, ो/ौ arriving from above, the runner warm-up guard and the
+picture version stamp. Builder: `keep_train_next` on the demo, File3's recorded transition lines
+(`vo_pt_*`) and their r109 timings.
+
+Proof — both lessons driven by the same script, miss → miss → miss → right on every test screen,
+each clip reduced to its role (prompt / hint1 / hint2 / hint3 / name / letter / try / correct) and
+each step's hand, glow, lock and आगे state compared: **10 of 10 screens identical** (3 tap, word
+sort, mark sort, word build, picture sort, 3 sentences). 0 errors.

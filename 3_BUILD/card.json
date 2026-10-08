@@ -48,13 +48,13 @@
   "img": "assets/UI/swifty_gate_seek.webp",
   "talk_at_ms": 1960,
   "title_cue_ms": {
-   "tutorial": 4030,
-   "guided": 3970,
-   "practice": 1260
+   "tutorial": 3075,
+   "guided": 3575,
+   "practice": 925
   },
   "title_dur_ms": {
-   "tutorial": 1230,
-   "guided": 1300,
+   "tutorial": 1150,
+   "guided": 1325,
    "practice": 850
   },
   "talk": {
@@ -102,43 +102,43 @@
   },
   "lips": {
    "tutorial": {
-    "bits": "0000000000000000000111111111111100001110000110000000001110000000000000000011111001111000111111111001111000000000011110000000000011111111111100000000000000000000000111000000111000000000000000000001100000011001110000000000000",
+    "bits": "0110001111111111100000001110001110000000001111000000000000011110000011111111100001111100000111110000111100000000000000000000001110000000000000000000000111110000110000000000",
     "step_ms": 25
    },
    "guided": {
-    "bits": "000000000001110000111000001111000000110000001100000000000000000000000111000001110000000000111100000001110000011100001100000001100000110011000000000000000000000001100000011100000000000000011110000001110001100000000000000000000",
+    "bits": "01100001110000111000001110000011000000000000000000000011100011111100000000111111100000111110000110000011111000011000001111110000000000000000000000111001111100000000000000000011110000011100011001100000",
     "step_ms": 25
    },
    "practice": {
-    "bits": "0000000000001100000111111111111111000000000000000001100111111000000000000111110000000000000000000000",
+    "bits": "00000011111000000000000000000000000000111001110000000001100111111110000000",
     "step_ms": 25
    }
   },
   "title_voice_ms": {
    "tutorial": [
     [
-     4025,
-     4400
+     3075,
+     3425
     ],
     [
-     4700,
-     5275
+     3650,
+     4225
     ]
    ],
    "guided": [
     [
-     3975,
-     4325
+     3575,
+     3925
     ],
     [
-     4650,
-     5275
+     4250,
+     4900
     ]
    ],
    "practice": [
     [
-     1250,
-     2125
+     925,
+     1775
     ]
    ]
   }
@@ -154,8 +154,7 @@
   "hand_on_hint3": true,
   "lock_after_hint3": true,
   "reveal_on_attempt": null,
-  "silent_on_late_correct": true,
-  "silent_from_attempt": 3
+  "silent_on_late_correct": true
  },
  "signals_expected": [
   "slide_entered",
@@ -201,8 +200,8 @@
    "vo_base_khilna": "assets/Audio/vo_base_khilna.ogg",
    "vo_cel_prompt": "assets/Audio/vo_cel_prompt.ogg",
    "vo_g10_correct": "assets/Audio/vo_g10_correct.ogg",
+   "vo_g10_h1": "assets/Audio/vo_g10_h1.ogg",
    "vo_g10_h3": "assets/Audio/vo_g10_h3.ogg",
-   "vo_g10_sent_a": "assets/Audio/vo_g10_sent_a.ogg",
    "vo_g10_try_dhol": "assets/Audio/vo_g10_try_dhol.ogg",
    "vo_g10_try_hathauda": "assets/Audio/vo_g10_try_hathauda.ogg",
    "vo_g10_try_tota": "assets/Audio/vo_g10_try_tota.ogg",
@@ -213,7 +212,14 @@
    "vo_g3_correct": "assets/Audio/vo_g3_correct.ogg",
    "vo_g3_h3": "assets/Audio/vo_g3_h3.ogg",
    "vo_g4_h1": "assets/Audio/vo_g4_h1.ogg",
-   "vo_g4_h2": "assets/Audio/vo_g4_h2.ogg",
+   "vo_g4_h2_dhol": "assets/Audio/vo_g4_h2_dhol.ogg",
+   "vo_g4_h2_kaua": "assets/Audio/vo_g4_h2_kaua.ogg",
+   "vo_g4_h2_paudha": "assets/Audio/vo_g4_h2_paudha.ogg",
+   "vo_g4_h2_tota": "assets/Audio/vo_g4_h2_tota.ogg",
+   "vo_g4_h3_dhol": "assets/Audio/vo_g4_h3_dhol.ogg",
+   "vo_g4_h3_kaua": "assets/Audio/vo_g4_h3_kaua.ogg",
+   "vo_g4_h3_paudha": "assets/Audio/vo_g4_h3_paudha.ogg",
+   "vo_g4_h3_tota": "assets/Audio/vo_g4_h3_tota.ogg",
    "vo_g4_prompt": "assets/Audio/vo_g4_prompt.ogg",
    "vo_g4d_end": "assets/Audio/vo_g4d_end.ogg",
    "vo_g4d_ghoda": "assets/Audio/vo_g4d_ghoda.ogg",
@@ -221,28 +227,40 @@
    "vo_g4d_prompt": "assets/Audio/vo_g4d_prompt.ogg",
    "vo_g5_h1": "assets/Audio/vo_g5_h1.ogg",
    "vo_g5_h2": "assets/Audio/vo_g5_h2.ogg",
+   "vo_g5_h3_au": "assets/Audio/vo_g5_h3_au.ogg",
+   "vo_g5_h3_o": "assets/Audio/vo_g5_h3_o.ogg",
    "vo_g5_prompt": "assets/Audio/vo_g5_prompt.ogg",
    "vo_g6_h1": "assets/Audio/vo_g6_h1.ogg",
+   "vo_g6_h2": "assets/Audio/vo_g6_h2.ogg",
    "vo_g6_h3_any": "assets/Audio/vo_g6_h3_any.ogg",
+   "vo_g6_h3_dhol": "assets/Audio/vo_g6_h3_dhol.ogg",
+   "vo_g6_h3_mor": "assets/Audio/vo_g6_h3_mor.ogg",
+   "vo_g6_h3_paudha": "assets/Audio/vo_g6_h3_paudha.ogg",
    "vo_g7_h1": "assets/Audio/vo_g7_h1.ogg",
-   "vo_g7_h1_tail": "assets/Audio/vo_g7_h1_tail.ogg",
-   "vo_g7_h2": "assets/Audio/vo_g7_h2.ogg",
+   "vo_g7_h2_daud": "assets/Audio/vo_g7_h2_daud.ogg",
+   "vo_g7_h2_ghoda": "assets/Audio/vo_g7_h2_ghoda.ogg",
+   "vo_g7_h2_hathauda": "assets/Audio/vo_g7_h2_hathauda.ogg",
+   "vo_g7_h2_tota": "assets/Audio/vo_g7_h2_tota.ogg",
+   "vo_g7_h3_daud": "assets/Audio/vo_g7_h3_daud.ogg",
+   "vo_g7_h3_ghoda": "assets/Audio/vo_g7_h3_ghoda.ogg",
+   "vo_g7_h3_hathauda": "assets/Audio/vo_g7_h3_hathauda.ogg",
+   "vo_g7_h3_tota": "assets/Audio/vo_g7_h3_tota.ogg",
    "vo_g7_prompt": "assets/Audio/vo_g7_prompt.ogg",
    "vo_g8_correct": "assets/Audio/vo_g8_correct.ogg",
+   "vo_g8_h1": "assets/Audio/vo_g8_h1.ogg",
    "vo_g8_h3": "assets/Audio/vo_g8_h3.ogg",
-   "vo_g8_sent_a": "assets/Audio/vo_g8_sent_a.ogg",
-   "vo_g8_sent_b": "assets/Audio/vo_g8_sent_b.ogg",
    "vo_g8_try_ghoda": "assets/Audio/vo_g8_try_ghoda.ogg",
    "vo_g8_try_kaua": "assets/Audio/vo_g8_try_kaua.ogg",
    "vo_g8_try_mor": "assets/Audio/vo_g8_try_mor.ogg",
    "vo_g9_correct": "assets/Audio/vo_g9_correct.ogg",
+   "vo_g9_h1": "assets/Audio/vo_g9_h1.ogg",
    "vo_g9_h3": "assets/Audio/vo_g9_h3.ogg",
-   "vo_g9_sent_a": "assets/Audio/vo_g9_sent_a.ogg",
-   "vo_g9_sent_b": "assets/Audio/vo_g9_sent_b.ogg",
    "vo_g9_try_dhol": "assets/Audio/vo_g9_try_dhol.ogg",
    "vo_g9_try_khilona": "assets/Audio/vo_g9_try_khilona.ogg",
    "vo_g9_try_mor": "assets/Audio/vo_g9_try_mor.ogg",
    "vo_landing": "assets/Audio/vo_landing.ogg",
+   "vo_letter_au": "assets/Audio/vo_letter_au.ogg",
+   "vo_letter_o": "assets/Audio/vo_letter_o.ogg",
    "vo_matra_au": "assets/Audio/vo_matra_au.ogg",
    "vo_matra_o": "assets/Audio/vo_matra_o.ogg",
    "vo_meet_kaua": "assets/Audio/vo_meet_kaua.ogg",
@@ -261,39 +279,25 @@
    "vo_name_nauka": "assets/Audio/vo_name_nauka.ogg",
    "vo_name_paudha": "assets/Audio/vo_name_paudha.ogg",
    "vo_name_tota": "assets/Audio/vo_name_tota.ogg",
-   "vo_ok_mark_au": "assets/Audio/vo_ok_mark_au.ogg",
-   "vo_ok_mark_o": "assets/Audio/vo_ok_mark_o.ogg",
-   "vo_ok_picture_daud": "assets/Audio/vo_ok_picture_daud.ogg",
-   "vo_ok_picture_ghoda": "assets/Audio/vo_ok_picture_ghoda.ogg",
-   "vo_ok_picture_hathauda": "assets/Audio/vo_ok_picture_hathauda.ogg",
-   "vo_ok_picture_tota": "assets/Audio/vo_ok_picture_tota.ogg",
+   "vo_ok_dhol": "assets/Audio/vo_ok_dhol.ogg",
+   "vo_ok_kaua": "assets/Audio/vo_ok_kaua.ogg",
+   "vo_ok_matra_au": "assets/Audio/vo_ok_matra_au.ogg",
+   "vo_ok_matra_o": "assets/Audio/vo_ok_matra_o.ogg",
+   "vo_ok_paudha": "assets/Audio/vo_ok_paudha.ogg",
+   "vo_ok_tota": "assets/Audio/vo_ok_tota.ogg",
    "vo_ok_wb_dhol": "assets/Audio/vo_ok_wb_dhol.ogg",
    "vo_ok_wb_mor": "assets/Audio/vo_ok_wb_mor.ogg",
    "vo_ok_wb_paudha": "assets/Audio/vo_ok_wb_paudha.ogg",
-   "vo_ok_word_dhol": "assets/Audio/vo_ok_word_dhol.ogg",
-   "vo_ok_word_kaua": "assets/Audio/vo_ok_word_kaua.ogg",
-   "vo_ok_word_paudha": "assets/Audio/vo_ok_word_paudha.ogg",
-   "vo_ok_word_tota": "assets/Audio/vo_ok_word_tota.ogg",
+   "vo_okp_daud": "assets/Audio/vo_okp_daud.ogg",
+   "vo_okp_ghoda": "assets/Audio/vo_okp_ghoda.ogg",
+   "vo_okp_hathauda": "assets/Audio/vo_okp_hathauda.ogg",
+   "vo_okp_tota": "assets/Audio/vo_okp_tota.ogg",
    "vo_onset_ghoda": "assets/Audio/vo_onset_ghoda.ogg",
    "vo_onset_khilona": "assets/Audio/vo_onset_khilona.ogg",
    "vo_pair_au": "assets/Audio/vo_pair_au.ogg",
    "vo_pair_o": "assets/Audio/vo_pair_o.ogg",
    "vo_result_ghoda": "assets/Audio/vo_result_ghoda.ogg",
    "vo_result_khilona": "assets/Audio/vo_result_khilona.ogg",
-   "vo_rev_mark_au": "assets/Audio/vo_rev_mark_au.ogg",
-   "vo_rev_mark_o": "assets/Audio/vo_rev_mark_o.ogg",
-   "vo_rev_picture_daud": "assets/Audio/vo_rev_picture_daud.ogg",
-   "vo_rev_picture_ghoda": "assets/Audio/vo_rev_picture_ghoda.ogg",
-   "vo_rev_picture_hathauda": "assets/Audio/vo_rev_picture_hathauda.ogg",
-   "vo_rev_picture_tota": "assets/Audio/vo_rev_picture_tota.ogg",
-   "vo_rev_wb_dhol": "assets/Audio/vo_rev_wb_dhol.ogg",
-   "vo_rev_wb_mor": "assets/Audio/vo_rev_wb_mor.ogg",
-   "vo_rev_wb_paudha": "assets/Audio/vo_rev_wb_paudha.ogg",
-   "vo_rev_word_dhol": "assets/Audio/vo_rev_word_dhol.ogg",
-   "vo_rev_word_kaua": "assets/Audio/vo_rev_word_kaua.ogg",
-   "vo_rev_word_paudha": "assets/Audio/vo_rev_word_paudha.ogg",
-   "vo_rev_word_tota": "assets/Audio/vo_rev_word_tota.ogg",
-   "vo_sc_h1": "assets/Audio/vo_sc_h1.ogg",
    "vo_sc_h2": "assets/Audio/vo_sc_h2.ogg",
    "vo_sc_prompt": "assets/Audio/vo_sc_prompt.ogg",
    "vo_sounds_ghoda": "assets/Audio/vo_sounds_ghoda.ogg",
@@ -350,55 +354,58 @@
    "vo_meet_paudha": "पौधा, बोलकर देखिए। इसमें प पर औ की मात्रा लगी है।",
    "vo_t5_prompt": "आइए, औ की मात्रा वाले कुछ शब्द देखें।",
    "vo_tap_prompt_o": "जिस डिब्बे में ओ की मात्रा वाला शब्द है, उस डिब्बे पर टैप कीजिए।",
-   "vo_tap_h1_o": "फिर से पढ़िए। ओ की मात्रा वाले शब्द पर टैप कीजिए।",
-   "vo_tap_h2_o": "ओ की मात्रा वाले शब्द पर टैप कीजिए।",
-   "vo_g1_h3": "मोर शब्द में ओ की मात्रा है। मोर पर टैप कीजिए।",
+   "vo_tap_h1_o": "फिर से पढ़िए। जिस शब्द में ओ की मात्रा आ रही है, उस पर टैप कीजिए।",
+   "vo_tap_h2_o": "जिस शब्द में ओ की मात्रा है, उस पर टैप कीजिए।",
+   "vo_g1_h3": "देखिए, मोर में ओ की मात्रा है। मोर पर टैप कीजिए।",
    "vo_g1_correct": "शाबाश! मोर शब्द में ओ की मात्रा है।",
    "vo_name_mor": "मोर",
    "vo_name_daud": "दौड़",
    "vo_name_chauk": "चौक",
    "vo_tap_prompt_au": "जिस डिब्बे में औ की मात्रा वाला शब्द है, उस डिब्बे पर टैप कीजिए।",
-   "vo_tap_h1_au": "फिर से पढ़िए। औ की मात्रा वाले शब्द पर टैप कीजिए।",
-   "vo_tap_h2_au": "औ की मात्रा वाले शब्द पर टैप कीजिए।",
-   "vo_g2_h3": "कौआ शब्द में औ की मात्रा है। कौआ पर टैप कीजिए।",
+   "vo_tap_h1_au": "फिर से पढ़िए। जिस शब्द में औ की मात्रा आ रही है, उस पर टैप कीजिए।",
+   "vo_tap_h2_au": "जिस शब्द में औ की मात्रा है, उस पर टैप कीजिए।",
+   "vo_g2_h3": "देखिए, कौआ में औ की मात्रा है। कौआ पर टैप कीजिए।",
    "vo_g2_correct": "शाबाश! कौआ शब्द में औ की मात्रा है।",
    "vo_name_dhol": "ढोल",
    "vo_name_kaua": "कौआ",
    "vo_name_gol": "गोल",
-   "vo_g3_h3": "तोता शब्द में ओ की मात्रा है। तोता पर टैप कीजिए।",
+   "vo_g3_h3": "देखिए, तोता में ओ की मात्रा है। तोता पर टैप कीजिए।",
    "vo_g3_correct": "शाबाश! तोता शब्द में ओ की मात्रा है।",
    "vo_name_nauka": "नौका",
    "vo_name_tota": "तोता",
-   "vo_name_ghoda": "घोड़ा",
-   "vo_g4d_ghoda": "घोड़ा में ओ की मात्रा है, इसलिए घोड़ा ओ वाले डिब्बे में गया।",
-   "vo_name_khilona": "खिलौना",
-   "vo_g4d_khilona": "खिलौना में औ की मात्रा है, इसलिए खिलौना औ वाले डिब्बे में गया।",
    "vo_g4d_prompt": "देखिए, शब्द को उसकी मात्रा वाले डिब्बे में कैसे डालते हैं।",
    "vo_g4d_end": "अब आप भी ऐसे ही करके देखिए।",
-   "vo_g4_prompt": "हर शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।",
-   "vo_g4_h1": "फिर से पढ़िए। इस शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।",
-   "vo_g4_h2": "इस शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।",
+   "vo_g4d_ghoda": "घोड़ा में ओ की मात्रा है, इसलिए घोड़ा ओ वाले डिब्बे में गया।",
+   "vo_name_ghoda": "घोड़ा",
+   "vo_g4d_khilona": "खिलौना में औ की मात्रा है, इसलिए खिलौना औ वाले डिब्बे में गया।",
+   "vo_name_khilona": "खिलौना",
+   "vo_g4_h1": "फिर से पढ़िए। शब्द में कौन-सी मात्रा है, देखिए और उसे उसी मात्रा वाले डिब्बे में डालिए।",
+   "vo_ok_paudha": "शाबाश! पौधा शब्द में औ की मात्रा है।",
    "vo_name_paudha": "पौधा",
-   "vo_rev_word_paudha": "पौधा शब्द में औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
-   "vo_ok_word_paudha": "शाबाश! पौधा शब्द में औ की मात्रा है।",
-   "vo_rev_word_dhol": "ढोल शब्द में ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
-   "vo_ok_word_dhol": "शाबाश! ढोल शब्द में ओ की मात्रा है।",
-   "vo_rev_word_kaua": "कौआ शब्द में औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
-   "vo_ok_word_kaua": "शाबाश! कौआ शब्द में औ की मात्रा है।",
-   "vo_rev_word_tota": "तोता शब्द में ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
-   "vo_ok_word_tota": "शाबाश! तोता शब्द में ओ की मात्रा है।",
-   "vo_rev_mark_au": "यह औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
-   "vo_ok_mark_au": "शाबाश! यह औ की मात्रा है।",
-   "vo_rev_mark_o": "यह ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
-   "vo_ok_mark_o": "शाबाश! यह ओ की मात्रा है।",
+   "vo_g4_h2_paudha": "पौधा में औ की मात्रा है। अब यही मात्रा ऊपर डिब्बों पर खोजिए और शब्द वहीं डालिए।",
+   "vo_g4_h3_paudha": "पौधा को औ की मात्रा वाले डिब्बे में डालिए।",
+   "vo_ok_dhol": "शाबाश! ढोल शब्द में ओ की मात्रा है।",
+   "vo_g4_h2_dhol": "ढोल में ओ की मात्रा है। अब यही मात्रा ऊपर डिब्बों पर खोजिए और शब्द वहीं डालिए।",
+   "vo_g4_h3_dhol": "ढोल को ओ की मात्रा वाले डिब्बे में डालिए।",
+   "vo_ok_kaua": "शाबाश! कौआ शब्द में औ की मात्रा है।",
+   "vo_g4_h2_kaua": "कौआ में औ की मात्रा है। अब यही मात्रा ऊपर डिब्बों पर खोजिए और शब्द वहीं डालिए।",
+   "vo_g4_h3_kaua": "कौआ को औ की मात्रा वाले डिब्बे में डालिए।",
+   "vo_ok_tota": "शाबाश! तोता शब्द में ओ की मात्रा है।",
+   "vo_g4_h2_tota": "तोता में ओ की मात्रा है। अब यही मात्रा ऊपर डिब्बों पर खोजिए और शब्द वहीं डालिए।",
+   "vo_g4_h3_tota": "तोता को ओ की मात्रा वाले डिब्बे में डालिए।",
+   "vo_g4_prompt": "हर शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।",
+   "vo_g5_h3_o": "ओ की मात्रा को ओ वाले डिब्बे में डालिए।",
+   "vo_ok_matra_o": "शाबाश! यह ओ की मात्रा है।",
+   "vo_g5_h3_au": "औ की मात्रा को औ वाले डिब्बे में डालिए।",
+   "vo_ok_matra_au": "शाबाश! यह औ की मात्रा है।",
+   "vo_g5_h1": "फिर से देखिए। मात्रा को ध्यान से देखिए और उसे सही डिब्बे में डालिए।",
+   "vo_g5_h2": "ओ की मात्रा ो है और औ की मात्रा ौ है। अब मात्रा को सही डिब्बे में डालिए।",
    "vo_g5_prompt": "सही मात्रा को सही डिब्बे में डालिए।",
-   "vo_g5_h1": "फिर से देखिए। सही मात्रा को सही डिब्बे में डालिए।",
-   "vo_g5_h2": "मात्रा का आकार ध्यान से देखिए। इसे सही डिब्बे में डालिए।",
-   "vo_rev_wb_mor": "मो लगाने से मोर बनता है। मो को खाली जगह में डालिए।",
+   "vo_g6_h3_mor": "मो को मोर वाले डिब्बे में डालिए। मो, र… मोर।",
    "vo_ok_wb_mor": "शाबाश! मोर बन गया।",
-   "vo_rev_wb_dhol": "ढो लगाने से ढोल बनता है। ढो को खाली जगह में डालिए।",
+   "vo_g6_h3_dhol": "ढो को ढोल वाले डिब्बे में डालिए। ढो, ल… ढोल।",
    "vo_ok_wb_dhol": "शाबाश! ढोल बन गया।",
-   "vo_rev_wb_paudha": "पौ लगाने से पौधा बनता है। पौ को खाली जगह में डालिए।",
+   "vo_g6_h3_paudha": "पौ को पौधा वाले डिब्बे में डालिए। पौ, धा… पौधा।",
    "vo_ok_wb_paudha": "शाबाश! पौधा बन गया।",
    "vo_ak_mo": "मो",
    "vo_ak_nau": "नौ",
@@ -406,47 +413,49 @@
    "vo_ak_pau": "पौ",
    "vo_ak_kau": "कौ",
    "vo_wb_prompt": "चित्र देखकर सही अक्षर से शब्द पूरा कीजिए।",
-   "vo_g6_h1": "फिर से देखिए। चित्र देखकर सही अक्षर से शब्द पूरा कीजिए।",
-   "vo_g6_h3_any": "जो अक्षर चमक रहा है, उसे खाली जगह में डालिए।",
-   "vo_g7_prompt": "चित्र का नाम सुनिए और उसे सही मात्रा वाले डिब्बे में डालिए।",
-   "vo_g7_h1": "फिर से सुनिए।",
-   "vo_g7_h1_tail": "चित्र को सही मात्रा वाले डिब्बे में डालिए।",
-   "vo_g7_h2": "मात्रा देखिए। चित्र को सही मात्रा वाले डिब्बे में डालिए।",
-   "vo_rev_picture_daud": "दौड़ में औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
-   "vo_ok_picture_daud": "शाबाश! दौड़ में औ की मात्रा है।",
-   "vo_rev_picture_tota": "तोता में ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
-   "vo_ok_picture_tota": "शाबाश! तोता में ओ की मात्रा है।",
-   "vo_rev_picture_ghoda": "घोड़ा में ओ की मात्रा है। इसे ओ वाले डिब्बे में डालिए।",
-   "vo_ok_picture_ghoda": "शाबाश! घोड़ा में ओ की मात्रा है।",
+   "vo_g6_h1": "फिर से देखिए। चित्र का नाम सोचिए और देखिए शब्द पूरा करने के लिए कौन-सा अक्षर लगेगा।",
+   "vo_g6_h2": "नाम ध्यान से सुनिए। जिस शब्द की शुरुआत इस अक्षर से होती है, उसी डिब्बे में इसे डालिए।",
+   "vo_g6_h3_any": "जो अक्षर चमक रहा है, उसे उसी डिब्बे में डालिए।",
+   "vo_g7_h1": "फिर से सुनिए। चित्र का नाम ध्यान से सुनिए और देखिए उसमें कौन-सी मात्रा है।",
+   "vo_okp_daud": "शाबाश! दौड़ में औ की मात्रा है।",
+   "vo_g7_h2_daud": "दौड़ में औ की मात्रा है। अब इसे सही मात्रा वाली बोगी में डालिए।",
+   "vo_g7_h3_daud": "दौड़ को औ की मात्रा वाली बोगी में डालिए।",
+   "vo_okp_tota": "शाबाश! तोता में ओ की मात्रा है।",
+   "vo_g7_h2_tota": "तोता में ओ की मात्रा है। अब इसे सही मात्रा वाली बोगी में डालिए।",
+   "vo_g7_h3_tota": "तोता को ओ की मात्रा वाली बोगी में डालिए।",
+   "vo_okp_ghoda": "शाबाश! घोड़ा में ओ की मात्रा है।",
+   "vo_g7_h2_ghoda": "घोड़ा में ओ की मात्रा है। अब इसे सही मात्रा वाली बोगी में डालिए।",
+   "vo_g7_h3_ghoda": "घोड़ा को ओ की मात्रा वाली बोगी में डालिए।",
+   "vo_okp_hathauda": "शाबाश! हथौड़ा में औ की मात्रा है।",
    "vo_name_hathauda": "हथौड़ा",
-   "vo_rev_picture_hathauda": "हथौड़ा में औ की मात्रा है। इसे औ वाले डिब्बे में डालिए।",
-   "vo_ok_picture_hathauda": "शाबाश! हथौड़ा में औ की मात्रा है।",
+   "vo_g7_h2_hathauda": "हथौड़ा में औ की मात्रा है। अब इसे सही मात्रा वाली बोगी में डालिए।",
+   "vo_g7_h3_hathauda": "हथौड़ा को औ की मात्रा वाली बोगी में डालिए।",
+   "vo_g7_prompt": "चित्र का नाम सुनिए और उसे सही मात्रा वाले डिब्बे में डालिए।",
    "vo_g8_try_kaua": "पेड़ पर एक कौआ बैठा है।",
    "vo_g8_try_ghoda": "पेड़ पर एक घोड़ा बैठा है।",
    "vo_g8_try_mor": "पेड़ पर एक मोर बैठा है।",
-   "vo_sc_prompt": "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए। शब्द को खाली जगह में डालिए।",
-   "vo_g8_sent_a": "पेड़ पर एक",
-   "vo_g8_sent_b": "बैठा है।",
-   "vo_sc_h1": "फिर से देखिए। चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।",
-   "vo_sc_h2": "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।",
-   "vo_g8_h3": "चित्र में पेड़ पर एक कौआ बैठा है। कौआ को खाली जगह में डालिए।",
+   "vo_sc_prompt": "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।",
+   "vo_g8_h1": "फिर से पढ़िए। चित्र देखिए, पेड़ पर कौन बैठा है? सही शब्द चुनकर वाक्य पूरा कीजिए।",
+   "vo_sc_h2": "जो वाक्य सही लग रहा है, वही शब्द चुनिए।",
+   "vo_g8_h3": "पेड़ पर एक कौआ बैठा है। कौआ चुनिए।",
    "vo_g8_correct": "शाबाश! पेड़ पर एक कौआ बैठा है।",
    "vo_g9_try_khilona": "बच्चे के पास एक खिलौना है।",
    "vo_g9_try_mor": "बच्चे के पास एक मोर है।",
    "vo_g9_try_dhol": "बच्चे के पास एक ढोल है।",
-   "vo_g9_sent_a": "बच्चे के पास एक",
-   "vo_g9_sent_b": "है।",
-   "vo_g9_h3": "चित्र में बच्चे के पास एक खिलौना है। खिलौना को खाली जगह में डालिए।",
+   "vo_g9_h1": "फिर से पढ़िए। चित्र देखिए, बच्चे के पास क्या है? सही शब्द चुनकर वाक्य पूरा कीजिए।",
+   "vo_g9_h3": "बच्चे के पास एक खिलौना है। खिलौना चुनिए।",
    "vo_g9_correct": "शाबाश! बच्चे के पास एक खिलौना है।",
    "vo_g10_try_dhol": "आदमी के हाथ में एक ढोल है।",
    "vo_g10_try_hathauda": "आदमी के हाथ में एक हथौड़ा है।",
    "vo_g10_try_tota": "आदमी के हाथ में एक तोता है।",
-   "vo_g10_sent_a": "आदमी के हाथ में एक",
-   "vo_g10_h3": "चित्र में आदमी के हाथ में एक हथौड़ा है। हथौड़ा शब्द को खाली जगह में डालिए।",
+   "vo_g10_h1": "फिर से पढ़िए। चित्र देखिए, आदमी के हाथ में क्या है? सही शब्द चुनकर वाक्य पूरा कीजिए।",
+   "vo_g10_h3": "आदमी के हाथ में एक हथौड़ा है। हथौड़ा चुनिए।",
    "vo_g10_correct": "शाबाश! आदमी के हाथ में एक हथौड़ा है।",
    "vo_cel_prompt": "बहुत बढ़िया, दोस्त! तुमने कमाल कर दिया!",
    "vo_landing": "हेलो दोस्त! मैं हूँ स्विफ्टी। आज हम मात्राओं के बारे में जानेंगे।",
-   "vo_try_again": "एक बार फिर सुनिए।"
+   "vo_try_again": "एक बार फिर सुनिए।",
+   "vo_letter_o": "ओ",
+   "vo_letter_au": "औ"
   },
   "image": {
    "obj_daud": "assets/Images/obj_daud.png",
@@ -666,9 +675,6 @@
    "data": {
     "target": "मोर",
     "matra": "ो",
-    "shuffle": false,
-    "h2_keep_marks": true,
-    "hint3_hand": true,
     "coaches": [
      {
       "word": "मोर",
@@ -707,9 +713,6 @@
    "data": {
     "target": "कौआ",
     "matra": "ौ",
-    "shuffle": false,
-    "h2_keep_marks": true,
-    "hint3_hand": true,
     "coaches": [
      {
       "word": "ढोल",
@@ -748,9 +751,6 @@
    "data": {
     "target": "तोता",
     "matra": "ो",
-    "shuffle": false,
-    "h2_keep_marks": true,
-    "hint3_hand": true,
     "coaches": [
      {
       "word": "नौका",
@@ -789,17 +789,19 @@
      {
       "key": "ो",
       "label": "ओ (ो)",
+      "audio": "vo_letter_o",
       "matra": "ो"
      },
      {
       "key": "ौ",
       "label": "औ (ौ)",
+      "audio": "vo_letter_au",
       "matra": "ौ"
      }
     ],
     "single": false,
     "demo": true,
-    "shuffle": false,
+    "keep_train_next": true,
     "cards": [
      {
       "bin": "ो",
@@ -817,8 +819,7 @@
       "audio": "vo_name_khilona",
       "correct_audio": "vo_g4d_khilona"
      }
-    ],
-    "keep_train_next": true
+    ]
    }
   },
   {
@@ -829,8 +830,7 @@
    "prompt_hi": "हर शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।",
    "audio": {
     "prompt": "vo_g4_prompt",
-    "hint1": "vo_g4_h1",
-    "hint2": "vo_g4_h2"
+    "hint1": "vo_g4_h1"
    },
    "data": {
     "kind": "word",
@@ -838,18 +838,16 @@
      {
       "key": "ो",
       "label": "ओ (ो)",
+      "audio": "vo_letter_o",
       "matra": "ो"
      },
      {
       "key": "ौ",
       "label": "औ (ौ)",
+      "audio": "vo_letter_au",
       "matra": "ौ"
      }
     ],
-    "single": false,
-    "shuffle": false,
-    "h2_read_bins": false,
-    "hint3_hand": true,
     "cards": [
      {
       "bin": "ौ",
@@ -857,8 +855,9 @@
       "img": "obj_paudha",
       "emoji": "🌱",
       "audio": "vo_name_paudha",
-      "hint3_audio": "vo_rev_word_paudha",
-      "correct_audio": "vo_ok_word_paudha"
+      "correct_audio": "vo_ok_paudha",
+      "hint2_audio": "vo_g4_h2_paudha",
+      "hint3_audio": "vo_g4_h3_paudha"
      },
      {
       "bin": "ो",
@@ -866,8 +865,9 @@
       "img": "obj_dhol",
       "emoji": "🥁",
       "audio": "vo_name_dhol",
-      "hint3_audio": "vo_rev_word_dhol",
-      "correct_audio": "vo_ok_word_dhol"
+      "correct_audio": "vo_ok_dhol",
+      "hint2_audio": "vo_g4_h2_dhol",
+      "hint3_audio": "vo_g4_h3_dhol"
      },
      {
       "bin": "ौ",
@@ -875,8 +875,9 @@
       "img": "obj_kaua",
       "emoji": "🐦",
       "audio": "vo_name_kaua",
-      "hint3_audio": "vo_rev_word_kaua",
-      "correct_audio": "vo_ok_word_kaua"
+      "correct_audio": "vo_ok_kaua",
+      "hint2_audio": "vo_g4_h2_kaua",
+      "hint3_audio": "vo_g4_h3_kaua"
      },
      {
       "bin": "ो",
@@ -884,10 +885,12 @@
       "img": "obj_tota",
       "emoji": "🦜",
       "audio": "vo_name_tota",
-      "hint3_audio": "vo_rev_word_tota",
-      "correct_audio": "vo_ok_word_tota"
+      "correct_audio": "vo_ok_tota",
+      "hint2_audio": "vo_g4_h2_tota",
+      "hint3_audio": "vo_g4_h3_tota"
      }
-    ]
+    ],
+    "single": false
    }
   },
   {
@@ -907,32 +910,33 @@
      {
       "key": "ो",
       "label": "ओ",
+      "audio": "vo_letter_o",
       "matra": "ो"
      },
      {
       "key": "ौ",
       "label": "औ",
+      "audio": "vo_letter_au",
       "matra": "ौ"
      }
     ],
-    "single": true,
-    "shuffle": false,
-    "h2_mark_only": true,
-    "hint3_hand": true,
     "cards": [
-     {
-      "bin": "ौ",
-      "word": "◌ौ",
-      "hint3_audio": "vo_rev_mark_au",
-      "correct_audio": "vo_ok_mark_au"
-     },
      {
       "bin": "ो",
       "word": "◌ो",
-      "hint3_audio": "vo_rev_mark_o",
-      "correct_audio": "vo_ok_mark_o"
+      "audio": "vo_matra_o",
+      "hint3_audio": "vo_g5_h3_o",
+      "correct_audio": "vo_ok_matra_o"
+     },
+     {
+      "bin": "ौ",
+      "word": "◌ौ",
+      "audio": "vo_matra_au",
+      "hint3_audio": "vo_g5_h3_au",
+      "correct_audio": "vo_ok_matra_au"
      }
-    ]
+    ],
+    "single": true
    }
   },
   {
@@ -944,7 +948,7 @@
    "audio": {
     "prompt": "vo_wb_prompt",
     "hint1": "vo_g6_h1",
-    "hint2": "vo_wb_prompt",
+    "hint2": "vo_g6_h2",
     "hint3": "vo_g6_h3_any"
    },
    "data": {
@@ -957,7 +961,7 @@
       "img": "obj_mor",
       "emoji": "🦚",
       "name_audio": "vo_name_mor",
-      "hint3_audio": "vo_rev_wb_mor",
+      "hint3_audio": "vo_g6_h3_mor",
       "correct_audio": "vo_ok_wb_mor"
      },
      {
@@ -968,7 +972,7 @@
       "img": "obj_dhol",
       "emoji": "🥁",
       "name_audio": "vo_name_dhol",
-      "hint3_audio": "vo_rev_wb_dhol",
+      "hint3_audio": "vo_g6_h3_dhol",
       "correct_audio": "vo_ok_wb_dhol"
      },
      {
@@ -979,40 +983,32 @@
       "img": "obj_paudha",
       "emoji": "🌱",
       "name_audio": "vo_name_paudha",
-      "hint3_audio": "vo_rev_wb_paudha",
+      "hint3_audio": "vo_g6_h3_paudha",
       "correct_audio": "vo_ok_wb_paudha"
      }
     ],
     "options": [
      {
       "akshar": "मो",
-      "matra": "ो",
       "audio": "vo_ak_mo"
      },
      {
       "akshar": "नौ",
-      "matra": "ौ",
       "audio": "vo_ak_nau"
      },
      {
       "akshar": "ढो",
-      "matra": "ो",
       "audio": "vo_ak_dho"
      },
      {
       "akshar": "पौ",
-      "matra": "ौ",
       "audio": "vo_ak_pau"
      },
      {
       "akshar": "कौ",
-      "matra": "ौ",
       "audio": "vo_ak_kau"
      }
-    ],
-    "shuffle": false,
-    "h2_akshar": true,
-    "hint3_hand": false
+    ]
    }
   },
   {
@@ -1023,9 +1019,7 @@
    "prompt_hi": "चित्र का नाम सुनिए और उसे सही मात्रा वाले डिब्बे में डालिए।",
    "audio": {
     "prompt": "vo_g7_prompt",
-    "hint1": "vo_g7_h1",
-    "hint1_tail": "vo_g7_h1_tail",
-    "hint2": "vo_g7_h2"
+    "hint1": "vo_g7_h1"
    },
    "data": {
     "kind": "picture",
@@ -1033,18 +1027,16 @@
      {
       "key": "ो",
       "label": "ओ",
+      "audio": "vo_letter_o",
       "matra": "ो"
      },
      {
       "key": "ौ",
       "label": "औ",
+      "audio": "vo_letter_au",
       "matra": "ौ"
      }
     ],
-    "single": false,
-    "shuffle": false,
-    "h2_keep_word": true,
-    "hint3_hand": false,
     "cards": [
      {
       "bin": "ौ",
@@ -1052,8 +1044,9 @@
       "img": "obj_daud",
       "emoji": "🏃",
       "audio": "vo_name_daud",
-      "hint3_audio": "vo_rev_picture_daud",
-      "correct_audio": "vo_ok_picture_daud"
+      "correct_audio": "vo_okp_daud",
+      "hint2_audio": "vo_g7_h2_daud",
+      "hint3_audio": "vo_g7_h3_daud"
      },
      {
       "bin": "ो",
@@ -1061,8 +1054,9 @@
       "img": "obj_tota",
       "emoji": "🦜",
       "audio": "vo_name_tota",
-      "hint3_audio": "vo_rev_picture_tota",
-      "correct_audio": "vo_ok_picture_tota"
+      "correct_audio": "vo_okp_tota",
+      "hint2_audio": "vo_g7_h2_tota",
+      "hint3_audio": "vo_g7_h3_tota"
      },
      {
       "bin": "ो",
@@ -1070,8 +1064,9 @@
       "img": "obj_ghoda",
       "emoji": "🐴",
       "audio": "vo_name_ghoda",
-      "hint3_audio": "vo_rev_picture_ghoda",
-      "correct_audio": "vo_ok_picture_ghoda"
+      "correct_audio": "vo_okp_ghoda",
+      "hint2_audio": "vo_g7_h2_ghoda",
+      "hint3_audio": "vo_g7_h3_ghoda"
      },
      {
       "bin": "ौ",
@@ -1079,10 +1074,12 @@
       "img": "obj_hathauda",
       "emoji": "🔨",
       "audio": "vo_name_hathauda",
-      "hint3_audio": "vo_rev_picture_hathauda",
-      "correct_audio": "vo_ok_picture_hathauda"
+      "correct_audio": "vo_okp_hathauda",
+      "hint2_audio": "vo_g7_h2_hathauda",
+      "hint3_audio": "vo_g7_h3_hathauda"
      }
-    ]
+    ],
+    "single": false
    }
   },
   {
@@ -1093,9 +1090,7 @@
    "prompt_hi": "सही शब्द चुनकर वाक्य पूरा कीजिए।",
    "audio": {
     "prompt": "vo_sc_prompt",
-    "sent_pre": "vo_g8_sent_a",
-    "sent_post": "vo_g8_sent_b",
-    "hint1": "vo_sc_h1",
+    "hint1": "vo_g8_h1",
     "hint2": "vo_sc_h2",
     "hint3": "vo_g8_h3",
     "correct": "vo_g8_correct"
@@ -1129,8 +1124,6 @@
       "sentence_audio": "vo_g8_try_mor"
      }
     ],
-    "shuffle": false,
-    "hint3_hand": false,
     "scene_glow": [
      [
       0.545,
@@ -1149,9 +1142,7 @@
    "prompt_hi": "सही शब्द चुनकर वाक्य पूरा कीजिए।",
    "audio": {
     "prompt": "vo_sc_prompt",
-    "sent_pre": "vo_g9_sent_a",
-    "sent_post": "vo_g9_sent_b",
-    "hint1": "vo_sc_h1",
+    "hint1": "vo_g9_h1",
     "hint2": "vo_sc_h2",
     "hint3": "vo_g9_h3",
     "correct": "vo_g9_correct"
@@ -1185,8 +1176,6 @@
       "sentence_audio": "vo_g9_try_dhol"
      }
     ],
-    "shuffle": false,
-    "hint3_hand": false,
     "scene_glow": [
      [
       0.46,
@@ -1205,9 +1194,7 @@
    "prompt_hi": "सही शब्द चुनकर वाक्य पूरा कीजिए।",
    "audio": {
     "prompt": "vo_sc_prompt",
-    "sent_pre": "vo_g10_sent_a",
-    "sent_post": "vo_g9_sent_b",
-    "hint1": "vo_sc_h1",
+    "hint1": "vo_g10_h1",
     "hint2": "vo_sc_h2",
     "hint3": "vo_g10_h3",
     "correct": "vo_g10_correct"
@@ -1241,8 +1228,6 @@
       "sentence_audio": "vo_g10_try_tota"
      }
     ],
-    "shuffle": false,
-    "hint3_hand": false,
     "scene_glow": [
      [
       0.59,

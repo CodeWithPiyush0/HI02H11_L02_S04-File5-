@@ -46,9 +46,9 @@
    {
     "step": "miss2(चौक)",
     "clips": [
-     "vo_name_mor",
      "vo_name_daud",
      "vo_name_chauk",
+     "vo_name_mor",
      "vo_tap_h2_o"
     ],
     "state": {
@@ -58,7 +58,7 @@
      "glow": 0,
      "hand": 0,
      "locked": 0,
-     "marks": 3,
+     "marks": 0,
      "nav": false,
      "nudge": 0,
      "out": 0,
@@ -79,7 +79,7 @@
      "glow": 0,
      "hand": 1,
      "locked": 0,
-     "marks": 3,
+     "marks": 0,
      "nav": false,
      "nudge": 1,
      "out": 2,
@@ -98,7 +98,7 @@
      "glow": 0,
      "hand": 0,
      "locked": 0,
-     "marks": 3,
+     "marks": 1,
      "nav": true,
      "nudge": 1,
      "out": 2,
@@ -154,9 +154,9 @@
    {
     "step": "miss2(गोल)",
     "clips": [
-     "vo_name_dhol",
-     "vo_name_kaua",
      "vo_name_gol",
+     "vo_name_kaua",
+     "vo_name_dhol",
      "vo_tap_h2_au"
     ],
     "state": {
@@ -166,7 +166,7 @@
      "glow": 0,
      "hand": 0,
      "locked": 0,
-     "marks": 3,
+     "marks": 0,
      "nav": false,
      "nudge": 0,
      "out": 0,
@@ -187,7 +187,7 @@
      "glow": 0,
      "hand": 1,
      "locked": 0,
-     "marks": 3,
+     "marks": 0,
      "nav": false,
      "nudge": 1,
      "out": 2,
@@ -206,7 +206,7 @@
      "glow": 0,
      "hand": 0,
      "locked": 0,
-     "marks": 3,
+     "marks": 1,
      "nav": true,
      "nudge": 1,
      "out": 2,
@@ -262,9 +262,9 @@
    {
     "step": "miss2(कौआ)",
     "clips": [
+     "vo_name_kaua",
      "vo_name_nauka",
      "vo_name_tota",
-     "vo_name_kaua",
      "vo_tap_h2_o"
     ],
     "state": {
@@ -274,7 +274,7 @@
      "glow": 0,
      "hand": 0,
      "locked": 0,
-     "marks": 3,
+     "marks": 0,
      "nav": false,
      "nudge": 0,
      "out": 0,
@@ -295,7 +295,7 @@
      "glow": 0,
      "hand": 1,
      "locked": 0,
-     "marks": 3,
+     "marks": 0,
      "nav": false,
      "nudge": 1,
      "out": 2,
@@ -314,7 +314,7 @@
      "glow": 0,
      "hand": 0,
      "locked": 0,
-     "marks": 3,
+     "marks": 1,
      "nav": true,
      "nudge": 1,
      "out": 2,
@@ -329,10 +329,10 @@
     "step": "entry",
     "clips": [
      "vo_g4_prompt",
-     "vo_name_paudha",
-     "vo_name_dhol",
+     "vo_name_tota",
      "vo_name_kaua",
-     "vo_name_tota"
+     "vo_name_dhol",
+     "vo_name_paudha"
     ],
     "state": {
      "attempts": 0,
@@ -376,7 +376,9 @@
     "step": "miss2(पौधा)",
     "clips": [
      "vo_name_paudha",
-     "vo_g4_h2"
+     "vo_letter_o",
+     "vo_letter_au",
+     "vo_g4_h2_paudha"
     ],
     "state": {
      "attempts": 2,
@@ -397,14 +399,14 @@
    {
     "step": "miss3(पौधा)",
     "clips": [
-     "vo_rev_word_paudha",
+     "vo_g4_h3_paudha",
      "vo_name_paudha"
     ],
     "state": {
      "attempts": 3,
      "big": 0,
      "blankglow": 0,
-     "glow": 1,
+     "glow": 0,
      "hand": 1,
      "locked": 0,
      "marks": 0,
@@ -412,7 +414,7 @@
      "nudge": 1,
      "out": 0,
      "revealword": 0,
-     "wait": 3,
+     "wait": 0,
      "wbpulse": 0
     }
    },
@@ -425,7 +427,7 @@
      "attempts": 3,
      "big": 0,
      "blankglow": 0,
-     "glow": 1,
+     "glow": 0,
      "hand": 0,
      "locked": 0,
      "marks": 0,
@@ -433,7 +435,7 @@
      "nudge": 1,
      "out": 0,
      "revealword": 0,
-     "wait": 3,
+     "wait": 0,
      "wbpulse": 0
     }
    },
@@ -461,7 +463,9 @@
    {
     "step": "entry",
     "clips": [
-     "vo_g5_prompt"
+     "vo_g5_prompt",
+     "vo_matra_au",
+     "vo_matra_o"
     ],
     "state": {
      "attempts": 0,
@@ -480,9 +484,10 @@
     }
    },
    {
-    "step": "miss1(◌ौ)",
+    "step": "miss1(◌ो)",
     "clips": [
-     "vo_g5_h1"
+     "vo_g5_h1",
+     "vo_matra_o"
     ],
     "state": {
      "attempts": 1,
@@ -501,8 +506,10 @@
     }
    },
    {
-    "step": "miss2(◌ौ)",
+    "step": "miss2(◌ो)",
     "clips": [
+     "vo_letter_o",
+     "vo_letter_au",
      "vo_g5_h2"
     ],
     "state": {
@@ -522,15 +529,16 @@
     }
    },
    {
-    "step": "miss3(◌ौ)",
+    "step": "miss3(◌ो)",
     "clips": [
-     "vo_rev_mark_au"
+     "vo_g5_h3_o",
+     "vo_matra_o"
     ],
     "state": {
      "attempts": 3,
      "big": 0,
      "blankglow": 0,
-     "glow": 1,
+     "glow": 0,
      "hand": 1,
      "locked": 0,
      "marks": 0,
@@ -538,18 +546,20 @@
      "nudge": 1,
      "out": 0,
      "revealword": 0,
-     "wait": 1,
+     "wait": 0,
      "wbpulse": 0
     }
    },
    {
     "step": "4th drop on wrong coach (locked)",
-    "clips": [],
+    "clips": [
+     "vo_matra_o"
+    ],
     "state": {
      "attempts": 3,
      "big": 0,
      "blankglow": 0,
-     "glow": 1,
+     "glow": 0,
      "hand": 0,
      "locked": 0,
      "marks": 0,
@@ -557,12 +567,12 @@
      "nudge": 1,
      "out": 0,
      "revealword": 0,
-     "wait": 1,
+     "wait": 0,
      "wbpulse": 0
     }
    },
    {
-    "step": "right(◌ौ)",
+    "step": "right(◌ो)",
     "clips": [],
     "state": {
      "attempts": 3,
@@ -571,7 +581,7 @@
      "glow": 0,
      "hand": 0,
      "locked": 0,
-     "marks": 1,
+     "marks": 0,
      "nav": false,
      "nudge": 1,
      "out": 0,
@@ -628,8 +638,8 @@
    {
     "step": "miss2(कौ on _र)",
     "clips": [
-     "vo_ak_kau",
-     "vo_wb_prompt"
+     "vo_g6_h1",
+     "vo_ak_kau"
     ],
     "state": {
      "attempts": 2,
@@ -650,23 +660,25 @@
    {
     "step": "miss3(नौ on _र)",
     "clips": [
-     "vo_rev_wb_mor",
-     "vo_ak_nau"
+     "vo_name_mor",
+     "vo_name_dhol",
+     "vo_name_paudha",
+     "vo_g6_h2"
     ],
     "state": {
      "attempts": 3,
      "big": 0,
      "blankglow": 0,
-     "glow": 1,
+     "glow": 0,
      "hand": 0,
      "locked": 0,
      "marks": 0,
      "nav": false,
-     "nudge": 1,
+     "nudge": 0,
      "out": 0,
      "revealword": 0,
-     "wait": 4,
-     "wbpulse": 1
+     "wait": 0,
+     "wbpulse": 0
     }
    },
    {
@@ -683,7 +695,7 @@
      "locked": 0,
      "marks": 1,
      "nav": false,
-     "nudge": 1,
+     "nudge": 0,
      "out": 0,
      "revealword": 0,
      "wait": 0,
@@ -696,10 +708,10 @@
     "step": "entry",
     "clips": [
      "vo_g7_prompt",
+     "vo_name_hathauda",
      "vo_name_daud",
-     "vo_name_tota",
      "vo_name_ghoda",
-     "vo_name_hathauda"
+     "vo_name_tota"
     ],
     "state": {
      "attempts": 0,
@@ -721,8 +733,7 @@
     "step": "miss1(दौड़)",
     "clips": [
      "vo_g7_h1",
-     "vo_name_daud",
-     "vo_g7_h1_tail"
+     "vo_name_daud"
     ],
     "state": {
      "attempts": 1,
@@ -744,7 +755,7 @@
     "step": "miss2(दौड़)",
     "clips": [
      "vo_name_daud",
-     "vo_g7_h2"
+     "vo_g7_h2_daud"
     ],
     "state": {
      "attempts": 2,
@@ -753,11 +764,11 @@
      "glow": 0,
      "hand": 0,
      "locked": 0,
-     "marks": 1,
+     "marks": 0,
      "nav": false,
      "nudge": 0,
      "out": 0,
-     "revealword": 1,
+     "revealword": 0,
      "wait": 0,
      "wbpulse": 0
     }
@@ -765,22 +776,22 @@
    {
     "step": "miss3(दौड़)",
     "clips": [
-     "vo_rev_picture_daud",
+     "vo_g7_h3_daud",
      "vo_name_daud"
     ],
     "state": {
      "attempts": 3,
      "big": 0,
      "blankglow": 0,
-     "glow": 1,
-     "hand": 0,
+     "glow": 0,
+     "hand": 1,
      "locked": 0,
-     "marks": 1,
+     "marks": 0,
      "nav": false,
      "nudge": 1,
      "out": 0,
-     "revealword": 1,
-     "wait": 3,
+     "revealword": 0,
+     "wait": 0,
      "wbpulse": 0
     }
    },
@@ -793,15 +804,15 @@
      "attempts": 3,
      "big": 0,
      "blankglow": 0,
-     "glow": 1,
+     "glow": 0,
      "hand": 0,
      "locked": 0,
-     "marks": 1,
+     "marks": 0,
      "nav": false,
      "nudge": 1,
      "out": 0,
-     "revealword": 1,
-     "wait": 3,
+     "revealword": 0,
+     "wait": 0,
      "wbpulse": 0
     }
    },
@@ -829,7 +840,6 @@
    {
     "step": "entry",
     "clips": [
-     "vo_g8_sent_b",
      "vo_sc_prompt"
     ],
     "state": {
@@ -853,7 +863,7 @@
     "clips": [
      "vo_name_ghoda",
      "vo_name_ghoda",
-     "vo_sc_h1"
+     "vo_g8_h1"
     ],
     "state": {
      "attempts": 1,
@@ -907,9 +917,9 @@
     "state": {
      "attempts": 3,
      "big": 0,
-     "blankglow": 1,
+     "blankglow": 0,
      "glow": 0,
-     "hand": 0,
+     "hand": 1,
      "locked": 2,
      "marks": 0,
      "nav": false,
@@ -947,7 +957,6 @@
    {
     "step": "entry",
     "clips": [
-     "vo_g9_sent_b",
      "vo_sc_prompt"
     ],
     "state": {
@@ -971,7 +980,7 @@
     "clips": [
      "vo_name_mor",
      "vo_name_mor",
-     "vo_sc_h1"
+     "vo_g9_h1"
     ],
     "state": {
      "attempts": 1,
@@ -994,9 +1003,9 @@
     "clips": [
      "vo_name_dhol",
      "vo_name_dhol",
+     "vo_g9_try_dhol",
      "vo_g9_try_khilona",
      "vo_g9_try_mor",
-     "vo_g9_try_dhol",
      "vo_sc_h2"
     ],
     "state": {
@@ -1025,9 +1034,9 @@
     "state": {
      "attempts": 3,
      "big": 0,
-     "blankglow": 1,
+     "blankglow": 0,
      "glow": 0,
-     "hand": 0,
+     "hand": 1,
      "locked": 2,
      "marks": 0,
      "nav": false,
@@ -1065,7 +1074,6 @@
    {
     "step": "entry",
     "clips": [
-     "vo_g9_sent_b",
      "vo_sc_prompt"
     ],
     "state": {
@@ -1089,7 +1097,7 @@
     "clips": [
      "vo_name_dhol",
      "vo_name_dhol",
-     "vo_sc_h1"
+     "vo_g10_h1"
     ],
     "state": {
      "attempts": 1,
@@ -1143,9 +1151,9 @@
     "state": {
      "attempts": 3,
      "big": 0,
-     "blankglow": 1,
+     "blankglow": 0,
      "glow": 0,
-     "hand": 0,
+     "hand": 1,
      "locked": 2,
      "marks": 0,
      "nav": false,
@@ -1232,6 +1240,7 @@
     "vo_tap_prompt_o"
    ],
    "clips": [
+    "vo_tap_prompt_o",
     "vo_g3_correct"
    ],
    "state": {
@@ -1253,15 +1262,20 @@
   "G4D": {
    "entry": [
     "vo_g4d_prompt",
-    "vo_name_ghoda",
     "vo_name_khilona",
-    "vo_name_ghoda"
+    "vo_name_ghoda",
+    "vo_name_khilona"
    ],
    "clips": [
-    "vo_g4d_ghoda",
-    "vo_name_khilona",
     "vo_g4d_khilona",
-    "vo_g4d_end"
+    "vo_name_ghoda",
+    "vo_g4d_ghoda",
+    "vo_g4d_end",
+    "vo_g4_prompt",
+    "vo_name_tota",
+    "vo_name_kaua",
+    "vo_name_paudha",
+    "vo_name_dhol"
    ],
    "state": {
     "attempts": 0,
@@ -1270,8 +1284,8 @@
     "glow": 0,
     "hand": 0,
     "locked": 0,
-    "marks": 2,
-    "nav": true,
+    "marks": 0,
+    "nav": false,
     "nudge": 0,
     "out": 0,
     "revealword": 0,
@@ -1288,10 +1302,10 @@
     "vo_name_tota"
    ],
    "clips": [
-    "vo_ok_word_paudha",
-    "vo_ok_word_dhol",
-    "vo_ok_word_kaua",
-    "vo_ok_word_tota"
+    "vo_ok_paudha",
+    "vo_ok_dhol",
+    "vo_ok_kaua",
+    "vo_ok_tota"
    ],
    "state": {
     "attempts": 0,
@@ -1311,11 +1325,13 @@
   },
   "G5": {
    "entry": [
-    "vo_g5_prompt"
+    "vo_g5_prompt",
+    "vo_matra_o",
+    "vo_matra_au"
    ],
    "clips": [
-    "vo_ok_mark_au",
-    "vo_ok_mark_o"
+    "vo_ok_matra_o",
+    "vo_ok_matra_au"
    ],
    "state": {
     "attempts": 0,
@@ -1324,7 +1340,7 @@
     "glow": 0,
     "hand": 0,
     "locked": 0,
-    "marks": 2,
+    "marks": 0,
     "nav": true,
     "nudge": 0,
     "out": 0,
@@ -1361,16 +1377,16 @@
   "G7": {
    "entry": [
     "vo_g7_prompt",
-    "vo_name_daud",
     "vo_name_tota",
+    "vo_name_hathauda",
     "vo_name_ghoda",
-    "vo_name_hathauda"
+    "vo_name_daud"
    ],
    "clips": [
-    "vo_ok_picture_daud",
-    "vo_ok_picture_tota",
-    "vo_ok_picture_ghoda",
-    "vo_ok_picture_hathauda"
+    "vo_okp_daud",
+    "vo_okp_tota",
+    "vo_okp_ghoda",
+    "vo_okp_hathauda"
    ],
    "state": {
     "attempts": 0,
@@ -1390,7 +1406,6 @@
   },
   "G8": {
    "entry": [
-    "vo_g8_sent_b",
     "vo_sc_prompt"
    ],
    "clips": [
@@ -1416,7 +1431,6 @@
   },
   "G9": {
    "entry": [
-    "vo_g9_sent_b",
     "vo_sc_prompt"
    ],
    "clips": [
@@ -1442,7 +1456,6 @@
   },
   "G10": {
    "entry": [
-    "vo_g9_sent_b",
     "vo_sc_prompt"
    ],
    "clips": [
@@ -1469,7 +1482,17 @@
  },
  "errors": [],
  "console": [
-  "http://127.0.0.1:8915/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
-  "http://127.0.0.1:8915/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)"
+  "http://127.0.0.1:8925/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+  "http://127.0.0.1:8925/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_khilona.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentio",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_ghoda.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentiona",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_khilona.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentio",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_ghoda.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentiona",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_khilona.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentio",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_ghoda.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentiona",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_khilona.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentio",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_ghoda.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentiona",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_khilona.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentio",
+  "http://127.0.0.1:8925/HI02H11_L02_S04.html - The resource http://127.0.0.1:8925/assets/Images/obj_khilona.png?v=3aba101504c6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentio"
  ]
 }

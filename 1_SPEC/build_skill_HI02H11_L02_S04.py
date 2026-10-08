@@ -20,8 +20,9 @@ Every point where that rule had to be applied is listed in `../CHANGES.md`.
 Decisions taken with the developer on 2026-10-06:
   · the independent round (the SME's word-catch game, deck position 21) is NOT in this build yet;
   · File3's watch-only drag-and-drop demo screen (G4D) IS kept, with this lesson's words;
-  · Hint 3 shows the hand on screens 7-11 and NOT on 12-16 (the deck: "Pending confirmation, use
-    glow and lock without a hand") — the one switch is HINT3_HAND below.
+  · [2026-10-07] the HINT LOGIC is File3's, exactly: File3's Hint 1/2/3 lines, demonstrations,
+    the hand at Hint 3 on every test screen, options shuffled per visit, and a win after two misses
+    is silent. Only the words differ. (This replaced the deck's own ladder of 2026-10-06.)
 
 Run:  PYTHONUTF8=1 python 1_SPEC/build_skill_HI02H11_L02_S04.py   (from the folder root)
 """
@@ -51,10 +52,6 @@ COPY_AUDIO = ["vo_pt_tutorial", "vo_pt_guided", "vo_pt_practice",
 
 O, AU = "ो", "ौ"
 
-# The one switch for the open ruling (Ankita). The deck's notes on word-build, the picture sort and
-# the three sentences: "Pending confirmation, use glow and lock without a hand."
-HINT3_HAND = {"tap": True, "sort_words": True, "sort_marks": True,
-              "word_build": False, "sort_pictures": False, "sentence": False}
 
 # ---------------------------------------------------------------- content
 # key -> (word, emoji, matra). Every word carries exactly ONE target mark (ो or ौ). Other marks
@@ -306,176 +303,184 @@ def s_pair(sid, words, matra):
             "data": {"examples": ex, "no_heading": True}}
 
 
+# ---------------------------------------------------------------- test screens: File3's hint logic
+# [2026-10-07] The developer: "its hint logic will also be exact same" as File3 (HI02H11_L02_S02).
+# So every Hint 1 / 2 / 3 line, every demonstration, the hand, the shuffle and the silent late win
+# below are File3's build_skill_HI02H11_L02_S02.py, word for word, with ओ / औ in place of उ / ऊ.
+# (File3 says «छोटी उ» / «बड़ी ऊ» in the VO; ओ / औ have no such pair, so MATRA_NAME is the letter.)
+MATRA_NAME = dict(NAME)
+LETTER = dict(NAME)
+MATRA_VO = {m: "vo_matra_" + SLUG[m] for m in (O, AU)}
+LETTER_VO = {m: "vo_letter_" + SLUG[m] for m in (O, AU)}
+
+
 def s_tap(sid, words, target):
-    """Pages 7-9. The deck's ladder, word for word."""
+    """File3 s_tap: rung 1 one line, rung 2 reads the three words with their matras lit, rung 3
+    names the answer + hand + the other two lock."""
     m = matra_of(target)
-    M = NAME[m]
+    n = MATRA_NAME[m]
+    tag = SLUG[m]
     return {"id": sid, "phase": "guided", "eis": "symbolic", "type": "TRAIN_TAP",
-            "prompt_hi": "“%s” की मात्रा वाले शब्द पर टैप कीजिए।" % M,
+            "prompt_hi": "“%s” की मात्रा वाले शब्द पर टैप कीजिए।" % LETTER[m],
             "audio": {
-                "prompt": once("vo_tap_prompt_" + SLUG[m],
-                               "जिस डिब्बे में %s की मात्रा वाला शब्द है, उस डिब्बे पर टैप कीजिए।" % M),
-                "hint1": once("vo_tap_h1_" + SLUG[m],
-                              "फिर से पढ़िए। %s की मात्रा वाले शब्द पर टैप कीजिए।" % M),
-                "hint2": once("vo_tap_h2_" + SLUG[m], "%s की मात्रा वाले शब्द पर टैप कीजिए।" % M),
+                "prompt": once("vo_tap_prompt_" + tag,
+                               "जिस डिब्बे में %s की मात्रा वाला शब्द है, उस डिब्बे पर टैप कीजिए।" % n),
+                "hint1": once("vo_tap_h1_" + tag,
+                              "फिर से पढ़िए। जिस शब्द में %s की मात्रा आ रही है, उस पर टैप कीजिए।" % n),
+                "hint2": once("vo_tap_h2_" + tag,
+                              "जिस शब्द में %s की मात्रा है, उस पर टैप कीजिए।" % n),
                 "hint3": vo("vo_%s_h3" % sid.lower(),
-                            "%s शब्द में %s की मात्रा है। %s पर टैप कीजिए।" % (target, M, target)),
+                            "देखिए, %s में %s की मात्रा है। %s पर टैप कीजिए।" % (target, n, target)),
                 "correct": vo("vo_%s_correct" % sid.lower(),
-                              "शाबाश! %s शब्द में %s की मात्रा है।" % (target, M))},
-            "data": {"target": target, "matra": m, "shuffle": False,
-                     "h2_keep_marks": True, "hint3_hand": HINT3_HAND["tap"],
+                              "शाबाश! %s शब्द में %s की मात्रा है।" % (target, n))},
+            "data": {"target": target, "matra": m,
                      "coaches": [{"word": w, "correct": (w == target),
                                   "audio": name_clip(w), "matra": matra_of(w)} for w in words]}}
 
 
 def bins(with_matra=False):
-    """File3: the word round's coaches read «उ (ु)» - letter + its matra; the mark and picture
-    rounds show the bare letter (otherwise the label would give the mark round away)."""
-    return [{"key": m, "label": ("%s (%s)" % (NAME[m], m)) if with_matra else NAME[m], "matra": m}
-            for m in (O, AU)]
+    """File3: the word round's coaches read «उ (ु)»; the mark and picture rounds the bare letter.
+    Each carries the LETTER clip, which rung 2 reads out."""
+    return [{"key": m, "label": ("%s (%s)" % (LETTER[m], m)) if with_matra else LETTER[m],
+             "audio": LETTER_VO[m], "matra": m} for m in (O, AU)]
 
 
-def sort_card(word, kind):
+def sort_card(word, correct_audio):
     k = key_of(word)
-    m = matra_of(word)
-    M = NAME[m]
-    sh = " शब्द" if kind == "word" else ""      # the picture round drops «शब्द» (deck p.13)
-    s = slug_of(word)
-    return {"bin": m, "word": word, "img": pic(k), "emoji": OBJ[k][1], "audio": name_clip(word),
-            "hint3_audio": vo("vo_rev_%s_%s" % (kind, s),
-                              "%s%s में %s की मात्रा है। इसे %s वाले डिब्बे में डालिए।" % (word, sh, M, M)),
-            "correct_audio": vo("vo_ok_%s_%s" % (kind, s),
-                                "शाबाश! %s%s में %s की मात्रा है।" % (word, sh, M))}
+    return {"bin": matra_of(word), "word": word, "img": pic(k), "emoji": OBJ[k][1],
+            "audio": name_clip(word), "correct_audio": correct_audio}
+
+
+def sort_hints(card, tag, h2_fmt, h3_fmt):
+    """File3 sort_hints: rungs 2 and 3 are per card, both naming the card and its matra."""
+    w, m = card["word"], card["bin"]
+    s = slug_of(w)
+    card["hint2_audio"] = vo("vo_%s_h2_%s" % (tag, s), h2_fmt % (w, MATRA_NAME[m]))
+    card["hint3_audio"] = vo("vo_%s_h3_%s" % (tag, s), h3_fmt % (w, MATRA_NAME[m]))
+    return card
+
+
+def s_sort(sid, kind, bins_, cards, heading, prompt, hint1, hint2, single=False):
+    return {"id": sid, "phase": "guided", "eis": "enactive", "type": "TRAIN_SORT",
+            "prompt_hi": heading,
+            "audio": dict([("prompt", vo("vo_%s_prompt" % sid.lower(), prompt)), ("hint1", hint1)]
+                          + ([("hint2", hint2)] if hint2 else [])),
+            "data": {"kind": kind, "bins": bins_, "cards": cards, "single": single}}
 
 
 def s_demo(sid, words):
-    """File3's [r83] watch-only drag-and-drop page, kept (developer, 2026-10-06), with this
-    lesson's two anchor words: घोड़ा (page 3) and खिलौना (page 5)."""
-    cards = []
-    for w in words:
-        k = key_of(w)
-        m = matra_of(w)
-        cards.append({"bin": m, "word": w, "img": pic(k), "emoji": OBJ[k][1],
-                      "audio": name_clip(w),
-                      "correct_audio": vo("vo_g4d_" + slug_of(w),
-                                          "%s में %s की मात्रा है, इसलिए %s %s वाले डिब्बे में गया।"
-                                          % (w, NAME[m], w, NAME[m]))})
+    """File3's [r83] watch-only drag-and-drop page, with this lesson's anchor words."""
     return {"id": sid, "phase": "guided", "eis": "iconic", "type": "TRAIN_SORT",
             "prompt_hi": "देखिए, शब्द को सही डिब्बे में कैसे डालते हैं।",
             "audio": {"prompt": vo("vo_g4d_prompt",
                                    "देखिए, शब्द को उसकी मात्रा वाले डिब्बे में कैसे डालते हैं।"),
                       "outro": vo("vo_g4d_end", "अब आप भी ऐसे ही करके देखिए।")},
             "data": {"kind": "word", "bins": bins(True), "single": False, "demo": True,
-                     "shuffle": False, "cards": cards,
-                     "keep_train_next": True}}     # [File3 r103] page 10 keeps this train
+                     "keep_train_next": True,     # [File3 r103] the next page keeps this train
+                     "cards": [sort_card(w, vo("vo_g4d_" + slug_of(w),
+                                               "%s में %s की मात्रा है, इसलिए %s %s वाले डिब्बे में गया।"
+                                               % (w, NAME[matra_of(w)], w, NAME[matra_of(w)])))
+                               for w in words]}}
 
 
 def s_sort_words(sid, words):
-    """Page 10. Hint 2 reads ONLY the dropped word (no coach-label walk)."""
     p = "हर शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।"
-    return {"id": sid, "phase": "guided", "eis": "enactive", "type": "TRAIN_SORT",
-            "prompt_hi": p,
-            "audio": {"prompt": vo("vo_%s_prompt" % sid.lower(), p),
-                      "hint1": vo("vo_%s_h1" % sid.lower(),
-                                  "फिर से पढ़िए। इस शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।"),
-                      "hint2": vo("vo_%s_h2" % sid.lower(),
-                                  "इस शब्द को उसकी सही मात्रा वाले डिब्बे में डालिए।")},
-            "data": {"kind": "word", "bins": bins(True), "single": False, "shuffle": False,
-                     "h2_read_bins": False, "hint3_hand": HINT3_HAND["sort_words"],
-                     "cards": [sort_card(w, "word") for w in words]}}
+    h1 = vo("vo_%s_h1" % sid.lower(), "फिर से पढ़िए। शब्द में कौन-सी मात्रा है, देखिए और उसे उसी "
+                                      "मात्रा वाले डिब्बे में डालिए।")
+    cards = [sort_hints(sort_card(w, vo("vo_ok_" + slug_of(w), "शाबाश! %s शब्द में %s की मात्रा है।"
+                                        % (w, LETTER[matra_of(w)]))),
+                        sid.lower(),
+                        "%s में %s की मात्रा है। अब यही मात्रा ऊपर डिब्बों पर खोजिए और शब्द वहीं डालिए।",
+                        "%s को %s की मात्रा वाले डिब्बे में डालिए।")
+             for w in words]
+    return s_sort(sid, "word", bins(True), cards, p, p, h1, None)
 
 
 def s_sort_marks(sid):
-    """Page 11. The cards carry NO clip: «Do not announce the matra's name on initial pick-up»."""
-    p = "सही मात्रा को सही डिब्बे में डालिए।"
-    cards = []
-    for m in (AU, O):                     # the deck: "◌ौ and ◌ो, as in the attached screen"
-        M = NAME[m]
-        cards.append({"bin": m, "word": "◌" + m,
-                      "hint3_audio": vo("vo_rev_mark_" + SLUG[m],
-                                        "यह %s की मात्रा है। इसे %s वाले डिब्बे में डालिए।" % (M, M)),
-                      "correct_audio": vo("vo_ok_mark_" + SLUG[m], "शाबाश! यह %s की मात्रा है।" % M)})
-    return {"id": sid, "phase": "guided", "eis": "enactive", "type": "TRAIN_SORT",
-            "prompt_hi": p,
-            "audio": {"prompt": vo("vo_%s_prompt" % sid.lower(), p),
-                      "hint1": vo("vo_%s_h1" % sid.lower(), "फिर से देखिए। " + p),
-                      "hint2": vo("vo_%s_h2" % sid.lower(),
-                                  "मात्रा का आकार ध्यान से देखिए। इसे सही डिब्बे में डालिए।")},
-            "data": {"kind": "matra", "bins": bins(), "single": True, "shuffle": False,
-                     "h2_mark_only": True, "hint3_hand": HINT3_HAND["sort_marks"],
-                     "cards": cards}}
+    cards = [{"bin": m, "word": "◌" + m, "audio": MATRA_VO[m],
+              "hint3_audio": vo("vo_%s_h3_%s" % (sid.lower(), SLUG[m]),
+                                "%s की मात्रा को %s वाले डिब्बे में डालिए।" % (MATRA_NAME[m], LETTER[m])),
+              "correct_audio": vo("vo_ok_matra_" + SLUG[m], "शाबाश! यह %s की मात्रा है।" % LETTER[m])}
+             for m in (O, AU)]
+    return s_sort(sid, "matra", bins(), cards,
+                  "सही मात्रा को सही डिब्बे में डालिए।",
+                  "सही मात्रा को सही डिब्बे में डालिए।",
+                  vo("vo_%s_h1" % sid.lower(),
+                     "फिर से देखिए। मात्रा को ध्यान से देखिए और उसे सही डिब्बे में डालिए।"),
+                  # File3's wording, with its two bare combining marks (File3 flag F6)
+                  vo("vo_%s_h2" % sid.lower(),
+                     "ओ की मात्रा ो है और औ की मात्रा ौ है। अब मात्रा को सही डिब्बे में डालिए।"),
+                  single=True)
 
 
 def s_word_build(sid, slots, options):
-    """Page 12. slots = [(word, tail, head)]; options in the SME's order."""
-    out = []
+    """File3 s_word_build. slots = [(word, tail, head)]."""
+    out, opts = [], []
     for word, tail, head in slots:
         k = key_of(word)
         s = slug_of(word)
         out.append({"word": word, "head": head, "tail": tail, "matra": matra_of(word),
                     "img": pic(k), "emoji": OBJ[k][1], "name_audio": name_clip(word),
-                    "hint3_audio": vo("vo_rev_wb_" + s, "%s लगाने से %s बनता है। %s को खाली जगह में डालिए।"
-                                      % (head, word, head)),
+                    "hint3_audio": vo("vo_%s_h3_%s" % (sid.lower(), s),
+                                      "%s को %s वाले डिब्बे में डालिए। %s, %s… %s।"
+                                      % (head, word, head, tail, word)),
                     "correct_audio": vo("vo_ok_wb_" + s, "शाबाश! %s बन गया।" % word)})
-    opts = []
+    akslug = {"मो": "mo", "नौ": "nau", "ढो": "dho", "पौ": "pau", "कौ": "kau"}
     for o in options:
-        m = O if O in o else AU
-        opts.append({"akshar": o, "matra": m, "audio": vo("vo_ak_" + {
-            "मो": "mo", "नौ": "nau", "ढो": "dho", "पौ": "pau", "कौ": "kau"}[o], o)})
+        opts.append({"akshar": o, "audio": vo("vo_ak_" + akslug[o], o)})
     p = "चित्र देखकर सही अक्षर से शब्द पूरा कीजिए।"
     return {"id": sid, "phase": "guided", "eis": "enactive", "type": "WORD_BUILD",
             "prompt_hi": p,
             "audio": {"prompt": once("vo_wb_prompt", p),
-                      "hint1": vo("vo_%s_h1" % sid.lower(), "फिर से देखिए। " + p),
-                      "hint2": once("vo_wb_prompt", p),
-                      # fallback only - every slot carries its own Hint-3 line
+                      "hint1": vo("vo_%s_h1" % sid.lower(),
+                                  "फिर से देखिए। चित्र का नाम सोचिए और देखिए शब्द पूरा करने के लिए "
+                                  "कौन-सा अक्षर लगेगा।"),
+                      "hint2": vo("vo_%s_h2" % sid.lower(),
+                                  "नाम ध्यान से सुनिए। जिस शब्द की शुरुआत इस अक्षर से होती है, उसी "
+                                  "डिब्बे में इसे डालिए।"),
                       "hint3": vo("vo_%s_h3_any" % sid.lower(),
-                                  "जो अक्षर चमक रहा है, उसे खाली जगह में डालिए।")},
-            "data": {"slots": out, "options": opts, "shuffle": False, "h2_akshar": True,
-                     "hint3_hand": HINT3_HAND["word_build"]}}
+                                  "जो अक्षर चमक रहा है, उसे उसी डिब्बे में डालिए।")},
+            "data": {"slots": out, "options": opts}}
 
 
 def s_sort_pictures(sid, words):
-    """Page 13. Hint 1 plays the picture's name between its two lines; Hint 2 leaves the name
-    under the picture until it is placed."""
     p = "चित्र का नाम सुनिए और उसे सही मात्रा वाले डिब्बे में डालिए।"
-    return {"id": sid, "phase": "guided", "eis": "enactive", "type": "TRAIN_SORT",
-            "prompt_hi": p,
-            "audio": {"prompt": vo("vo_%s_prompt" % sid.lower(), p),
-                      "hint1": vo("vo_%s_h1" % sid.lower(), "फिर से सुनिए।"),
-                      "hint1_tail": vo("vo_%s_h1_tail" % sid.lower(),
-                                       "चित्र को सही मात्रा वाले डिब्बे में डालिए।"),
-                      "hint2": vo("vo_%s_h2" % sid.lower(),
-                                  "मात्रा देखिए। चित्र को सही मात्रा वाले डिब्बे में डालिए।")},
-            "data": {"kind": "picture", "bins": bins(), "single": False, "shuffle": False,
-                     "h2_keep_word": True, "hint3_hand": HINT3_HAND["sort_pictures"],
-                     "cards": [sort_card(w, "picture") for w in words]}}
+    h1 = vo("vo_%s_h1" % sid.lower(), "फिर से सुनिए। चित्र का नाम ध्यान से सुनिए और देखिए उसमें "
+                                      "कौन-सी मात्रा है।")
+    cards = [sort_hints(sort_card(w, vo("vo_okp_" + slug_of(w), "शाबाश! %s में %s की मात्रा है।"
+                                        % (w, LETTER[matra_of(w)]))),
+                        sid.lower(),
+                        "%s में %s की मात्रा है। अब इसे सही मात्रा वाली बोगी में डालिए।",
+                        "%s को %s की मात्रा वाली बोगी में डालिए।")
+             for w in words]
+    return s_sort(sid, "picture", bins(), cards, p, p, h1, None)
 
 
 SC_HEADING = "सही शब्द चुनकर वाक्य पूरा कीजिए।"
 
 
-def s_sentence(sid, scene, pre, post, answer, options, hint3):
-    """Pages 14-16. The prompt, then the sentence read with a pause at the blank."""
+def s_sentence(sid, scene, pre, post, answer, options, ask):
+    """File3 s_sentence: rung 1 asks this screen's own question of the picture, rung 2 tries every
+    option in the blank and glows the scene, rung 3 reads the right sentence + hand + lock."""
     o = []
     for w in options:
         k = key_of(w)
         o.append({"word": w, "img": pic(k), "emoji": OBJ[k][1], "audio": name_clip(w),
-                  "sentence_audio": vo("vo_%s_try_%s" % (sid.lower(), slug_of(w)), pre + w + post)})
-    p = "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।"
+                  "sentence_audio": vo("vo_%s_try_%s" % (sid.lower(), slug_of(w)),
+                                       (pre + w + post).replace("  ", " ").strip())})
+    sentence = (pre + answer + post).replace("  ", " ").strip()
     return {"id": sid, "phase": "guided", "eis": "symbolic", "type": "SENTENCE_COMPLETE",
             "prompt_hi": SC_HEADING,
             "audio": {
-                "prompt": once("vo_sc_prompt", p + " शब्द को खाली जगह में डालिए।"),
-                "sent_pre": vo("vo_%s_sent_a" % sid.lower(), pre.strip()),
-                "sent_post": once("vo_%s_sent_b" % sid.lower(), post.strip()),
-                "hint1": once("vo_sc_h1", "फिर से देखिए। " + p),
-                "hint2": once("vo_sc_h2", p),
-                "hint3": vo("vo_%s_h3" % sid.lower(), hint3),
-                "correct": vo("vo_%s_correct" % sid.lower(), "शाबाश! " + pre + answer + post)},
+                "prompt": once("vo_sc_prompt", "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।"),
+                "hint1": vo("vo_%s_h1" % sid.lower(),
+                            "फिर से पढ़िए। चित्र देखिए, %s? सही शब्द चुनकर वाक्य पूरा कीजिए।" % ask),
+                "hint2": once("vo_sc_h2", "जो वाक्य सही लग रहा है, वही शब्द चुनिए।"),
+                "hint3": vo("vo_%s_h3" % sid.lower(), "%s %s चुनिए।" % (sentence, answer)),
+                "correct": vo("vo_%s_correct" % sid.lower(), "शाबाश! " + sentence)},
             "data": {"scene_img": pic(scene), "scene_emoji": SCENE[scene],
-                     "sentence_pre": pre, "sentence_post": post, "answer": answer,
-                     "options": o, "shuffle": False, "hint3_hand": HINT3_HAND["sentence"],
+                     "sentence_pre": pre, "sentence_post": post,
+                     "answer": answer, "options": o,
                      "scene_glow": SCENE_GLOW.get(scene, [])}}
 
 
@@ -502,14 +507,11 @@ def build_slides():
                           ["मो", "नौ", "ढो", "पौ", "कौ"]))
     S.append(s_sort_pictures("G7", ["दौड़", "तोता", "घोड़ा", "हथौड़ा"]))
     S.append(s_sentence("G8", "scn_ped_kaua", "पेड़ पर एक ", " बैठा है।", "कौआ",
-                        ["कौआ", "घोड़ा", "मोर"],
-                        "चित्र में पेड़ पर एक कौआ बैठा है। कौआ को खाली जगह में डालिए।"))
+                        ["कौआ", "घोड़ा", "मोर"], "पेड़ पर कौन बैठा है"))
     S.append(s_sentence("G9", "scn_khel", "बच्चे के पास एक ", " है।", "खिलौना",
-                        ["खिलौना", "मोर", "ढोल"],
-                        "चित्र में बच्चे के पास एक खिलौना है। खिलौना को खाली जगह में डालिए।"))
+                        ["खिलौना", "मोर", "ढोल"], "बच्चे के पास क्या है"))
     S.append(s_sentence("G10", "scn_hathauda", "आदमी के हाथ में एक ", " है।", "हथौड़ा",
-                        ["ढोल", "हथौड़ा", "तोता"],
-                        "चित्र में आदमी के हाथ में एक हथौड़ा है। हथौड़ा शब्द को खाली जगह में डालिए।"))
+                        ["ढोल", "हथौड़ा", "तोता"], "आदमी के हाथ में क्या है"))
     # ---- the independent round (deck position 21) is not in this build — see the header ----
     # [File3 r105] the developer: the standard end-screen dialogue, as in File3 (was the deck's recap
     # «शाबाश! आज हमने सीखा, ओ और औ की मात्रा पहचानना, और मात्रा वाले शब्द पढ़ना।»). Its तुमने passes
@@ -537,6 +539,9 @@ def used_images(slides):
 def build_card(slides):
     vo("vo_landing", "हेलो दोस्त! मैं हूँ स्विफ्टी। आज हम मात्राओं के बारे में जानेंगे।")
     vo("vo_try_again", "एक बार फिर सुनिए।")
+    # the bare LETTER, which File3's rung 2 reads off the coach labels
+    for m in (O, AU):
+        vo(LETTER_VO[m], LETTER[m])
     counts = {}
     for s in slides:
         counts[s["phase"]] = counts.get(s["phase"], 0) + 1
@@ -568,15 +573,15 @@ def build_card(slides):
                  # [File3 r103/r104] where each transition's on-screen phrase starts inside its clip,
                  # and how long Swiftee takes to say it - the same kit clips as File3 (byte-identical),
                  # so File3's measurements; the builder adds the voiced stretches (title_voice_ms, r108)
-                 "title_cue_ms": {"tutorial": 4030, "guided": 3970, "practice": 1260},
-                 "title_dur_ms": {"tutorial": 1230, "guided": 1300, "practice": 850}},
+                 # [File3 r109] the recorded transition lines, File3's own measurement
+                 "title_cue_ms": {"tutorial": 3075, "guided": 3575, "practice": 925},
+                 "title_dur_ms": {"tutorial": 1150, "guided": 1325, "practice": 850}},
         # the deck's ladder: rung 1 at the 1st miss, 2 at the 2nd, 3 at the 3rd; a win after
         # Hint 3 is silent ("No additional VO is needed"), any earlier win is praised
         "scaffold_rules": {"nudge_timeout_ms": {"guided": 6000, "practice": 8000},
                            "max_attempts": 3, "hint_levels": 3, "hand_on_attempt": 3,
                            "hand_on_hint3": True, "lock_after_hint3": True,
-                           "reveal_on_attempt": None, "silent_on_late_correct": True,
-                           "silent_from_attempt": 3},
+                           "reveal_on_attempt": None, "silent_on_late_correct": True},
         "signals_expected": ["slide_entered", "slide_completed",
                              "train_tap_first_try", "matra_sort_item", "matra_sort_first_try",
                              "word_build_item", "word_build_first_try",
@@ -606,12 +611,8 @@ def guard_engine(src):
                       ("dressLandingTrain", "the painted landing train"),
                       ("TrainChrome", "the painted train chrome"),
                       ("_markMaskK", "the per-pixel ो/ौ highlight"),
-                      ("silent_from_attempt", "the deck's silent-after-Hint-3 rule"),
-                      ("hint3_hand === false", "the per-screen Hint-3 hand switch"),
-                      ("d.shuffle === false", "the SME's authored option order"),
-                      ("hint1_tail", "the picture round's Hint 1 with the name inside it"),
                       ("base_img_from", "the bud opening into the flower"),
-                      ("sent_pre", "the sentence read with a pause at the blank")):
+                      ("keep_train_next", "File3 r103: the demo hands its train to the sort page")):
         if need not in src:
             sys.exit("X  engine has no %s. Re-run 4_ENGINE/inject_train.py." % why)
     print("  OK  engine: %s  (4_ENGINE, File3's engine + the S04 additions)" % m.group(1))
@@ -723,13 +724,14 @@ def guard_audio(slides, card):
             for it in d.get(group, []) or []:
                 if not isinstance(it, dict):
                     continue
-                for k in ("audio", "correct_audio", "audio_line", "hint3_audio", "name_audio",
-                          "sentence_audio"):
+                for k in ("audio", "correct_audio", "audio_line", "hint2_audio", "hint3_audio",
+                          "name_audio", "sentence_audio"):
                     if it.get(k) and it[k] not in declared:
                         miss.append("%s %s.%s -> %s" % (s["id"], group, k, it[k]))
         if s["type"] in GESTURE and not d.get("demo"):
             per_ok = bool(items) and all(c.get("correct_audio") for c in items)
             per_h3 = bool(items) and all(c.get("hint3_audio") for c in items)
+            per_h2 = bool(items) and all(c.get("hint2_audio") for c in items)
             for rung in ("prompt", "hint1", "hint2", "hint3", "correct"):
                 if (s.get("audio") or {}).get(rung):
                     continue
@@ -737,9 +739,9 @@ def guard_audio(slides, card):
                     continue
                 if rung == "hint3" and per_h3:
                     continue
+                if rung == "hint2" and per_h2:
+                    continue
                 ladders.append("%s missing %s" % (s["id"], rung))
-            if "hint3_hand" not in d:
-                ladders.append("%s does not say whether Hint 3 shows the hand" % s["id"])
     if miss:
         sys.exit("X  undeclared audio ids:\n     " + "\n     ".join(miss))
     if ladders:

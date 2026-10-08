@@ -88,33 +88,11 @@
      started, not awaited), so nothing else can observe the widened set. Set
      scaffold_rules.hand_on_hint3 to false and [28f] applies exactly as before. */
   function withHand3(fn){
-    /* [S04] THE HAND IS ALSO DECIDED PER SCREEN. The S04 deck moves word-build, the picture sort
-       and the three sentences into GUIDED (where the hand is normally allowed) and then says, on
-       each of those five screens, "Pending confirmation, use glow and lock without a hand". So a
-       slide whose card says `hint3_hand:false` takes its own phase OUT of the set for this one
-       synchronous call - the glow, the lock and the line all still happen, only the hand does not. */
-    const _cur = (typeof CARD !== "undefined" && CARD.slides && CARD.slides[state.idx]) || null;
-    if(_cur && _cur.data && _cur.data.hint3_hand === false && typeof HAND_PHASES !== "undefined"){
-      const ph = _cur.phase, had = HAND_PHASES.has(ph);
-      if(had) HAND_PHASES.delete(ph);
-      try { fn(); } finally { if(had) HAND_PHASES.add(ph); }
-      return;
-    }
     if(!handOnHint3() || typeof HAND_PHASES === "undefined"){ fn(); return; }
     const had = HAND_PHASES.has("practice");
     if(!had) HAND_PHASES.add("practice");
     try { fn(); } finally { if(!had) HAND_PHASES.delete("practice"); }
   }
-
-  /* [S04] WHEN IS A WIN SILENT. File3 went quiet after TWO misses. The S04 deck writes the
-     silence only for the win AFTER HINT 3 ("No additional VO is needed because Hint 3 has already
-     explained the answer") and says a correct answer at any earlier stage is accepted as usual -
-     so the threshold is a card rule: `silent_from_attempt` misses (3 here), default File3's. */
-  const silentFrom = () => ((CARD.scaffold_rules && CARD.scaffold_rules.silent_from_attempt)
-                            || (maxTries() - 1));
-  /* [S04] the SME authors the option order on every S04 screen ("Keep the options in this order:
-     मोर, दौड़, चौक"). `shuffle:false` keeps it; anything else deals fresh as File3 does. */
-  const dealt = (d, list, key) => (d && d.shuffle === false) ? (list || []).slice() : shuffledFresh(list, key);
 
   /* Turn a bare clip ID into a playable path. `audioFor()` does this for ids that live in
      slide.audio, but several modules carry ids INSIDE slide.data (a MEET_PAIR example's line, a
@@ -540,6 +518,7 @@
       }
       /* no mask (tainted canvas, no metrics): fall through to File3's band path */
     }
+
 
     /* baseline, via an inline-block strut: its top edge sits on the baseline.
        [r14] The strut is 100 CSS px wide so it ALSO measures the local scale. Everything below
@@ -1315,7 +1294,7 @@
       const d = slide.data;
       newVoEpoch();          /* any chain still running from a previous mount is now stale */
       /* [r29] the carts are dealt in a fresh order every time; `correct` travels with the cart */
-      const coachList = dealt(d, d.coaches, slide.id + ":coaches");
+      const coachList = shuffledFresh(d.coaches, slide.id + ":coaches");
       const correctIdx = coachList.findIndex(c => c.correct);
       /* SME, on all three tap screens: "Train comes through animation from right to left. Train
          stops at the centre of the screen. **After the train stops**, the three coaches पुल, दूध,
@@ -1347,8 +1326,7 @@
         if(w) c.el.classList.add("is-read");
         say(clip(src.audio), ()=> setTimeout(()=>{
           c.el.classList.remove("is-read");
-          /* [S04] «Retain the matra highlights in all three words so the child can compare.» */
-          if(!d.h2_keep_marks) matraClear(w);
+          matraClear(w);
           next();
         }, 260));
       }), fin), done);
@@ -1384,7 +1362,7 @@
           if(!armed || hintBusy || state.locked || isPlaying) return;
           if(typeof sfxTap === "function") sfxTap();
           if(i === correctIdx){
-            const silent = state.attempts >= silentFrom();
+            const silent = state.attempts >= maxTries() - 1;
             train.correct(i);
             /* Mark the matra in the word they just chose. The SME's correct-answer VO is
                «शाबाश! पुल शब्द में छोटी उ की मात्रा है» — this is that sentence made visible,
@@ -1462,7 +1440,7 @@
          comparator is inconsistent, so the result is not a uniform permutation and V8's sort
          leaves short lists near their original order far more often than chance. On a four-card
          tray that is exactly the case that matters. */
-      const cards = dealt(d, d.cards, slide.id + ":cards");
+      const cards = shuffledFresh(d.cards, slide.id + ":cards");
       cards.forEach(c => {
         const t = document.createElement("div");
         t.className = "tr-card k-" + d.kind;
@@ -1528,55 +1506,31 @@
       function sortDemo(tile, done){
         hintHold(function(fin){
         const steps = [];
+        /* [r103] RUNG 2 READS EVERY OPTION STILL IN THE TRAY, one by one. Yasir, page 10: "all options
+           will be read aloud with matra highlighted"; page 13: "all options read aloud with its text,
+           don't highlight the matra in its name". */
+        const left = [...tray.querySelectorAll(".tr-card")].filter(t => !t.classList.contains("snapped"));
         if(d.kind === "word"){
-          /* "जो शब्द गलत डाला गया, उसे read out करें ... शब्द में उसकी मात्रा highlight/glow करें" */
-          const lbl = tile.querySelector(".tr-cardlbl");
-          steps.push((next)=>{
-            if(lbl) matraHLSoon(lbl, tile.dataset.bin, { glow:true, pulse:true });
-            say(clip(tile.dataset.audio), ()=> setTimeout(()=>{ matraClear(lbl); next(); }, 260));
-          });
-          /* [S04] «Read only the wrongly dropped word» - the deck drops the coach-label walk */
-          if(d.h2_read_bins !== false) steps.push.apply(steps, binReadSteps(false));
+          left.forEach(t => steps.push((next)=>{
+            const lbl = t.querySelector(".tr-cardlbl");
+            if(lbl) matraHLSoon(lbl, t.dataset.bin, { glow:true, pulse:true });
+            say(clip(t.dataset.audio), ()=> setTimeout(()=>{ matraClear(lbl); next(); }, 260));
+          }));
         } else if(d.kind === "picture"){
-          /* "चित्र के नीचे कुछ देर के लिए शब्द दिखाएँ और उसकी मात्रा highlight/glow करें"।
-             This is the one place the picture round shows its word, and it shows it for this
-             beat only - see flag F3. The round-3 note "the word should not be displayed at any
-             point" is superseded here by the later document, and nowhere else: the word is
-             removed again before the rung ends. */
-          steps.push((next)=>{
-            /* [S04] «Temporarily display its word underneath the picture … Keep this word support
-               visible for the next attempt» - so with `h2_keep_word` it stays until the card is
-               placed (settleInto takes it away), and a second Hint 2 does not stack another */
-            const keep = !!d.h2_keep_word;
-            const had = keep ? tile.querySelector(".tr-revealword") : null;
-            const w = had || document.createElement("span");
+          left.forEach(t => steps.push((next)=>{
+            const w = document.createElement("span");
             w.className = "tr-revealword ink-glyph";
-            w.textContent = tile.dataset.word || "";
-            if(!had) tile.appendChild(w);
-            /* [r65] the picture lifts to make room and the word sits INSIDE the card - it was
-               hanging off the bottom edge ("the name is getting out of that option box") */
-            tile.classList.add("tr-revealing");
+            w.textContent = t.dataset.word || "";
+            t.appendChild(w);
+            t.classList.add("tr-revealing");
             requestAnimationFrame(()=> w.classList.add("in"));
-            matraHLSoon(w, tile.dataset.bin, { glow:true, pulse:true });
-            say(clip(tile.dataset.audio), ()=> setTimeout(()=>{
-              if(keep){ tile.classList.add("tr-revealkeep"); next(); return; }
+            say(clip(t.dataset.audio), ()=> setTimeout(()=>{
               w.classList.remove("in");
-              tile.classList.remove("tr-revealing");
+              t.classList.remove("tr-revealing");
               setTimeout(()=> w.remove(), 340);
               next();
-            }, keep ? 200 : 900));
-          });
-        } else if(d.h2_mark_only){
-          /* [S04] «Slightly enlarge only the wrongly dropped matra card. Highlight its complete
-             matra strokes … Do not announce the matra's name.» The card returns to its size when
-             the line has been said (tile._h2undo, called by the drop handler). */
-          steps.push((next)=>{
-            const mk = tile.querySelector(".tr-matra");
-            tile.classList.add("tr-h2big");
-            if(mk) matraHLSoon(mk, tile.dataset.bin, { glow:true, pulse:true });
-            tile._h2undo = ()=>{ tile.classList.remove("tr-h2big"); if(mk) matraClear(mk); tile._h2undo = null; };
-            next();
-          });
+            }, 500));
+          }));
         } else {
           steps.push.apply(steps, binReadSteps(true));
         }
@@ -1632,18 +1586,6 @@
           const lbl = tile.querySelector(".tr-cardlbl");
           if(lbl) matraHLSoon(lbl, tile.dataset.bin, { glow:true });
         }
-        /* [S04] the mark round: «Highlight only the complete matra strokes in red» on placement */
-        if(d.kind === "matra"){
-          const mk = tile.querySelector(".tr-matra");
-          if(tile._h2undo) tile._h2undo();
-          if(mk && CARD.chip_strokes) matraHLSoon(mk, tile.dataset.bin, { glow:true });
-        }
-        /* [S04] «Remove temporary word support whenever its picture is correctly placed», and
-           Hint 3's glow / the other cards' wait end with the guided placement */
-        tile.querySelectorAll(".tr-revealword").forEach(w => w.remove());
-        tile.classList.remove("tr-revealing", "tr-revealkeep", "tr-glow", "tr-h2big");
-        if(tile._guided){ tile._guided = false;
-          [...tray.querySelectorAll(".tr-card.tr-wait")].forEach(t => t.classList.remove("tr-wait")); }
         placed++;
         train.correct(ci);
         sfxPopSoft();                      /* the DROP, distinct from the pick-up tap */
@@ -1672,7 +1614,7 @@
           if(d.bins[ci].key === tile.dataset.bin){
             /* SME: "Correct Answer on 3rd Attempt … No VO." Counted PER CARD, because on a sort
                screen each card carries its own attempt ladder. */
-            const quiet = (perCard.get(tile) || 0) >= silentFrom();
+            const quiet = (perCard.get(tile) || 0) >= maxTries() - 1;
             settleInto(tile, body, ci);
             const okvo = quiet ? null : (tile.dataset.okaudio || tile.dataset.audio);
             if(placed >= need){
@@ -1699,27 +1641,15 @@
             SwiftPAL.emit("answer_wrong", { slide_id: slide.id, attempts: state.attempts });
             const want = binIdx(tile.dataset.bin);
             if(n === 1){
-              /* [S04] picture round: «फिर से सुनिए।» → the picture's name → «चित्र को सही …» */
-              if(A(slide, "hint1_tail") && tile.dataset.audio){
-                hintHold((fin)=> sayAll([A(slide, "hint1"), clip(tile.dataset.audio),
-                                         A(slide, "hint1_tail")].filter(Boolean), fin));
-              } else {
-                say(A(slide, "hint1") || A(slide, "try_again"), ()=>{});
-              }
+              say(A(slide, "hint1") || A(slide, "try_again"), ()=>{});
             } else if(n === 2 && hintLevels() >= 3){
               state.hintUsed = true;
               SwiftPAL.emit("hint_shown", { slide_id: slide.id, level: 2 });
-              sortDemo(tile, ()=> hintHold((fin)=> say(clip(tile.dataset.h2) || A(slide, "hint2")
-                                      || A(slide, "hint") || A(slide, "try_again"),
-                                      ()=>{ if(tile._h2undo) tile._h2undo(); fin(); })));
+              sortDemo(tile, ()=> say(clip(tile.dataset.h2) || A(slide, "hint2")
+                                      || A(slide, "hint") || A(slide, "try_again"), ()=>{}));
             } else {
               state.hintUsed = true;
               SwiftPAL.emit("hint_shown", { slide_id: slide.id, level: 3 });
-              /* [S04] «Give the current card and its correct coach a soft glow … Temporarily
-                 disable other unfinished cards until this guided placement is complete» */
-              tile.classList.add("tr-glow"); tile._guided = true;
-              [...tray.querySelectorAll(".tr-card:not(.snapped)")].forEach(t => {
-                if(t !== tile) t.classList.add("tr-wait"); });
               lockToBin(tile, want);
               /* [r25] from the card the child is holding to the cart it belongs in */
               withHand3(()=> train.nudgeTo(want, tile, slide));
@@ -1741,8 +1671,6 @@
         (function step(){
           if(i >= tiles.length){ state.revealing = false; if(demo) runDemo(); return; }
           const t = tiles[i++]; t.classList.remove("tr-seq-hidden");
-          /* [S04] a mark card has no clip - «Do not announce the matra's name» - so it just appears */
-          if(!t.dataset.audio){ sfxPopSoft(); setTimeout(step, 320); return; }
           say(clip(t.dataset.audio),
               ()=> setTimeout(step, 160));
         })();
@@ -1951,14 +1879,11 @@
          word that carries a matra; that is what panel 3 is careful about. */
       /* [r18] hidden until the opening line has played — see step 2 */
       const p1 = document.createElement("div"); p1.className = "mb-panel mb-p1 mb-hidden";
-      /* [S04] SPLIT BY अक्षर, NOT BY CODE POINT. घड़ा is घ + ड + ़ + ा - a per-character split put
-         the nukta and the ा in spans of their own, where each grew a dotted circle. Grapheme
-         clusters keep ड़ा whole («Keep ड़ा together») and still give घ / ल a span of their own. */
+      /* [S04] SPLIT BY अक्षर, NOT BY CODE POINT: घड़ा is घ + ड + ़ + ा, and a per-character
+         split put the nukta and the ा in spans of their own, each with its own dotted circle. */
       const baseChars = clustersOf(d.base_word || "").map(ch =>
         '<span class="mb-c" data-ch="' + ch + '">' + ch + "</span>").join("");
-      /* [S04] `base_img_from`: the base picture is an ACTION - «खिलना», a bud opening into the
-         flower. Both pictures are stacked; the bud dissolves into the flower while «यह शब्द
-         देखिए, खिलना» plays. Settled state (capture, reduced motion) is the open flower. */
+      /* [S04] `base_img_from`: «खिलना» is an action - the bud dissolves into the flower */
       const basePicHTML = (d.base_img || d.base_emoji)
         ? (d.base_img_from
             ? '<span class="mb-bloom">' +
@@ -2004,8 +1929,6 @@
       const p3 = document.createElement("div"); p3.className = "mb-panel mb-p3 mb-hidden";
       p3.innerHTML = '<div class="mb-word"><span class="mb-result ink-glyph">' +
                        (d.result_word || "") + "</span></div>" +
-                     /* [S04] «Show: खि + लौ + ना = खिलौना» - the join, written out under the word */
-                     (d.cap_result ? '<div class="mb-capres">' + d.cap_result + "</div>" : "") +
                      '<div class="mb-pic">' +
                        imgOrEmoji(d.result_img, d.result_emoji, "mb-img", "mb-emoji") + "</div>";
       row.appendChild(p3);
@@ -2016,12 +1939,7 @@
       const slot   = p2.querySelector(".mb-slot");
       const sylEl  = p2.querySelector(".mb-syl");
       const resEl  = p3.querySelector(".mb-result");
-      const basePic = p1.querySelector(".mb-bloom");
-      /* [S04] «Highlight only the ो मात्रा … The dotted circle is a display aid» - for a mark
-         drawn above/right of its consonant the chip is painted navy and only the strokes are
-         lit (matraHL's mask path separates them from the ◌ exactly). ु/ू keep File3's chip. */
-      const strokeChip = !!CARD.chip_strokes && !_BELOW_MARKS.has(d.matra || "");   /* File3 look unless asked */
-      if(strokeChip) p2.classList.add("mb-strokes");
+      const basePic = p1.querySelector(".mb-bloom");          /* [S04] */
       const show   = (el)=>{ el.classList.remove("mb-hidden"); el.classList.remove("mb-in");
                              void el.offsetWidth; el.classList.add("mb-in"); };
 
@@ -2043,10 +1961,9 @@
         state.demoRunning = false;
         [p1, a1, p2, a2, p3].forEach(e => e.classList.remove("mb-hidden"));
         if(consEl) consEl.classList.add("lit");
-        if(basePic) basePic.classList.add("is-bloomed");
+        if(basePic) basePic.classList.add("is-bloomed");      /* [S04] */
         slot.innerHTML = chip;
         slot.classList.remove("mb-slot-wait"); slot.classList.add("mb-slot-in");
-        if(strokeChip) matraHLSoon(slot, d.matra, { glow:true });
         sylEl.textContent = d.syllable || "";
         matraHLSoon(sylEl, d.matra, { glow:true });
         matraHLSoon(resEl, d.matra, { glow:true });
@@ -2066,7 +1983,7 @@
            They were on screen from mount, so «आइए, देखें कि …» played over a screen with
            nothing left to reveal — the same fault as page 3, and why that line read as absent. */
         (next)=>{ show(p1); sfxPopSoft();
-                  /* [S04] «Briefly animate the bud opening into a flower» as the word is named */
+                  /* [S04] the bud opens into the flower as «खिलना» is named */
                   if(basePic) setTimeout(()=>{ if(myGen === _voGen) basePic.classList.add("is-bloomed"); }, 900);
                   setTimeout(()=> say(A(slide, "base"), ()=> setTimeout(next, 520)), 260); },
         // 3 · the consonant lights inside the base word ("Highlight प")
@@ -2093,10 +2010,8 @@
             /* ु and ू hang UNDER the consonant, so they arrive from below — the note's own
                words. A side entry is for the spacing matras the sibling teaches. */
             const down = (d.travel || "down") === "down";
-            /* [S04] ो / ौ sit ABOVE and to the RIGHT of the consonant, so they come down onto it
-               from above-right ("softly slide into its correct position around घ") */
-            const up = d.travel === "up";
-            fly.style.setProperty("--mb-fx", (down) ? "0px" : (up ? "70px"
+            const up = d.travel === "up";                       /* [S04] ो / ौ */
+            fly.style.setProperty("--mb-fx", down ? "0px" : (up ? "70px"
               : (RIGHT_SPACING_MATRAS.has(d.matra) ? "118px" : "-118px")));
             fly.style.setProperty("--mb-fy", down ? "96px" : (up ? "-90px" : "-38px"));
             fly.classList.add("mb-fly-go");
@@ -2105,7 +2020,6 @@
           setTimeout(()=>{                   // cross-fade: the slot fades up as the flier fades out
             slot.classList.remove("mb-slot-wait");
             slot.classList.add("mb-slot-in");
-            if(strokeChip) matraHLSoon(slot, d.matra, { glow:true, pulse:true });
             fly.classList.add("mb-fly-done");
             setTimeout(()=> fly.remove(), 300);
             say(A(slide, "matra_name"), ()=> setTimeout(next, 300));
@@ -2531,12 +2445,9 @@
       const row = document.createElement("div"); row.className = "mp-row";
       const els = pairs.map(p => {
         const el = document.createElement("div"); el.className = "mp-pair";
-        /* [S04] «Highlight only the matra strokes in red. Keep the dotted circle neutral.» */
-        const strokes = !!CARD.chip_strokes && !_BELOW_MARKS.has(p.matra || "");   /* File3 look unless asked */
         el.innerHTML = '<span class="mp-letter">' + p.letter + "</span>" +
                        '<span class="mp-arrow">\u2192</span>' +
-                       '<span class="mp-matra' + (strokes ? " mp-strokes" : "") + '">' +
-                         matraGlyph(p.matra) + "</span>";
+                       '<span class="mp-matra">' + matraGlyph(p.matra) + "</span>";
         row.appendChild(el);
         return el;
       });
@@ -2561,7 +2472,6 @@
           e.querySelectorAll(".mp-arrow, .mp-matra").forEach(x => x.classList.add("mp-in"));
           const mm = e.querySelector(".mp-matra");
           if(mm) mm.classList.add("mp-hl");
-          if(mm && mm.classList.contains("mp-strokes")) matraHLSoon(mm, pairs[k].matra, { glow:true });
         });
         setNavActive(true);
       };
@@ -2594,7 +2504,6 @@
             if(CARD.slides[state.idx] !== slide) return;   // navigated away mid-line
             if(!el.classList.contains("active")) return;   // a later pair already took the light
             m.classList.add("mp-hl");
-            if(m.classList.contains("mp-strokes")) matraHLSoon(m, p.matra, { glow:true, pulse:true });
           }, cue);
         }, 480);
       };
@@ -2906,12 +2815,11 @@
       tray.className = "tr-tray wb-tray";
       /* SME: "Below the train, show draggable options: पु · फू · सु" plus 1–2 distractors.
          Shuffled, so the answer is never the n-th card two runs running. */
-      dealt(d, d.options, slide.id + ":options").forEach(o => {      /* [r29] see the note on the sort tray */
+      shuffledFresh(d.options, slide.id + ":options").forEach(o => {      /* [r29] see the note on the sort tray */
         const t = document.createElement("div");
         t.className = "tr-card k-akshar";
         t.dataset.akshar = o.akshar;
         if(o.audio) t.dataset.audio = o.audio;
-        if(o.matra) t.dataset.matra = o.matra;
         t.innerHTML = '<span class="wb-akshar ink-glyph">' + o.akshar + "</span>";
         tray.appendChild(t);
       });
@@ -2922,13 +2830,6 @@
       setNavActive(false);
       let done = 0;
       const perCard = new Map();
-      /* [S04] WHO OWNS A MISS. «Keep a separate wrong-attempt counter for each correct अक्षर card
-         … A wrong drop of नौ or कौ also counts as an attempt. Track these errors against the
-         unfinished blank where the distractor was dropped. Switching between नौ and कौ must not
-         reset that blank's distractor counter.» So a letter that completes some coach counts
-         against itself; a letter that completes none counts against the blank it was dropped on. */
-      const completesAny = (tile)=> d.slots.some(s => tile.dataset.akshar + s.tail === s.word);
-      const wbKey = (tile, i)=> (d.h2_akshar && !completesAny(tile)) ? ("blank:" + i) : tile;
 
       /* RUNG 2, screen 6: "तीनों चित्रों के नाम एक-एक करके read out करें ... नाम बोलते समय वह
          चित्र glow करे और उसके डिब्बे की खाली जगह blink करे।" A coach whose blank is already
@@ -2981,16 +2882,11 @@
           const slot = d.slots[i];
           tile.style.transform = "";
           if(tile.dataset.akshar + slot.tail === slot.word){
-            /* silent if THIS letter or THIS blank has already been walked through Hint 3 */
-            const quiet = Math.max(perCard.get(tile) || 0, perCard.get("blank:" + i) || 0) >= silentFrom();
+            const quiet = (perCard.get(tile) || 0) >= maxTries() - 1;
             blank.classList.add("filled");
             blank.innerHTML = '<span class="ink-glyph wb-inakshar">' + tile.dataset.akshar + "</span>";
             /* the option is consumed — it belongs to exactly one coach */
             tile.classList.add("snapped", "wb-used");
-            tile.classList.remove("tr-glow", "wb-callout");
-            if(tile._guided){ tile._guided = false;
-              [...tray.querySelectorAll(".tr-wait")].forEach(t => t.classList.remove("tr-wait"));
-              [...host.querySelectorAll(".wb-pulse")].forEach(b => b.classList.remove("wb-pulse")); }
             closeGap(tile);                                /* [r96] its place folds away */
             /* SME: "Option snaps into the blank space. The complete word appears." The split form
                is replaced by the whole word a beat later so the child reads it as one word, with
@@ -3015,8 +2911,7 @@
               sayOpt(clip(okvo), ()=>{});
             }
           } else {
-            const key = wbKey(tile, i);
-            const n = (perCard.get(key) || 0) + 1; perCard.set(key, n);
+            const n = (perCard.get(tile) || 0) + 1; perCard.set(tile, n);
             state.attempts++;
             fbWrong();
             if(typeof setSwMood === "function") setSwMood("tryagain");
@@ -3033,23 +2928,8 @@
             } else if(n === 2 && hintLevels() >= 3){
               state.hintUsed = true;
               SwiftPAL.emit("hint_shown", { slide_id: slide.id, level: 2 });
-              if(d.h2_akshar){
-                /* [S04] «Read only the wrongly dropped अक्षर. Slightly enlarge that card and
-                   highlight its matra … After the VO finishes, return the card to its normal size» */
-                const ak = tile.querySelector(".wb-akshar");
-                hintHold((fin)=>{
-                  tile.classList.add("tr-h2big");
-                  if(ak && tile.dataset.matra) matraHLSoon(ak, tile.dataset.matra, { glow:true, pulse:true });
-                  sayAll([clip(tile.dataset.audio), A(slide, "hint2")].filter(Boolean), ()=>{
-                    tile.classList.remove("tr-h2big");
-                    if(ak) matraClear(ak);
-                    fin();
-                  });
-                });
-              } else {
-                wbDemo(()=> say(A(slide, "hint2") || A(slide, "hint") || A(slide, "try_again"),
-                                ()=>{}));
-              }
+              wbDemo(()=> say(A(slide, "hint2") || A(slide, "hint") || A(slide, "try_again"),
+                              ()=>{}));
             } else {
               state.hintUsed = true;
               SwiftPAL.emit("hint_shown", { slide_id: slide.id, level: 3 });
@@ -3062,14 +2942,7 @@
                  rung 3 with nothing but a glow.) */
               let want = d.slots.findIndex(s => tile.dataset.akshar + s.tail === s.word);
               let from = tile;
-              /* [S04] «After the third distractor error for a blank, reveal the correct अक्षर for
-                 that blank» - the blank it was dropped on, not the first empty one */
-              if(want < 0 && d.h2_akshar){
-                want = i;
-                const sl = d.slots[i];
-                from = [...tray.children].find(t => !t.classList.contains("snapped")
-                              && t.dataset.akshar + sl.tail === sl.word) || null;
-              } else if(want < 0){
+              if(want < 0){
                 want = firstEmpty();
                 const sl = want >= 0 ? d.slots[want] : null;
                 from = sl ? [...tray.children].find(t => !t.classList.contains("snapped")
@@ -3083,13 +2956,6 @@
                                            (want >= 0 ? bl : null)));
               if(bl && want >= 0) bl.classList.add("wb-pulse");
               if(from && from !== tile) from.classList.add("wb-callout");
-              /* [S04] «Give the correct अक्षर and its matching blank a soft glow. Temporarily lock
-                 all other options and destinations.» */
-              if(d.h2_akshar && from){
-                from.classList.add("tr-glow"); from._guided = true;
-                [...tray.children].forEach(t => { if(t !== from && !t.classList.contains("snapped"))
-                  t.classList.add("tr-wait"); });
-              }
               const sl3 = want >= 0 ? d.slots[want] : null;
               say(clip(sl3 && sl3.hint3_audio) || A(slide, "hint3") || A(slide, "hint2")
                   || A(slide, "hint") || A(slide, "try_again"), ()=>{});
@@ -3966,9 +3832,11 @@ function resolveGate(g){
      tenth of z into several screens' worth of arch sliding at the camera. Stopped here, the
      reaction plays at the place she actually passed through. */
   g.pin = true; g.fx = 0; g.chosenLane = G.lane;
-  G.cleared++;
   const chosen = g.words[G.lane];
-  G.pips.push(!!(chosen && chosen.ok));
+  /* [r101] Yasir: "for an incorrect answer don't switch to the next question - show the same question
+     again". Only a RIGHT answer finishes a question: it counts towards the level and fills a progress
+     dot. A wrong one costs a heart and its question comes back on the next pair of portals. */
+  if(chosen && chosen.ok){ G.cleared++; G.pips.push(true); }
   if(chosen && chosen.ok){
     G.right++; G.score += 100 + G.right*10;
     G.flashCol="rgba(120,255,190,.22)"; G.flash=0.35;
@@ -3985,6 +3853,7 @@ function resolveGate(g){
     sfxGate(false); sfxWrong(); sfxBonk(); VOICE.clear(); VOICE.say("wrong");
     VOICE.say("correct_is"); VOICE.say(g.words[g.okLane].id, rightWord); G.afterWrong = true;
     if(G.hearts<=0){ gameOver(); return; }
+    repeatQuestion(g);
   }
   hud();
   const L = LEVELS[G.level];
@@ -3995,6 +3864,21 @@ function resolveGate(g){
      level, and its word could slip in between the last "शाबाश" and "वाह! ..." */
   else if(G.cleared + G.gates.filter(x => !x.done).length < L.gates)
     spawnGate(Math.max(1.0, (G.gates.length?Math.max.apply(null,G.gates.map(x=>x.z)):0) + GATE_GAP));
+}
+
+/* [r101] the same question on the next pair of portals: the same two words, their sides dealt again
+   (so the child reads them rather than just switching lanes). The pair already waiting up the track
+   takes them; if there is none, one is made. Its word is spoken as it comes near, as for any pair. */
+function repeatQuestion(g){
+  const words = g.words.map(w => ({ t:w.t, id:w.id, ok:w.ok }));
+  if(Math.random() < 0.5) words.reverse();
+  let nx = G.gates.filter(x => !x.done).sort((a, b) => a.z - b.z)[0];
+  if(!nx){
+    spawnGate(Math.max(1.0, (G.gates.length ? Math.max.apply(null, G.gates.map(x => x.z)) : 0) + GATE_GAP));
+    nx = G.gates[G.gates.length - 1];
+  }
+  nx.words = words; nx.target = g.target; nx.okLane = words.findIndex(w => w.ok);
+  nx.spoken = false; nx.heard = false; nx.waitT = 0; nx.repeat = true;
 }
 
 /* gold, rising, slow to fade - the reward for getting through */
@@ -4048,10 +3932,12 @@ function update(dt){
      not been heard to the end by the time its pair is two-thirds of the way in, the world eases
      to a fifth of its speed - as it does under the level's intro - until it has (at most 7 s). */
   const fg = G.gates.find(x => !x.done);
-  let waitWord = false;
-  if(fg && !fg.heard && fg.z < 0.55){ fg.waitT = (fg.waitT || 0) + dt; waitWord = fg.waitT < 8; }
-  G.waitF = (G.waitF == null ? 1 : G.waitF);
-  G.waitF += ((waitWord ? 0.2 : 1) - G.waitF) * (1 - Math.exp(-dt*5));
+  /* [r102] NO SLOWING DOWN. Yasir: "after a mistake the character slows down for a fraction of a
+     second - we don't need it". It was this wait (above): the long wrong-answer feedback made the next
+     word late, and the run eased to a fifth of its speed until it had been heard. Since r101 that next
+     pair repeats the word the feedback has just said, so the run keeps its speed always. */
+  void fg;
+  G.waitF = 1;
   const v = G.speed * (G.hold ? 0.20 : 0.20 + 0.80*G.ramp) * dt * G.waitF;
   // gates
   for(const g of G.gates){
@@ -4066,7 +3952,7 @@ function update(dt){
        right word ("सही शब्द है पूजा"), and the new target followed it within 0.3 s - two words
        back to back, which is exactly what "it plays both words" sounds like. */
     if(!g.spoken && !g.done && g.z<=0.62 && G.gates.find(x => !x.done) === g &&
-       VOICE.quietFor() >= (G.afterWrong ? 1500 : 700) && !document.body.classList.contains("vo-lock")){
+       VOICE.quietFor() >= (G.afterWrong ? 600 : 700) && !document.body.classList.contains("vo-lock")){   /* [r102] 1500 -> 600: no slow-down to wait for it now */
       g.spoken = true; G.afterWrong = false;  /* after "सही शब्द है ..." a longer beat: a new word */
       /* [r77] Yasir: only the TARGET word is spoken - the one to catch - not both portals' */
       const tw = g.words.find(w => w.ok) || g.words[0];
@@ -5755,7 +5641,7 @@ if(document.fonts && document.fonts.load){
       /* SME: "Keep the options visually supported with pictures so the child can independently
          understand the word." Picture AND word on every card, exactly as the mockup draws them. */
       /* [r29] the answer was authored first on all four sentence screens */
-      dealt(d, d.options, slide.id + ":options").forEach(o => {
+      shuffledFresh(d.options, slide.id + ":options").forEach(o => {
         const b = document.createElement("button");
         b.type = "button";
         b.className = "sc-opt";
@@ -5840,7 +5726,7 @@ if(document.fonts && document.fonts.load){
 
       function land(b){
         /* "Correct Answer on 3rd Attempt … No additional VO required." */
-        const silent = tries >= silentFrom();
+        const silent = tries >= maxTries() - 1;
         state.locked = true;
         if(typeof stopNudge === "function") stopNudge();
         opts.forEach(x => { x.disabled = true; if(x !== b) x.classList.add("sc-fade"); });
@@ -5902,7 +5788,6 @@ if(document.fonts && document.fonts.load){
         } else {
           b.classList.add("sc-ghost", "sc-gone"); closeGap(b);   /* no flight (reduced motion): straight swap */
         }
-        blank.classList.remove("sc-blankglow");
         fbCorrect();
         if(typeof confettiCannon === "function") confettiCannon();
         if(typeof setSwMood === "function") setSwMood("celebrate");
@@ -5997,8 +5882,6 @@ if(document.fonts && document.fonts.load){
           sceneGlow(false);
           const right = opts.find(x => x.dataset.word === d.answer);
           opts.forEach(x => { if(x !== right){ x.disabled = true; x.classList.add("sc-locked"); } });
-          /* [S04] «Give the option and the sentence blank a soft glow» */
-          blank.classList.add("sc-blankglow");
           if(right){
             right.classList.add("sc-nudge");
             withHand3(()=>{ if(typeof handOnAnswer === "function") handOnAnswer(right, slide); });
@@ -6137,28 +6020,7 @@ if(document.fonts && document.fonts.load){
       });
       setTimeout(_settleIn, 2400);
       opts.forEach(b => b.addEventListener("pointerdown", _settleIn, { once:true }));
-      /* [S04] «Play the instruction and sentence VO before enabling interaction.» «Read 'पेड़ पर
-         एक…', pause at the blank, then say 'बैठा है।' Do not say the missing word.» Two clips with
-         the pause between them, the blank blinking through it; the cards stay locked until the
-         sentence has been read (state.revealing is what makeDraggable honours). */
-      const sa = A(slide, "sent_pre"), sb = A(slide, "sent_post");
-      if(sa || sb){
-        state.revealing = true; hintBusy = true;
-        let entryDone = false;
-        const freeUp = ()=>{ if(entryDone) return; entryDone = true; hintBusy = false; state.revealing = false; };
-        const myGen = _voGen;
-        say(A(slide, "prompt"), ()=> setTimeout(()=>{
-          if(myGen !== _voGen) return;
-          sayOpt(sa, ()=>{
-            blank.classList.remove("sc-ask"); void blank.offsetWidth; blank.classList.add("sc-ask");
-            setTimeout(()=>{ if(myGen !== _voGen) return;
-              sayOpt(sb, ()=>{ blank.classList.remove("sc-ask"); freeUp(); }); }, 900);
-          });
-        }, 350));
-        setTimeout(()=>{ if(myGen === _voGen) freeUp(); }, 20000);
-      } else {
-        say(A(slide, "prompt"), ()=>{});
-      }
+      say(A(slide, "prompt"), ()=>{});
     }
   };
 
@@ -6556,7 +6418,7 @@ if(document.fonts && document.fonts.load){
       (function next(){ if(i >= files.length) return;
         fetch(D + files[i++]).then(r => r.blob()).catch(()=>{}).then(()=> setTimeout(next, 200)); })();
     };
-    /* [S04] only a lesson that HAS the runner warms its files - otherwise 14 requests 404 */
+    /* [S04] no runner in this lesson - do not fetch its files (they would 404) */
     const hasRunner = ()=>{ try{ return CARD.slides.some(s => s.type === "MINI_GAME"); }catch(e){ return false; } };
     const arm = ()=> setTimeout(()=>{ if(hasRunner()) start(); }, 10000);
     if(document.readyState === "complete") arm(); else window.addEventListener("load", arm);
@@ -6584,6 +6446,14 @@ if(document.fonts && document.fonts.load){
     const make = ()=>{
       if(el) return el;
       el = new Audio(src); el.loop = true; el.preload = "auto"; el.volume = 0;
+      /* [r110] Yasir: "once the bg music completes, play it again - it should play continuously in a
+         loop". `loop` is set, but a browser can still let a long streamed track finish (its seek back
+         to the start fails on a stream it cannot seek), and then the music simply stops. So if it
+         ever ends, it starts again from the top. */
+      el.addEventListener("ended", ()=>{
+        try{ el.currentTime = 0; }catch(e){}
+        if(started) el.play().catch(()=>{});
+      });
       return el;
     };
     const tryStart = ()=>{
@@ -6597,9 +6467,19 @@ if(document.fonts && document.fonts.load){
       try{ const s = CARD.slides[state.idx]; return !!(s && s.type === "MINI_GAME" &&
                     document.body && !document.body.classList.contains("is-start")); }catch(e){ return false; }
     };
-    let last = performance.now();
+    let last = performance.now(), lastPos = -1, movedAt = performance.now();
     const tick = ()=>{
       const now = performance.now(), dt = Math.min(0.1, (now - last) / 1000); last = now;
+      /* [r110] ...and if it should be playing but has stopped moving for 2 s (stuck at its end, or
+         stalled), it is started again - from the top when it is at the end */
+      if(el && started && !el.paused && !onGame()){
+        if(el.currentTime !== lastPos){ lastPos = el.currentTime; movedAt = now; }
+        else if(now - movedAt > 2000){
+          movedAt = now;
+          try{ if(el.ended || (el.duration && el.duration - el.currentTime < 1.5)) el.currentTime = 0; }catch(e){}
+          el.play().catch(()=>{});
+        }
+      } else movedAt = now;
       if(el && started){
         let want = BASE;
         if(sfxUntil > now || live.size) want = SFX;

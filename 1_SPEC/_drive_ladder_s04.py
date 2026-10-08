@@ -8,7 +8,7 @@ RIGHT FIRST TIME, which is the path a hint round is most likely to break.
 
     PYTHONUTF8=1 python 1_SPEC/_drive_ladder_s04.py <url> <out.json> <shots_dir>
 """
-import json, sys, time
+import json, os, sys, time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
@@ -161,7 +161,7 @@ def run_ladder(i, s, shots=True):
         tileA = lambda a: d.execute_script("""return [...document.querySelectorAll('.wb-tray .tr-card')]
               .find(c=>c.dataset.akshar===arguments[0]);""", a)
         blank = lambda: find(".wb-blank")[0]
-        for k, a in enumerate([dis[0], dis[1], dis[0]]):
+        for k, a in enumerate([dis[0], dis[1 % len(dis)], dis[0]]):
             step(rec, "miss%d(%s on _%s)" % (k + 1, a, sl0["tail"]), lambda a=a: drag(tileA(a), blank()))
             if shots and k == 1: shot(sid + "_h2")
             if shots and k == 2: shot(sid + "_h3")
@@ -215,6 +215,7 @@ def run_first_try(i, s):
 
 
 for i, s in enumerate(slides):
+    if os.environ.get('ONLY') and s['type'] != os.environ['ONLY']: continue
     try:
         r = run_ladder(i, s)
         if r is not None:
@@ -223,6 +224,7 @@ for i, s in enumerate(slides):
     except Exception as e:
         rep["errors"].append("%s ladder: %r" % (s["id"], e)); print(s["id"], "ERR", e)
 for i, s in enumerate(slides):
+    if os.environ.get('ONLY') and s['type'] != os.environ['ONLY']: continue
     try:
         r = run_first_try(i, s)
         if r is not None:
