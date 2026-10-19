@@ -46,7 +46,9 @@ print("   images : %d/%d present" % (len(image) - len(miss_i), len(image)))
 
 # ---- 2. every slide speaks its prompt, and every referenced id is declared
 print("\n2. WIRING")
-silent = [s["id"] for s in card["slides"] if not (s.get("audio") or {}).get("prompt")]
+# [File3 r134] page 1 (MATRA_PAIRS) has no opening line - it moved to the cover; its pairs speak
+silent = [s["id"] for s in card["slides"] if not (s.get("audio") or {}).get("prompt")
+          and not (s["type"] == "MATRA_PAIRS" and all(p.get("audio") for p in s["data"].get("pairs", [])))]
 if silent:
     FAIL.append("slides with no spoken prompt: %s" % silent)
 

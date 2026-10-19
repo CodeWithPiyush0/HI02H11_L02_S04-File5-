@@ -237,3 +237,93 @@ basket, a wrong word ringed red and tossed out, 5 ओ words → Swifty's cheer �
 celebration; 0 errors. The same script on File2's own build gives the same clip sequence (including
 the intro being heard three times at the start — File2's own behaviour). `_verify_assets.py`:
 `0 FAIL   0 WARN`. Screens: `5_SCREENSHOTS/tokri/`.
+
+## Round 7 (2026-10-16) — synced with File3's latest commits (c6c5d98 … 992e684, its r111–r138)
+
+The developer: "make all the changes that are pushed in this repo … page placement, logic, layout of
+pages, sfx etc". Source: `github.com/CodeWithPiyush0/HI02H11_L02_S02_DEV_HANDOFF` at `992e684`.
+
+**Engine** — `4_ENGINE/train_modules.js`, `train_styles.css`, `lesson_template.html`, `inject_train.py`
+are File3's `992e684` files plus ONLY this lesson's additions, re-applied: the ो/ौ stroke highlight
+(`_markMaskK`), the अक्षर-safe split (घड़ा), bud → flower (`base_img_from`), the picture version stamp,
+the «मात्रा टोकरी» injection + its `__slideCleanup` hook, MTG2A04's confetti, and the runner warm-up
+guard (no runner here). Everything else File3 changed comes with it: the cover's title pop + bell, the
+loading screen that waits for the cover's own files, sound effects played from memory, «only the next
+button pulses» (r138), a success sound with every correct drop (r138), spare tray cards fading away,
+phones turned to landscape and the transition fitted to them (r117).
+
+**Pages, as File3 now has them**
+- **Cover** — says «नमस्ते दोस्त! मैं हूँ स्विफ्टी। आज हम ओ और औ की मात्रा वाले शब्द पढ़ेंगे।»; page 1 has no
+  opening line any more (r134). Coach labels «ओ → ◌ो» / «औ → ◌ौ».
+- **Page 1** — letter, arrow and matra each arrive on their own words of «यह है ओ। इसकी मात्रा देखिए।» (r121).
+  This line pauses in different places from File3's, so the cues are placed inside the clip's own
+  phrases (`_word_ms` in the builder).
+- **Pages 2 / 4** — no equation panel (r121): «घड़ा» + picture on the left, the arrow, then the right-hand
+  word is built with the voice — घ, the ो flies in and makes घो, ड़ा joins, then the horse (r131); «घ। घो।
+  घोड़ा।» lights the right-hand word (r133/r134). Adapted for ओ/औ: the flying mark is masked to the mark's
+  own strokes and comes from above-right (File3's cut at the baseline only works for ु/ू, which hang
+  below); खिलौना is built ल → लौ → खि joins on «खि» → ना joins on «ना» → the toy; the bud still opens.
+- **Pages 3 / 5** — picture, the word centred under it, the yellow mic to its right (r134–r138); the line
+  is now «मोर, इसमें म पर ओ की मात्रा लगी है। बोलकर देखिए।»; the mic appears when it ends, «listens» for 3 s
+  on a tap, and after 7 s untapped plays File3's human «इस बटन पर टैप करिए।» (`vo_mic_nudge`, copied).
+- **Order** (r127/r131/r134): G5 demo, G5, G1, G3, G2, G4, word build, picture sort, sentences, game.
+- **G5 demo** replaces the word demo (r131): coaches ◌ो / ◌ौ, cards ओ / औ carried by the hand, «ओ की मात्रा
+  इस डिब्बे पर है, इसलिए ओ इस डिब्बे में गया।», heading «देखिए, अक्षर को उसकी मात्रा वाले डिब्बे में कैसे डालते
+  हैं।»; it hands its train to G5. (`vo_g4d_prompt/_ghoda/_khilona` removed.)
+- **Word sort (G4)** — plates read «ओ» / «औ», no matra (r131); its Hint 2 stops after «… में ओ की मात्रा
+  है।» (r134; two clips trimmed from their own Leda takes, two re-recorded).
+- **Sentences** — a correct answer reads the whole sentence with it glowing (r121; here every praise line
+  already contains the sentence, so it is read once); the last sentence screen has words only (r131 —
+  File3 has four sentence screens and gives the last two text-only; this lesson has three, so the last).
+- **Pictures** are WebP, converted by `1_SPEC/normalize_assets.py` (File3 r126, run by the build):
+  16 card pictures, the loader and the rest pose; the cover's train pictures are preloaded first.
+- **vercel.json** — File3's r126 caching: pages, card and pictures re-checked, versioned audio immutable.
+- Not taken: everything in File3 about its runner game (r112–r120, r124–r125, r130) — this lesson's
+  independent round is the «मात्रा टोकरी» (round 6), which was re-checked end to end on the new engine.
+
+**VO** — new (Leda): `vo_landing`, `vo_meet_mor/koyal/kaua/paudha`, `vo_g5d_prompt/_o/_au`,
+`vo_g4_h2_dhol/paudha`; trimmed: `vo_g4_h2_kaua/tota`; File3's recordings of identical lines copied
+(`vo_cel_prompt`, `vo_g4_h1`, `vo_g4_prompt`, `vo_g4d_end`, `vo_g5_h1`, `vo_sc_h2`, `vo_sc_prompt`,
+`vo_try_again`, `vo_mic_nudge`). Every new or cut clip checked by transcription.
+
+**Proof** — both lessons driven by the same scripts: hint ladders on every test screen match File3's
+step for step (the only differences are snapshot timing on the sentence screens, and the word build's
+second distractor, which File3's content does not have — the engine code is identical); pages 1–5, the
+G5 demo and the cover recorded with real audio side by side with File3; «मात्रा टोकरी» played to the
+celebration; `_verify_assets.py` 0 FAIL 0 WARN; `_verify_vo_overlap.py` 0 clashes; no console errors.
+
+## Round 8 (2026-10-16) — second pass against File3 (992e684)
+
+The developer: "there are still few things that does not match with the repo, and few elements got
+misalign". Both builds compared page by page: settled geometry of every element, the card's settings
+slide by slide, hint ladders, post-drop states and 2x close-ups.
+
+- **Phases / gate placement** — File3's word build, picture sort and sentence pages are PRACTICE pages
+  (P1–P6); here they were still guided. They are practice now (so the practice nudge timing and the
+  practice signal apply, as in File3), and the third gate «अब आपकी बारी!» is pinned before the game
+  (`gate.at.round3 = MT1`, File3 pins it before its MG1), so from the word sort the lesson goes
+  straight on to the word build, exactly like File3.
+- **Card settings copied from File3** — `part_label` «भाग 1», `phase_transition_title`, and the
+  `intro_letter_tap` signal.
+- **Old S04 styles removed** — a block left from rounds 2–4 (hint-card growth, glows, chip colours,
+  `.tr-matra` navy) still overrode File3's styles, e.g. the colour of the letter/matra cards on the G5
+  demo and G5. Only the bud → flower and the ो/ौ highlight rules remain.
+- **ो / ौ highlight edge** — a hairline of navy showed round the orange mark (the overlay and the word
+  anti-alias along the same edge). A thin stroke in the highlight colour, kept inside the mark's mask,
+  makes it as clean as File3's ु / ू.
+
+Checked after: the card matches File3 field for field except the game slot (tokri) and the content;
+hint ladders unchanged; the tokri game still plays through the gate to the celebration;
+`_verify_assets.py` 0 FAIL 0 WARN.
+
+## Round 9 (2026-10-16) — page 1's matra box, pages 3 / 5 picture–word spacing
+
+1. **Page 1** — the developer: "the matra is getting out of the box". The card's -.13em lift was File3's
+   measurement for «◌ु», whose ink hangs low; «◌ो» / «◌ौ» rise high, so the hook stuck out of the top.
+   The matra's ink is now measured and centred in its card: 26-28 px clear above and below
+   (File3's ◌ु / ◌ू: 26-29 px).
+2. **Pages 3 / 5** — "the word and image in few scenes overlapping". Measured on both builds: the
+   picture box (220 px) and the word's headline sit at exactly the same place, 20-22 px apart in File3;
+   ो / ौ rise ~27 px above the headline, so कौआ / पौधा cut 4-7 px into the picture. The word row now
+   moves down by what the word rises above a bare consonant (the picture does not move): 22 px from the
+   picture to the top of every word, as File3. Sizes unchanged (picture 220 px, word 96 px).

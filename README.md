@@ -37,7 +37,7 @@ Deploy the repo root as-is (framework preset **Other**, no build command, no out
 
 ```bash
 PYTHONUTF8=1 python 4_ENGINE/inject_train.py           # only after editing 4_ENGINE/train_*.{js,css}
-PYTHONUTF8=1 python 1_SPEC/build_skill_HI02H11_L02_S04.py
+PYTHONUTF8=1 python 1_SPEC/build_skill_HI02H11_L02_S04.py   # converts new pictures to WebP first
 ```
 
 New or changed VO (the builder deletes a clip whose text changed; `gen_tts` records only missing ids):
@@ -55,5 +55,5 @@ Checks: `cd 3_BUILD && PYTHONUTF8=1 python ../1_SPEC/_verify_assets.py` ·
 ## Open items
 
 - **Independent round:** «मात्रा टोकरी» (File2's word-catch game) is built after page 16; see `CHANGES.md` Round 6.
-- **Hint logic** is File3's current ladder (hand at Hint 3 on every test screen); re-sync `4_ENGINE/` if File3 changes again.
+- **File3 sync:** engine, page order and screens match File3 at `992e684` (`CHANGES.md` Round 7); re-sync `4_ENGINE/` if File3 changes again.
 - **Size:** `3_BUILD` is not optimised (raw-WAV audio). Re-encode to Opus on a copy before delivery.

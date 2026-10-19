@@ -158,7 +158,7 @@ def emoji_of(word):
 
 
 def pic(key):
-    if key and os.path.isfile(os.path.join(IMG_DIR, key + ".png")):
+    if key and os.path.isfile(os.path.join(IMG_DIR, key + ".webp")):   # [File3 r126] every picture is WebP
         return key
     if key and key not in PENDING_ART:
         PENDING_ART.append(key)
@@ -225,29 +225,132 @@ def _sound_cues_ms(audio_id, n):
     return [int(r * 0.01 * 1000) for r in runs]
 
 
+def _voice_runs_ms(audio_id, quiet_s=0.30):
+    """[File3 r121] Where each spoken PHRASE in a clip starts, in ms - the runs of sound between
+    pauses (300 ms closes a phrase). Returns [] if the clip is not readable."""
+    path = os.path.join(AUD_DIR, audio_id + ".ogg")
+    try:
+        with contextlib.closing(wave.open(path)) as w:
+            if w.getsampwidth() != 2 or w.getnchannels() != 1:
+                return []
+            sr = float(w.getframerate())
+            a = array.array("h"); a.frombytes(w.readframes(w.getnframes()))
+    except Exception:
+        return []
+    if not len(a):
+        return []
+    hop  = max(1, int(sr * 0.01))
+    peak = max(1, max(abs(v) for v in a))
+    loud = [max(abs(v) for v in a[i:i + hop]) > peak * 0.10
+            for i in range(0, len(a) - hop, hop)]
+    runs, i, minq = [], 0, int(quiet_s / 0.01)
+    while i < len(loud):
+        if loud[i]:
+            j, q = i, 0
+            while j < len(loud) and q < minq:
+                j += 1
+                q = 0 if (j < len(loud) and loud[j]) else q + 1
+            runs.append(int(i * 10))
+            i = j
+        else:
+            i += 1
+    return runs
+
+
+def _voice_segs_ms(audio_id, quiet_s=0.30):
+    """[S04] the same reading as `_voice_runs_ms`, with each phrase's END as well: [(start, end)]."""
+    path = os.path.join(AUD_DIR, audio_id + ".ogg")
+    try:
+        with contextlib.closing(wave.open(path)) as w:
+            if w.getsampwidth() != 2 or w.getnchannels() != 1:
+                return []
+            sr = float(w.getframerate())
+            a = array.array("h"); a.frombytes(w.readframes(w.getnframes()))
+    except Exception:
+        return []
+    if not len(a):
+        return []
+    hop  = max(1, int(sr * 0.01))
+    peak = max(1, max(abs(v) for v in a))
+    loud = [max(abs(v) for v in a[i:i + hop]) > peak * 0.10
+            for i in range(0, len(a) - hop, hop)]
+    segs, i, minq = [], 0, int(quiet_s / 0.01)
+    while i < len(loud):
+        if loud[i]:
+            j, q, last = i, 0, i
+            while j < len(loud) and q < minq:
+                j += 1
+                if j < len(loud) and loud[j]:
+                    q, last = 0, j
+                else:
+                    q += 1
+            segs.append((int(i * 10), int((last + 1) * 10)))
+            i = j
+        else:
+            i += 1
+    return segs
+
+
+def _word_ms(audio_id, line, word, fallback=1300):
+    """[S04] When `word` is spoken inside `line`'s clip, in ms. These lines do not pause where
+    File3's do («यह है ओ।» is one breath, File3's «यह है» · «उ» two), so a fixed phrase index cannot
+    carry over. The line is cut at its punctuation; when the clip reads as the same number of
+    phrases, the word is placed inside ITS phrase, by its share of that phrase's letters. Otherwise
+    the whole-clip estimate (`_matra_cue_ms`)."""
+    parts = [x.strip() for x in re.split(r"[,।!?]", line) if x.strip()]
+    for q in (0.30, 0.18):
+        segs = _voice_segs_ms(audio_id, q)
+        if segs and len(segs) == len(parts):
+            for (t0, t1), ph in zip(segs, parts):
+                k = ph.find(word)
+                if k >= 0:
+                    n = len(ph.replace(" ", ""))
+                    return int(t0 + (t1 - t0) * len(ph[:k].replace(" ", "")) / float(max(1, n)))
+            break
+    return _matra_cue_ms(audio_id, line, word, fallback)
+
+
+def _join_ms(audio_id, line, word):
+    """[S04] «अब खि, लौ और ना को जोड़ने पर, …» is read as one short phrase per piece («अब» · «खि» ·
+    «लौ» · «और ना» · …), more pauses than the line has commas. When the clip's short-pause phrases
+    are as many as the line's words-before-«को»-plus-the-rest, the piece is the phrase that holds
+    it; otherwise `_word_ms`."""
+    runs = _voice_runs_ms(audio_id, 0.18)
+    pieces = ["अब", "खि", "लौ", "और ना", "को जोड़ने पर", "खिलौना बनता है"]
+    if line.startswith("अब खि, लौ और ना") and len(runs) == len(pieces):
+        i = [k for k, p in enumerate(pieces) if word in p.split()][0]
+        return runs[i] + (250 if pieces[i].split()[0] != word else 0)
+    return _word_ms(audio_id, line, word, 300)
+
+
 # ---------------------------------------------------------------- screens
 def s_intro(sid):
     """Page 2 (deck slide 4) — «ओ → ◌ो», «औ → ◌ौ», one pair at a time (File3's MATRA_PAIRS).
     The S04 note: "Keep the heading: «आज हम ओ और औ की मात्रा वाले शब्द पढ़ेंगे।»" — so unlike
     File3 (whose note asked for it to go) the heading band stays."""
-    p = "आज हम ओ और औ की मात्रा वाले शब्द पढ़ेंगे।"
     pairs = []
     for m in (O, AU):
         line = "यह है %s। इसकी मात्रा देखिए।" % NAME[m]
         vid = vo("vo_pair_" + SLUG[m], line)
-        pairs.append({"letter": NAME[m], "matra": m, "audio": vid,
-                      "cue_ms": _matra_cue_ms(vid, line, "इसकी")})
+        cue = _matra_cue_ms(vid, line, "इसकी")
+        # [File3 r121] each part arrives ON ITS WORDS: the letter on «ओ», the arrow on «इसकी मात्रा»,
+        # the matra on «देखिए» - placed inside the clip's own phrases (see _word_ms)
+        pairs.append({"letter": NAME[m], "matra": m, "audio": vid, "cue_ms": cue,
+                      "letter_ms": _word_ms(vid, AUDIO_TEXT[vid], NAME[m], 900),
+                      "arrow_ms": _word_ms(vid, AUDIO_TEXT[vid], "इसकी", cue),
+                      "matra_ms": _word_ms(vid, AUDIO_TEXT[vid], "देखिए", cue + 1100)})
     return {"id": sid, "phase": "tutorial", "eis": "enactive", "type": "MATRA_PAIRS",
             # NO HEADING, exactly as File3's page 2 (the developer: screens identical to File3)
             "prompt_hi": "",
-            "audio": {"prompt": vo("vo_%s_prompt" % sid.lower(), p)},
+            # [File3 r134] no opening line here any more - it moved to the cover (vo_landing)
+            "audio": {},
             "data": {"pairs": pairs, "auto": True, "no_heading": True,
                      "phonemes": {m: vo("vo_matra_" + SLUG[m], "%s की मात्रा" % NAME[m])
                                   for m in (O, AU)}}}
 
 
 def s_build(sid, base_word, consonant, matra, syllable, result_word, result_line, join_word,
-            sounds, cap_result, base_img_from=None):
+            sounds, cap_result, base_img_from=None, tail_word=None, pre_word=None):
     """Pages 3 / 5 — base word -> consonant + mark -> the new word (File3's MATRA_BUILD).
     VO is the deck's, word for word (em-dash -> comma, see _tts_safe)."""
     M = NAME[matra]
@@ -264,6 +367,8 @@ def s_build(sid, base_word, consonant, matra, syllable, result_word, result_line
         "sounds": vo("vo_sounds_" + g, sounds),
     }
     bk = key_of(base_word)
+    ONSET_LINE, RESULT_LINE = AUDIO_TEXT[a["onset"]], AUDIO_TEXT[a["result"]]
+    ON_RUNS, RE_RUNS = _voice_runs_ms(a["onset"]), _voice_runs_ms(a["result"])
     return {"id": sid, "phase": "tutorial", "eis": "symbolic", "type": "MATRA_BUILD",
             # NO HEADING: the deck gives these two pages no heading section and asks to keep the
             # screen focused; File3's equivalent screens carry none either.
@@ -276,6 +381,18 @@ def s_build(sid, base_word, consonant, matra, syllable, result_word, result_line
                      "syl_ms":  _matra_cue_ms(a["onset"], AUDIO_TEXT[a["onset"]], "बनता", 340),
                      "join_ms": _matra_cue_ms(a["result"], AUDIO_TEXT[a["result"]], join_word, 320),
                      "sound_ms": _sound_cues_ms(a["sounds"], 3),
+                     # [File3 r121/r131] no equation panel: the right-hand word is built piece by
+                     # piece with the voice - the consonant, then the matra lands on «घो» (the onset
+                     # line's last phrase, drop_ms), then the rest of the word joins (tail_ms: the
+                     # result line's 2nd phrase - «ड़ा जुड़ने पर» / «खि»), then its picture on the
+                     # result line's last phrase (pic_ms). Measured runs, so a re-record moves them.
+                     "drop_ms": (ON_RUNS[-1] if len(ON_RUNS) >= 2
+                                 else _matra_cue_ms(a["onset"], ONSET_LINE, syllable)),
+                     "pic_ms": (RE_RUNS[-1] if len(RE_RUNS) >= 2
+                                else _matra_cue_ms(a["result"], RESULT_LINE, result_word)),
+                     "tail_ms": _join_ms(a["result"], RESULT_LINE, tail_word or join_word),
+                     # [S04] खिलौना: खि joins on «खि», ना on «ना» (the engine's mb-rpre)
+                     "pre_ms": (_join_ms(a["result"], RESULT_LINE, pre_word) if pre_word else None),
                      "base_img": pic(bk), "base_emoji": BASE_OBJ[base_word][1],
                      "base_img_from": pic(base_img_from) if base_img_from else None,
                      "cap_base": None, "cap_mid": None, "cap_result": None,   # File3: no captions
@@ -289,19 +406,24 @@ def s_pair(sid, words, matra):
     ex = []
     for w in words:
         k = key_of(w)
-        line = "%s — बोलकर देखिए। इसमें %s पर %s की मात्रा लगी है।" % (w, w[0], M)
+        # [File3 r134] «बोलकर देखिए» moved to the END of the line: «मोर, इसमें म पर ओ की मात्रा लगी है।
+        # बोलकर देखिए।» The picture comes with «इसमें» (the 2nd phrase), the matra lights on «ओ».
+        line = "%s, इसमें %s पर %s की मात्रा लगी है। बोलकर देखिए।" % (w, w[0], M)
         vid = vo("vo_meet_" + slug_of(w), line)
         t = AUDIO_TEXT[vid]
         ex.append({"word": w, "matra": matra_of(w), "img": pic(k), "emoji": OBJ[k][1],
                    "audio_line": vid,
-                   "pic_ms":   _matra_cue_ms(vid, t, "बोलकर", 520),
-                   "matra_ms": _matra_cue_ms(vid, t, "इसमें", 900),
+                   "pic_ms":   _word_ms(vid, t, "इसमें", 520),
+                   "matra_ms": _word_ms(vid, t, "पर " + M, 900) + 120,
                    "matra_audio": None})
     return {"id": sid, "phase": "tutorial", "eis": "iconic", "type": "MEET_PAIR",
             "prompt_hi": "",                     # no heading, as File3
             "audio": {"prompt": vo("vo_%s_prompt" % sid.lower(),
                                    "आइए, %s की मात्रा वाले कुछ शब्द देखें।" % M)},
-            "data": {"examples": ex, "no_heading": True}}
+            # [File3 r134/r136] the mic: if it is not tapped for 7 s, this line asks for it
+            # (File3's human clip, «इस बटन पर टैप करिए।», copied)
+            "data": {"examples": ex, "no_heading": True,
+                     "mic_nudge_audio": once("vo_mic_nudge", "इस बटन पर टैप करिए।")}}
 
 
 # ---------------------------------------------------------------- test screens: File3's hint logic
@@ -361,27 +483,32 @@ def sort_hints(card, tag, h2_fmt, h3_fmt):
     return card
 
 
-def s_sort(sid, kind, bins_, cards, heading, prompt, hint1, hint2, single=False):
-    return {"id": sid, "phase": "guided", "eis": "enactive", "type": "TRAIN_SORT",
+def s_sort(sid, kind, bins_, cards, heading, prompt, hint1, hint2, single=False, phase="guided"):
+    return {"id": sid, "phase": phase, "eis": "enactive", "type": "TRAIN_SORT",
             "prompt_hi": heading,
             "audio": dict([("prompt", vo("vo_%s_prompt" % sid.lower(), prompt)), ("hint1", hint1)]
                           + ([("hint2", hint2)] if hint2 else [])),
             "data": {"kind": kind, "bins": bins_, "cards": cards, "single": single}}
 
 
-def s_demo(sid, words):
-    """File3's [r83] watch-only drag-and-drop page, with this lesson's anchor words."""
+def s_demo(sid):
+    """[File3 r131] THE DEMO IS G5 REVERSED, IN FRONT OF G5 - the word demo (G4D) is gone. Coaches
+    ◌ो / ◌ौ, cards ओ / औ, each carried by the hand to its coach and explained; watch-only, and it
+    hands its train on to G5."""
+    p = "देखिए, अक्षर को उसकी मात्रा वाले डिब्बे में कैसे डालते हैं।"
     return {"id": sid, "phase": "guided", "eis": "iconic", "type": "TRAIN_SORT",
-            "prompt_hi": "देखिए, शब्द को सही डिब्बे में कैसे डालते हैं।",
-            "audio": {"prompt": vo("vo_g4d_prompt",
-                                   "देखिए, शब्द को उसकी मात्रा वाले डिब्बे में कैसे डालते हैं।"),
+            "prompt_hi": p,
+            "audio": {"prompt": vo("vo_g5d_prompt", p),
                       "outro": vo("vo_g4d_end", "अब आप भी ऐसे ही करके देखिए।")},
-            "data": {"kind": "word", "bins": bins(True), "single": False, "demo": True,
-                     "keep_train_next": True,     # [File3 r103] the next page keeps this train
-                     "cards": [sort_card(w, vo("vo_g4d_" + slug_of(w),
-                                               "%s में %s की मात्रा है, इसलिए %s %s वाले डिब्बे में गया।"
-                                               % (w, NAME[matra_of(w)], w, NAME[matra_of(w)])))
-                               for w in words]}}
+            "data": {"kind": "matra", "single": True, "demo": True,
+                     "keep_train_next": True,     # the G5 activity keeps this train
+                     "bins": [{"key": m, "label": "◌" + m, "audio": MATRA_VO[m], "matra": m}
+                              for m in (O, AU)],
+                     "cards": [{"bin": m, "word": LETTER[m], "audio": LETTER_VO[m],
+                                "correct_audio": vo("vo_g5d_" + SLUG[m],
+                                                    "%s की मात्रा इस डिब्बे पर है, इसलिए %s इस डिब्बे में गया।"
+                                                    % (LETTER[m], LETTER[m]))}
+                               for m in (O, AU)]}}
 
 
 def s_sort_words(sid, words):
@@ -391,10 +518,12 @@ def s_sort_words(sid, words):
     cards = [sort_hints(sort_card(w, vo("vo_ok_" + slug_of(w), "शाबाश! %s शब्द में %s की मात्रा है।"
                                         % (w, LETTER[matra_of(w)]))),
                         sid.lower(),
-                        "%s में %s की मात्रा है। अब यही मात्रा ऊपर डिब्बों पर खोजिए और शब्द वहीं डालिए।",
+                        # [File3 r134] «अब यही मात्रा ऊपर डिब्बों पर खोजिए …» cut
+                        "%s में %s की मात्रा है।",
                         "%s को %s की मात्रा वाले डिब्बे में डालिए।")
              for w in words]
-    return s_sort(sid, "word", bins(True), cards, p, p, h1, None)
+    # [File3 r131] «in page 11 remove matra from the top box of coach» - «ओ», not «ओ (ो)»
+    return s_sort(sid, "word", bins(), cards, p, p, h1, None)
 
 
 def s_sort_marks(sid):
@@ -430,7 +559,7 @@ def s_word_build(sid, slots, options):
     for o in options:
         opts.append({"akshar": o, "audio": vo("vo_ak_" + akslug[o], o)})
     p = "चित्र देखकर सही अक्षर से शब्द पूरा कीजिए।"
-    return {"id": sid, "phase": "guided", "eis": "enactive", "type": "WORD_BUILD",
+    return {"id": sid, "phase": "practice", "eis": "enactive", "type": "WORD_BUILD",
             "prompt_hi": p,
             "audio": {"prompt": once("vo_wb_prompt", p),
                       "hint1": vo("vo_%s_h1" % sid.lower(),
@@ -454,13 +583,19 @@ def s_sort_pictures(sid, words):
                         "%s में %s की मात्रा है। अब इसे सही मात्रा वाली बोगी में डालिए।",
                         "%s को %s की मात्रा वाली बोगी में डालिए।")
              for w in words]
-    return s_sort(sid, "picture", bins(), cards, p, p, h1, None)
+    # [File3] the word build, the picture sort and the sentences are its PRACTICE pages (P1-P6)
+    return s_sort(sid, "picture", bins(), cards, p, p, h1, None, phase="practice")
 
 
 SC_HEADING = "सही शब्द चुनकर वाक्य पूरा कीजिए।"
 
 
-def s_sentence(sid, scene, pre, post, answer, options, ask):
+def _full(pre, word, post):
+    """the sentence with `word` in its blank - the exact text its `_try_` clip was recorded from"""
+    return (pre + word + post).replace("  ", " ").strip()
+
+
+def s_sentence(sid, scene, pre, post, answer, options, ask, text_only=False):
     """File3 s_sentence: rung 1 asks this screen's own question of the picture, rung 2 tries every
     option in the blank and glows the scene, rung 3 reads the right sentence + hand + lock."""
     o = []
@@ -470,7 +605,7 @@ def s_sentence(sid, scene, pre, post, answer, options, ask):
                   "sentence_audio": vo("vo_%s_try_%s" % (sid.lower(), slug_of(w)),
                                        (pre + w + post).replace("  ", " ").strip())})
     sentence = (pre + answer + post).replace("  ", " ").strip()
-    return {"id": sid, "phase": "guided", "eis": "symbolic", "type": "SENTENCE_COMPLETE",
+    return {"id": sid, "phase": "practice", "eis": "symbolic", "type": "SENTENCE_COMPLETE",
             "prompt_hi": SC_HEADING,
             "audio": {
                 "prompt": once("vo_sc_prompt", "चित्र देखकर सही शब्द चुनकर वाक्य पूरा कीजिए।"),
@@ -482,6 +617,17 @@ def s_sentence(sid, scene, pre, post, answer, options, ask):
             "data": {"scene_img": pic(scene), "scene_emoji": SCENE[scene],
                      "sentence_pre": pre, "sentence_post": post,
                      "answer": answer, "options": o,
+                     # [File3 r121/r131] the last sentence screen: words only on its options
+                     "opts_text_only": bool(text_only),
+                     # [File3 r121] a correct drop reads the complete sentence - unless the praise
+                     # line already reads it back («शाबाश! पेड़ पर एक कौआ बैठा है।»), where playing
+                     # both would say it twice. Every praise line here does, so this stays None.
+                     "sentence_on_correct": (
+                         None if _full(pre, answer, post).rstrip("।") in AUDIO_TEXT[
+                             "vo_%s_correct" % sid.lower()]
+                         else vo("vo_%s_try_%s" % (sid.lower(), slug_of(answer)),
+                                 _full(pre, answer, post))),
+                     "sentence_full": _full(pre, answer, post),
                      "scene_glow": SCENE_GLOW.get(scene, [])}}
 
 
@@ -536,18 +682,19 @@ def build_slides():
     S.append(s_intro("T1"))
     S.append(s_build("T2", "घड़ा", "घ", O, "घो", "घोड़ा",
                      "अब ड़ा जुड़ने पर, घोड़ा बनता है।", "जुड़ने", "घ। घो। घोड़ा।",
-                     "घो + ड़ा = घोड़ा"))
+                     "घो + ड़ा = घोड़ा", tail_word="ड़ा"))
     S.append(s_pair("T3", ["मोर", "कोयल"], O))
     S.append(s_build("T4", "खिलना", "ल", AU, "लौ", "खिलौना",
                      "अब खि, लौ और ना को जोड़ने पर, खिलौना बनता है।", "जोड़ने",
-                     "ल। लौ। खिलौना।", "खि + लौ + ना = खिलौना", base_img_from="obj_khilna_bud"))
+                     "ल। लौ। खिलौना।", "खि + लौ + ना = खिलौना", base_img_from="obj_khilna_bud",
+                     pre_word="खि", tail_word="ना"))
     S.append(s_pair("T5", ["कौआ", "पौधा"], AU))
     # ---- guided · deck pages 7-16 (the deck moves every test screen into guided) ---------
     S.append(s_tap("G1", ["मोर", "दौड़", "चौक"], "मोर"))
     S.append(s_tap("G2", ["ढोल", "कौआ", "गोल"], "कौआ"))
     S.append(s_tap("G3", ["नौका", "तोता", "कौआ"], "तोता"))
-    S.append(s_demo("G4D", ["घोड़ा", "खिलौना"]))
     S.append(s_sort_words("G4", ["पौधा", "ढोल", "कौआ", "तोता"]))
+    S.append(s_demo("G5D"))
     S.append(s_sort_marks("G5"))
     S.append(s_word_build("G6", [("मोर", "र", "मो"), ("ढोल", "ल", "ढो"), ("पौधा", "धा", "पौ")],
                           ["मो", "नौ", "ढो", "पौ", "कौ"]))
@@ -557,7 +704,17 @@ def build_slides():
     S.append(s_sentence("G9", "scn_khel", "बच्चे के पास एक ", " है।", "खिलौना",
                         ["खिलौना", "मोर", "ढोल"], "बच्चे के पास क्या है"))
     S.append(s_sentence("G10", "scn_hathauda", "आदमी के हाथ में एक ", " है।", "हथौड़ा",
-                        ["ढोल", "हथौड़ा", "तोता"], "आदमी के हाथ में क्या है"))
+                        ["ढोल", "हथौड़ा", "तोता"], "आदमी के हाथ में क्या है",
+                        text_only=True))      # [File3 r131] the last sentence screen: words only
+
+    # [File3 r127/r131/r134] THE DEVELOPER'S PEDAGOGICAL SEQUENCE, as File3: the G5 demo and G5 open
+    # the guided block, then the taps (G1, G3, G2), then the word sort, the word build, the picture
+    # sort and the sentences. Built in their old order above (each keeps its id and its recordings)
+    # and reordered here, before the game and the celebration.
+    SEQ = ["G5D", "G5", "G1", "G3", "G2", "G4", "G6", "G7", "G8", "G9", "G10"]
+    _by = {x["id"]: x for x in S}
+    assert set(SEQ) <= set(_by), "sequence names a screen that does not exist"
+    S[:] = [x for x in S if x["id"] not in SEQ] + [_by[i] for i in SEQ]
     # ---- the independent round · «मात्रा टोकरी» (deck position 21) -----------------------
     S.append(s_tokri("MT1"))
     # [File3 r105] the developer: the standard end-screen dialogue, as in File3 (was the deck's recap
@@ -584,7 +741,8 @@ def used_images(slides):
 
 
 def build_card(slides):
-    vo("vo_landing", "हेलो दोस्त! मैं हूँ स्विफ्टी। आज हम मात्राओं के बारे में जानेंगे।")
+    # [File3 r134] the cover says page 1's old line, which page 1 no longer speaks
+    vo("vo_landing", "नमस्ते दोस्त! मैं हूँ स्विफ्टी। आज हम ओ और औ की मात्रा वाले शब्द पढ़ेंगे।")
     vo("vo_try_again", "एक बार फिर सुनिए।")
     # the bare LETTER, which File3's rung 2 reads off the coach labels
     for m in (O, AU):
@@ -595,14 +753,15 @@ def build_card(slides):
     audio = {v: "assets/Audio/%s.ogg" % v for v in sorted(AUDIO_TEXT)}
     for v in COPY_AUDIO:
         audio.setdefault(v, "assets/Audio/%s.ogg" % v)
-    image = {k: "assets/Images/%s.png" % k for k in sorted(used_images(slides))}
+    image = {k: "assets/Images/%s.webp" % k for k in sorted(used_images(slides))}
     emoji = {k: v[1] for k, v in OBJ.items()}
     emoji.update({v[0]: v[1] for v in BASE_OBJ.values()})
     emoji.update(EXTRA_IMG)
     emoji.update(SCENE)
     return {
         "version": "0.1", "skill_code": CODE, "lo_code": "HI02H11_L02",
-        "grade": "02", "attribute": "H11", "skill_type": "CORE", "medium": "hi",
+        "grade": "02", "attribute": "H11", "skill_type": "CORE",
+        "part_label": "भाग 1", "medium": "hi",          # [File3]
         "title": {"hi": "मात्राओं की रेल", "en": "Matra train — the o / au matras"},
         "subtitle_hi": "",
         "theme": "toybox",
@@ -612,11 +771,14 @@ def build_card(slides):
         "landing_hero": {"kind": "matra_train", "matras": [O, AU], "letters": ["ओ", "औ"]},
         "phase_transition_audio": {"tutorial": "vo_pt_tutorial", "guided": "vo_pt_guided",
                                    "practice": "vo_pt_practice"},
-        "phase_transition_title": {"tutorial": "चलिए, शुरू करें!", "guided": "चलिए, साथ में करें!",
-                                   "practice": "अब आपकी बारी!"},
+        "phase_transition_title": {"tutorial": "चलिए, रेल चलाएँ!", "guided": "साथ में करें।",
+                                   "practice": "अब आपकी बारी।"},         # [File3]
         "phase_distribution": counts,
         "ui_sfx": {"play": "sfx_play_button", "next": "sfx_next_button"},
         "gate": {"img": "assets/UI/swifty_gate_seek.webp", "talk_at_ms": 1960,
+                 # [File3 r83] the third transition «अब आपकी बारी!» opens just before the game, not
+                 # in front of the first practice page (engine: CARD.gate.at)
+                 "at": {"round3": "MT1"},
                  # [File3 r103/r104] where each transition's on-screen phrase starts inside its clip,
                  # and how long Swiftee takes to say it - the same kit clips as File3 (byte-identical),
                  # so File3's measurements; the builder adds the voiced stretches (title_voice_ms, r108)
@@ -629,7 +791,7 @@ def build_card(slides):
                            "max_attempts": 3, "hint_levels": 3, "hand_on_attempt": 3,
                            "hand_on_hint3": True, "lock_after_hint3": True,
                            "reveal_on_attempt": None, "silent_on_late_correct": True},
-        "signals_expected": ["slide_entered", "slide_completed",
+        "signals_expected": ["slide_entered", "slide_completed", "intro_letter_tap",
                              "train_tap_first_try", "matra_sort_item", "matra_sort_first_try",
                              "word_build_item", "word_build_first_try",
                              "sentence_complete_first_try",
@@ -637,7 +799,7 @@ def build_card(slides):
                              "phase_transition", "mastery_score", "lesson_completed"],
         "_emoji_fallback": emoji,
         "assets": {"audio": audio, "audio_text": AUDIO_TEXT, "image": image,
-                   "audio_ext": "ogg", "img_ext": "png"},
+                   "audio_ext": "ogg", "img_ext": "webp"},
         "slides": slides,
     }
 
@@ -668,12 +830,13 @@ def guard_engine(src):
 
 def guard_flow(slides):
     want = (["MATRA_PAIRS", "MATRA_BUILD", "MEET_PAIR", "MATRA_BUILD", "MEET_PAIR"]
-            + ["TRAIN_TAP"] * 3 + ["TRAIN_SORT"] * 3 + ["WORD_BUILD", "TRAIN_SORT"]
+            + ["TRAIN_SORT"] * 2            # [File3 r134] G5D (the watch-only demo) and G5 first
+            + ["TRAIN_TAP"] * 3 + ["TRAIN_SORT"] + ["WORD_BUILD", "TRAIN_SORT"]
             + ["SENTENCE_COMPLETE"] * 3 + ["MATRA_TOKRI", "CELEBRATION"])
     got = [s["type"] for s in slides]
     if got != want:
         sys.exit("X  flow guard:\n   want %s\n   got  %s" % (want, got))
-    print("  OK  flow guard: landing + %d slides (deck order + File3's G4D demo)" % len(slides))
+    print("  OK  flow guard: landing + %d slides (File3's r134 order, G5D demo)" % len(slides))
 
 
 def guard_single_matra():
@@ -1004,6 +1167,9 @@ def inject_celebration(html, card):
 
 def main():
     argparse.ArgumentParser().parse_args()
+    # [File3 r126] pictures -> WebP, videos -> WebM, before anything reads the asset folders
+    import subprocess
+    subprocess.run([sys.executable, os.path.join(SPEC_DIR, "normalize_assets.py")], check=True)
     if not os.path.isfile(ENGINE):
         sys.exit("X  no engine at %s" % ENGINE)
     src = open(ENGINE, encoding="utf-8").read()
@@ -1036,11 +1202,12 @@ def main():
     payload = json.dumps(card, ensure_ascii=False, indent=1)
     html = CARD_TAG.sub(lambda m: m.group(1) + payload + m.group(3), src, count=1)
 
-    first = [k for k in ("obj_ghoda", "obj_khilona") if k in card["assets"]["image"]]
-    links = "".join('<link rel="preload" as="image" fetchpriority="high" '
-                    'href="assets/Images/%s.png">' % k for k in first)
+    # [File3 r126] the head's high-priority preloads are the COVER's train pictures - the first thing
+    # the child sees, and on a slow line the thing that went missing
+    links = "".join('<link rel="preload" as="image" fetchpriority="high" href="assets/UI/%s">' % f
+                    for f in ("train_still.webp", "train_spritesheet.webp"))
     html, n_pre = re.subn(r'(?:<link rel="preload" as="image"[^>]*>)+', links, html, count=1)
-    print("  OK  preload retargeted to %s (%d block)" % (first, n_pre))
+    print("  OK  preload: the cover's train pictures (%d block rewritten)" % n_pre)
     if 'id="bundleLetterGlow"' not in html:
         html = re.sub(r"</head>", LETTER_GLOW_CSS + "</head>", html, count=1)
     html = inject_celebration(html, card)
@@ -1052,6 +1219,10 @@ def main():
             _h.update(open(os.path.join(AUD_DIR, _f), "rb").read())
     html = html.replace("__AUDIO_V_STAMP__", _h.hexdigest()[:12])
     html = html.replace("__MR_AUDIO_V_STAMP__", _h.hexdigest()[:12])
+    # File3's runner warm-up placeholders: this lesson has no runner (warmRunner never starts, see
+    # hasRunner), so they get a harmless stamp and an empty list
+    html = html.replace("__MR_ART_V_STAMP__", _h.hexdigest()[:12])
+    html = html.replace("__MR_ART_LIST__", "")
     # the same for the pictures: a redrawn picture keeps its name, so its URL has to change
     _hi = hashlib.sha1()
     for _f in sorted(os.listdir(IMG_DIR)):
