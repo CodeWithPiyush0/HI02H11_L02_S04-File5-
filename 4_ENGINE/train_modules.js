@@ -66,6 +66,24 @@
   function coachesAll(train){ train.coaches.forEach(c => c.el.classList.remove("is-off")); }
   const coachOff = (train, k)=> !!(train.coaches[k] && train.coaches[k].el.classList.contains("is-off"));
 
+  /* [r148] A WRONG ATTEMPT: THE SHAKE AND THE WRONG SOUND, THEN THE HINT. Yasir (BUG_09 pages): "in case of a
+     wrong attempt the coach shakes and the sfx plays, then the VO should play". r146 waited for the shake
+     only (520 ms) and only on the tap pages; the wrong sound is audible for 0.67 s (sfx_fb_incorrect, measured:
+     silence from 0.669 s), so the line still came in over its tail, and the drag and sentence pages did not
+     wait at all. Every wrong attempt now holds its hint until both are over - 750 ms - and takes no tap or
+     drop in between (hintBusy). A page left in the meantime runs nothing. */
+  const WRONG_GAP_MS = 750;
+  function afterWrong(run){
+    const g = _voGen;
+    hintHold(fin => setTimeout(fin, WRONG_GAP_MS), ()=>{ if(g === _voGen) run(); });
+  }
+
+  /* [r146] the end of a drag activity: the confetti and the success sound, together, once */
+  function celebrateOnce(){
+    fbCorrect();
+    if(typeof confettiCannon === "function") confettiCannon();
+  }
+
   function hintSeq(steps, done){
     let i = 0;
     (function step(){
@@ -170,13 +188,41 @@
      a watch-only demonstration running - and it lets go only after 700 ms with none of those, which
      bridges the gaps between the clips of a sequence. QA BUG_07: once the answer is right (state.locked)
      it stays grey and the speaker ignores taps (the replay guard in the engine) until the next page. */
+  /* [r145] QA BUG_09: "on slides 8, 9, 10, 12 the speaker can be tapped before the train even arrives -
+     the voices overlap". Those pages open in silence while the train rolls in, and only then speak the
+     question and read the options - the speaker was live in that gap, so a tap started the question and
+     the page's own opening then played on top of it. Now EVERY page keeps the speaker grey (and deaf,
+     see replaySlideAudio) from the moment it opens until its opening voice is over: something has been
+     spoken and the page has then been quiet for the same 700 ms. A page that says nothing at all lets go
+     after 8 s. `window.__spkIntro` is that state. */
+  /* [r146] QA BUG_06, round 2: "Swifty comes back to normal even before the VO is complete (all slides)".
+     r139 put her back on a fixed 1.8 s timer, and most wrong-answer lines are longer than that (rung 2
+     reads the options out first). She now stays sad for the WHOLE wrong-answer sequence - the wrong
+     sound, the shake, the hint line and any read-out - and turns back the moment it is over (250 ms
+     of quiet after something has been spoken). If nothing is spoken at all she turns back after 3 s.
+     Watched here because `hintBusy` lives in this module; the engine's own 1.8 s timer stands down
+     while this watcher is installed (window.__sadWatch). */
+  window.__sadWatch = true;
   (function speakerState(){
-    let quietSince = 0;
+    let quietSince = 0, page = null, heard = false, openAt = 0;
+    let sadAt = 0, sadHeard = false;
+    window.__spkIntro = false;
     const tick = ()=>{
       const seq = !!((typeof isPlaying !== "undefined" && isPlaying) || state.revealing || state.demoRunning || hintBusy);
       const now = performance.now();
-      if(seq) quietSince = 0; else if(!quietSince) quietSince = now;
-      const busy = seq || (now - quietSince < 700) || !!state.locked;
+      if(state.slideStart !== page){ page = state.slideStart; heard = false; openAt = now; window.__spkIntro = page != null; }
+      if(seq){ quietSince = 0; heard = true; } else if(!quietSince) quietSince = now;
+      const settled = !seq && now - quietSince >= 700;
+      if(window.__spkIntro && ((heard && settled) || (!heard && now - openAt > 8000))) window.__spkIntro = false;
+      const busy = !settled || !!state.locked || window.__spkIntro;
+      if(typeof swMood !== "undefined" && swMood === "tryagain"){
+        if(!sadAt){ sadAt = now; sadHeard = false; }
+        if(seq) sadHeard = true;
+        if((sadHeard && !seq && now - quietSince >= 250) || (!sadHeard && now - sadAt > 3000)){
+          sadAt = 0;
+          if(typeof setSwMood === "function") setSwMood("point");
+        }
+      } else sadAt = 0;
       if(document.body && document.body.classList.contains("spk-busy") !== busy)
         document.body.classList.toggle("spk-busy", busy);
     };
@@ -1234,9 +1280,10 @@
         c.el.classList.remove("is-shake"); void c.el.offsetWidth; c.el.classList.add("is-shake");
         setTimeout(()=> c.el.classList.remove("is-shake"), 520);
       },
-      correct(i){ const c = coaches[i]; if(!c) return;
+      /* [r146] `noConfetti`: the drag pages' per-drop glow (QA BUG_08 case 3, see celebrateOnce) */
+      correct(i, noConfetti){ const c = coaches[i]; if(!c) return;
         c.el.classList.add("is-correct");
-        if(typeof confettiCannon === "function") confettiCannon();
+        if(!noConfetti && typeof confettiCannon === "function") confettiCannon();
       },
       lock(i){ const c = coaches[i]; if(c) c.el.classList.add("is-locked"); },
       popLabels(gap){ tc.popLabels(gap); },
@@ -1295,6 +1342,15 @@
       if(typeof setSwMood === "function") setSwMood("tryagain");
       if(coachIdx != null) train.shake(coachIdx);
       SwiftPAL.emit("answer_wrong", { slide_id: slide.id, phase: slide.phase, attempts: tries });
+      /* [r146] Yasir, on slides 8-10: "when we tap a wrong coach it shakes with the wrong sound, and the VO
+         plays at the same time - when the animation ends, then the VO should start". The shake (and the
+         wrong sound with it) now plays on its own; the rung - its line, read-out or hand - starts when the
+         shake is over (520 ms, the shake's own length). The coaches take no tap in between (hintBusy). */
+      const n = tries;
+      afterWrong(()=> rungFor(n));          /* [r148] the shake AND the wrong sound first */
+      return tries;
+    };
+    function rungFor(tries){
       if(tries === 1){
         /* RUNG 1 - refocus. "गलत शब्द वाले डिब्बे पर soft shake। कोई सही उत्तर highlight नहीं
            होगा।" The shake above is the whole of the UI; nothing is marked and no hand appears. */
@@ -1319,8 +1375,7 @@
         say(A(slide, "hint3") || A(slide, "hint2") || A(slide, "hint") || A(slide, "try_again"),
             ()=>{});
       }
-      return tries;
-    };
+    }
   }
 
   /* Finish a test slide. `silent` = solved on the final attempt -> celebrate visually only,
@@ -1711,9 +1766,13 @@
           tile.appendChild(w);
         }
         placed++;
-        train.correct(ci);
+        /* [r146] QA BUG_08 case 3: "confetti falls for each correct answer - it should fall once only, when
+           the activity is fully completed". [r147] Yasir: "use the success sfx for every correct answer, and
+           confetti with sfx after completing all options". Each correct drop: the coach glows + the success
+           sound, no confetti; the drop that completes the screen: the confetti WITH the success sound (once). */
+        train.correct(ci, true);
         sfxPopSoft();                      /* the DROP, distinct from the pick-up tap */
-        fbCorrect();                       /* [r138] Yasir: the success sound with every confetti, not just the last */
+        if(placed >= need) celebrateOnce(); else fbCorrect();
         SwiftPAL.emit("matra_sort_item", { slide_id: slide.id, bin: tile.dataset.bin });
       };
 
@@ -1765,6 +1824,7 @@
             setTimeout(()=> tile.classList.remove("tr-cshake"), 560);
             SwiftPAL.emit("answer_wrong", { slide_id: slide.id, attempts: state.attempts });
             const want = binIdx(tile.dataset.bin);
+            afterWrong(()=>{                  /* [r148] the shake and the wrong sound first */
             if(n === 1){
               say(A(slide, "hint1") || A(slide, "try_again"), ()=>{});
             } else if(n === 2 && hintLevels() >= 3){
@@ -1782,6 +1842,7 @@
               say(clip(tile.dataset.h3) || A(slide, "hint3") || A(slide, "hint2")
                   || A(slide, "hint") || A(slide, "try_again"), ()=>{});
             }
+            });
           }
         }, { onPick: ()=>{ if(typeof sfxTap === "function") sfxTap(); } });
       });
@@ -2373,7 +2434,15 @@
         state.replayAudio = ()=>{
           if(done || !live()) return;
           clearTimeout(idleT);
-          say(clip(ex.audio_line), ()=>{ if(!done && live()) arm(); });
+          /* [r145] QA BUG_10: "when we tap the speaker, the user can tap the mic too, which skips the
+             explanation VO". While the speaker's replay plays, the mic is greyed and takes no tap; it is
+             live (and pulses) again when the line ends. The 7 s reminder does NOT grey it - that line
+             says «इस बटन पर टैप करिए» with the hand on the mic, so the mic must stay tappable. */
+          mic.disabled = true; mic.classList.add("mx-wait");
+          say(clip(ex.audio_line), ()=>{
+            if(done || !live()) return;
+            mic.disabled = false; mic.classList.remove("mx-wait");
+            arm(); });
         };
         mic.disabled = false;
         mic.classList.remove("mx-hide"); mic.classList.add("mx-live");
@@ -2399,8 +2468,11 @@
       const finish = ()=>{
         if(finished) return; finished = true;
         state.demoRunning = false;
-        state.replayAudio = ()=> sayAll(
-          [A(slide, "prompt")].concat(exs.map(e => clip(e.audio_line))).filter(Boolean), ()=>{});
+        /* [r145] QA BUG_10: "on the final question of slides 3 and 5 the speaker plays the previous
+           question's VO too". It replayed the opening line and BOTH words; now only the word that is on
+           screen - the last one - as during each word's own turn. */
+        const last = exs[exs.length - 1];
+        state.replayAudio = ()=> say(clip(last && last.audio_line), ()=>{});
         $("navBtn").onclick = ()=> completeSlide(true);
         setNavActive(true);
       };
@@ -3145,8 +3217,10 @@
               matraHLSoon(holder.querySelector(".tr-doneword"), slot.matra, { glow:true });
             }, 450);
             done++;
-            train.correct(i);
-            fbCorrect();
+            /* [r146/r147] QA BUG_08 case 3: glow + the success sound per letter; the last one: confetti + the
+               success sound */
+            train.correct(i, true);
+            if(done >= d.slots.length) celebrateOnce(); else fbCorrect();
             SwiftPAL.emit("word_build_item", { slide_id: slide.id, word: slot.word });
             /* «शाबाश! पुल बन गया।» / «शाबाश! सुई बन गई।» — per slot, and SILENT if the child
                needed the whole ladder ("Correct Answer on 3rd Attempt … No VO required"). */
@@ -3169,6 +3243,7 @@
             tile.classList.add("tr-cshake");
             setTimeout(()=> tile.classList.remove("tr-cshake"), 560);
             SwiftPAL.emit("answer_wrong", { slide_id: slide.id, attempts: state.attempts });
+            afterWrong(()=>{                  /* [r148] the shake and the wrong sound first */
             if(n === 1){
               /* RUNG 1: "No hand nudge. Only VO." */
               say(A(slide, "hint1") || A(slide, "try_again"), ()=>{});
@@ -3207,6 +3282,7 @@
               say(clip(sl3 && sl3.hint3_audio) || A(slide, "hint3") || A(slide, "hint2")
                   || A(slide, "hint") || A(slide, "try_again"), ()=>{});
             }
+            });
           }
         }, { onPick: ()=>{ if(typeof sfxTap === "function") sfxTap(); } });
       });
@@ -6689,10 +6765,12 @@ if(document.fonts && document.fonts.load){
           setTimeout(()=> b.classList.remove("sc-shake"), 560);
         }
         SwiftPAL.emit("answer_wrong", { slide_id: slide.id, phase: slide.phase, attempts: tries });
-        if(tries === 1){
+        const t = tries;
+        afterWrong(()=>{                      /* [r148] the shake and the wrong sound first */
+        if(t === 1){
           /* RUNG 1: shake, no highlight, one line */
           say(A(slide, "hint1") || A(slide, "try_again"), ()=>{});
-        } else if(tries === 2 && hintLevels() >= 3){
+        } else if(t === 2 && hintLevels() >= 3){
           /* RUNG 2: the three sentences, then the line that tells the child what to do with them */
           state.scaffoldLevel = 2; state.hintUsed = true;
           SwiftPAL.emit("hint_shown", { slide_id: slide.id, level: 2 });
@@ -6716,6 +6794,7 @@ if(document.fonts && document.fonts.load){
           say(A(slide, "hint3") || A(slide, "hint2") || A(slide, "hint") || A(slide, "try_again"),
               ()=>{});
         }
+        });
       }
 
       /* [r29] THE CARD CAN BE CARRIED TO THE BLANK, not only tapped.

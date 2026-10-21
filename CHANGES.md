@@ -399,3 +399,55 @@ QA still finds the music loud at 40 %. Its level is now 0.30. The old level unde
 would now have been LOUDER than the music itself, so both dips scale down with it: 0.15 under an effect,
 0.08 under the voice (the r99 proportions, about a half and a quarter). Measured: 0.30 with no voice, 0.08
 under the voice. The runner game's own music (MatraRunner, 80 % by Yasir's ruling) is not touched.
+
+## Round 14 (2026-10-21) — QA BUG_09 and BUG_10 (File3 r145)
+
+QA sheet, two new entries. Same code in File3 and File5.
+- **BUG_09 - the speaker during a page's opening.** On the tap pages and the word-build page the train
+  rolls in silently before the question is spoken, and the speaker was live in that gap: a tap started the
+  question and the page's own opening then played over it. Now EVERY page keeps the speaker grey, and
+  ignoring taps, from the moment it opens until its opening voice is over (something spoken, then 700 ms
+  of quiet; a page that says nothing lets go after 8 s). The speaker's tap handler also ignores taps
+  whenever it is grey.
+- **BUG_10 - pages 3 / 5, the mic pages.** (1) After the last word, the speaker replays only that word's
+  line, not the opening line and both words. (2) While the speaker replays a word's line, the mic is greyed
+  and takes no tap (a tap used to cut the line off); it is live again when the line ends. The 7 s reminder
+  «इस बटन पर टैप करिए» does not grey it - the hand points at the mic while it plays.
+Measured in both files: 23-50 taps on the speaker during the openings of the tap / word-build pages
+started nothing (the question played once), and a tap once it is blue replays the page; on both mic
+pages the mic greys during the replay and a tap on it does nothing, it pulses again after, it stays live
+during the reminder, and after the last word the speaker plays only that word's line. No console errors.
+
+## Round 15 (2026-10-21) — QA round 2: BUG_06, BUG_08 case 3, shake before the hint (File3 r146)
+
+QA round 2 + Yasir's ask on the tap pages. Same code in File3 and File5.
+- **BUG_06 (round 2: "Swifty comes back to normal before the VO is complete, on all slides").** The fixed
+  1.8 s timer is gone: Swifty stays sad for the whole wrong-answer sequence (the wrong sound, the shake, the
+  hint line and any read-out) and turns back when it is over (250 ms of quiet after the voice). Nothing
+  spoken: back after 3 s. The hand-on-the-last-option point in QA's remark is not part of this change.
+- **BUG_08 case 3 ("confetti on each correct answer - once, when the activity is complete").** Option B: each
+  correct drop on the sort pages and the word-build page gives the coach's glow and a soft pop; the confetti
+  and the success sound come once, with the drop that completes the screen. The tap pages are unchanged
+  (one answer: one confetti).
+- **Tap pages (slides 8-10): shake first, then the voice.** A wrong coach shakes with the wrong sound; the
+  hint (line, read-out or hand) now starts when the shake is over (520 ms), and the coaches take no tap in
+  between.
+
+## Round 16 (2026-10-21) — the success sound on every correct drop, confetti at the end (File3 r147)
+
+Yasir, on r146's option B: "why are you not using the success sfx for every correct answer - and confetti
+with sfx will play after completing all options correctly". On the sort pages and the word-build page each
+correct drop now plays the success sound (with the coach's glow), no confetti; the drop that completes the
+screen plays the confetti with the success sound - once, not twice. Measured in both files: G5 2 drops ->
+2 success sounds, 1 confetti (on the last); word build 3 letters -> 3 success sounds, 1 confetti.
+
+## Round 17 (2026-10-21) — a wrong attempt: the shake and the wrong sound, then the hint (File3 r148)
+
+Yasir, still on BUG_09: "in case of a wrong attempt the coach shakes and the sfx plays, then the VO should
+play". r146 waited only for the shake (520 ms) and only on the tap pages - but the wrong sound is audible for
+0.67 s (sfx_fb_incorrect; silent from 0.669 s), so the line still came in over it, and the sort, word-build and
+sentence pages did not wait at all. Every wrong attempt now plays the shake and the wrong sound on their own,
+and its hint (line, read-out, hand) starts 750 ms later; no tap or drop is taken in between. Swifty's sad face
+(r146) still lasts until the hint line is over.
+Measured in both files, wrong sound -> hint voice: tap page 754-763 ms, sort 757-761, word build 757-765,
+sentence 752-766; Swifty normal 0.3-0.4 s after the line ends; no console errors.
