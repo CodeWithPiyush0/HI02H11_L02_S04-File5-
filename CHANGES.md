@@ -385,3 +385,17 @@ drag-only - G4 for the coaches, T3 / T5 for the mic); no console errors.
 
 QA: the music "still feels loud" at 50 %. Its level is now 0.40 (was 0.50). It still steps back under
 sound effects and the voice, unchanged. Measured: 0.40 with no voice, 0.16 under the voice.
+
+## Round 11 (2026-10-21) — pages 3 / 5: the mic centred on the word
+
+The developer: "align the mic button with the word, it should be centred with respect to the word". The
+mic was centred on the word's whole ink, hook of ो / ौ included, so it sat level with the top line, 13-18 px
+above the letters. It is now centred on the letters - midway between the top line and the baseline:
+measured 0 px off on मोर, कोयल, कौआ and पौधा; the gap to the word (30-33 px) and the size are unchanged.
+
+## Round 13 (2026-10-21) — background music 30 %
+
+QA still finds the music loud at 40 %. Its level is now 0.30. The old level under a sound effect (0.32)
+would now have been LOUDER than the music itself, so both dips scale down with it: 0.15 under an effect,
+0.08 under the voice (the r99 proportions, about a half and a quarter). Measured: 0.30 with no voice, 0.08
+under the voice. The runner game's own music (MatraRunner, 80 % by Yasir's ruling) is not touched.

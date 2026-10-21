@@ -7294,7 +7294,9 @@ if(document.fonts && document.fonts.load){
      [r100] Yasir: "the bg music should only play when we click on the play button" - so it starts
      with that tap, and nothing else starts it (not the cover, not another touch). */
   const BGM = (function(){
-    const BASE = 0.40, SFX = 0.32, VO = 0.16;   /* [r139] QA BUG_03: 0.68 -> 0.50; [r143] QA again ("still feels loud"): 0.40. The ducking under SFX / VO is unchanged */
+    const BASE = 0.30, SFX = 0.15, VO = 0.08;   /* [r139] QA BUG_03: 0.68 -> 0.50; [r143] 0.40; [r144] QA still finds it loud: 0.30.
+       Under 0.32 the old SFX level would have RAISED the music on every effect, so both steps scale with it:
+       about half under an effect, a quarter under the voice - the proportions r99 set (0.68 / 0.32 / 0.16) */
     const src = (typeof _av === "function") ? _av("assets/Audio/bgm_lesson.ogg") : "assets/Audio/bgm_lesson.ogg";
     let el = null, vol = 0, started = false, sfxUntil = 0;
     const live = new Set();

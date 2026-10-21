@@ -2138,6 +2138,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 /* [File5] the mic centred on the WHOLE word here too - but File5's matras (ो / ौ) stand ABOVE the letters,
    where File3's (ु / ू) hang below, so the word's ink centre is higher: measured 27-29 px below it at -31 px. */
 .mx-v2 .mx-wordrow .mx-mic{ margin-top:-61px; }
+/* [S04 2026-10-21] the developer: "align the mic button with the word, it should be centred with respect to
+   the word". Centred on the whole ink (above), the mic sat level with the hook of ो / ौ and the top line -
+   13-18 px above the letters. It is centred on the LETTERS now: midway between the top line (शिरोरेखा)
+   and the baseline, measured on all four words. */
+.mx-v2 .mx-wordrow .mx-mic{ margin-top:-48px; }
 /* [r141] Yasir: "align the mic button with the word, centred with respect to the word" - -43 -> -31: measured, the
    mic's centre sat 11 screen px (12 design px) above the centre of the word's ink on all four words */
 .mx-v2 .mx-wordrow{ align-self:center; }
