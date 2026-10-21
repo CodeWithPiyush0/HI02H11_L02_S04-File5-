@@ -49,7 +49,8 @@ COPY_AUDIO = ["vo_pt_tutorial", "vo_pt_guided", "vo_pt_practice",
               "sfx_fb_correct", "sfx_fb_incorrect",
               "sfx_play_button", "sfx_next_button",
               "sfx_train_arrive", "sfx_train_move", "sfx_whistle",
-              "sfx_mt_burst", "sfx_chime"]           # «मात्रा टोकरी»: File2's own round-complete burst
+              "sfx_mt_burst", "sfx_chime",           # «मात्रा टोकरी»: File2's own round-complete burst
+              "sfx_whoosh"]                          # [File3 r142] the transition screen's swish
 
 O, AU = "ो", "ौ"
 
@@ -819,7 +820,10 @@ def build_card(slides):
                                    "practice": "अब आपकी बारी।"},         # [File3]
         "phase_distribution": counts,
         "ui_sfx": {"play": "sfx_play_button", "next": "sfx_next_button"},
-        "gate": {"img": "assets/UI/swifty_gate_seek.webp", "talk_at_ms": 1960,
+        # [File3 r142] the transition screen is Hindi-game-gender-identify's (engine phaseBlurTransition):
+        # its Swifty (assets/UI/peeking_talk_up.webp) and animation replace the seeking bird and her
+        # lip-sync, so `img`, `talk_at_ms`, `title_dur_ms` and the lip-sync sheet step are gone.
+        "gate": {
                  # [File3 r83] the third transition «अब आपकी बारी!» opens just before the game, not
                  # in front of the first practice page (engine: CARD.gate.at)
                  "at": {"round3": "MT1"},
@@ -827,8 +831,7 @@ def build_card(slides):
                  # and how long Swiftee takes to say it - the same kit clips as File3 (byte-identical),
                  # so File3's measurements; the builder adds the voiced stretches (title_voice_ms, r108)
                  # [File3 r109] the recorded transition lines, File3's own measurement
-                 "title_cue_ms": {"tutorial": 3075, "guided": 3575, "practice": 925},
-                 "title_dur_ms": {"tutorial": 1150, "guided": 1325, "practice": 850}},
+                 "title_cue_ms": {"tutorial": 3075, "guided": 3575, "practice": 925}},
         # the deck's ladder: rung 1 at the 1st miss, 2 at the 2nd, 3 at the 3rd; a win after
         # Hint 3 is silent ("No additional VO is needed"), any earlier win is praised
         "scaffold_rules": {"nudge_timeout_ms": {"guided": 6000, "practice": 8000},
@@ -1101,103 +1104,21 @@ def celebration_anim(slides):
     return {"base": "assets/UI/celebration/", "vo": vo_id, "meta": meta, "track": track}
 
 
-# ---------------------------------------------------------------- [File3 r107/r108] the gate bird speaks the line
-# Yasir: "when «चलिए शुरू करें» plays Swifty stays static, no mouth movement - same on transitions 2
-# and 3". The gate art is a fixed animation: its talking part (1.96-6.3 s) opens the beak only 7 times
-# whatever the clip says, then it blinks and holds a still frame for 1.2 s - exactly where «चलिए, शुरू
-# करें!» falls (6.0-7.2 s into the gate). So the rise stays the animation, and from her first speaking
-# frame she is drawn from a sheet of the SAME art's own frames (37-67: rest, blinks, the 7 open beaks
-# and the closed beak beside each), lip-synced to THIS transition's clip: the beak opens on each
-# syllable of the track the celebration kit's make_lipsync.py measures (run as it ships), blinks in
-# the pauses, and shuts when the line ends. Engine: CARD.gate.talk + CARD.gate.lips.
-GATE_TALK_FIRST, GATE_TALK_LAST, GATE_TALK_COLS = 37, 67, 8
-GATE_TALK_SHEET = "assets/UI/swifty_gate_talk.webp"
-
-
-def gate_talk(card):
-    import subprocess, tempfile
-    from PIL import Image
+# ---------------------------------------------------------------- [File3 r142] where each transition's phrase starts
+def gate_cues(card):
     g = card["gate"]
     # [2026-10-21] THE TRANSITION LINES ARE THE SME'S OWN RECORDINGS NOW, so where the on-screen phrase
     # («चलिए, शुरू करें!» / «चलिए, साथ में करें!» / «अब आपकी बारी!») sits in each clip is measured here
     # instead of reusing File3's numbers: it is everything after the clip's last long pause (>= 400 ms;
     # the comma inside «चलिए, साथ में करें!» is a shorter one). Falls back to the card's values.
+    # The engine wipes the line in at this moment (CARD.gate.title_cue_ms).
     for phase, vo_id in (("tutorial", "vo_pt_tutorial"), ("guided", "vo_pt_guided"), ("practice", "vo_pt_practice")):
         segs = _voice_segs_ms(vo_id, 0.30)
         if len(segs) < 2:
             continue
         k = max(i for i in range(1, len(segs)) if segs[i][0] - segs[i - 1][1] >= 400)             if any(segs[i][0] - segs[i - 1][1] >= 400 for i in range(1, len(segs))) else len(segs) - 1
         g["title_cue_ms"][phase] = segs[k][0]
-        g["title_dur_ms"][phase] = segs[-1][1] - segs[k][0]
-    print("  OK  transition phrases measured: cue %s  dur %s" % (g["title_cue_ms"], g["title_dur_ms"]))
-    src = os.path.join(BUNDLE, g["img"])
-    out = os.path.join(BUNDLE, GATE_TALK_SHEET)
-    if not os.path.isfile(src):
-        print("  !!  gate lip-sync skipped (%s missing) - the gate keeps its own animation" % g["img"])
-        return
-    im = Image.open(src)
-    fw, fh = im.size
-    n = GATE_TALK_LAST - GATE_TALK_FIRST + 1
-    if not os.path.isfile(out) or os.path.getmtime(out) < os.path.getmtime(src):
-        rows = (n + GATE_TALK_COLS - 1) // GATE_TALK_COLS
-        sheet = Image.new("RGBA", (fw * GATE_TALK_COLS, fh * rows), (0, 0, 0, 0))
-        for k in range(n):
-            im.seek(GATE_TALK_FIRST + k)
-            sheet.paste(im.convert("RGBA"), ((k % GATE_TALK_COLS) * fw, (k // GATE_TALK_COLS) * fh))
-        sheet.save(out, "WEBP", quality=90, method=6)
-    lips = {}
-    for phase, vo in (("tutorial", "vo_pt_tutorial"), ("guided", "vo_pt_guided"), ("practice", "vo_pt_practice")):
-        vp = os.path.join(AUD_DIR, vo + ".ogg")
-        if not os.path.isfile(vp):
-            continue
-        tmp = os.path.join(tempfile.gettempdir(), "gate_track_%s_%s.json" % (CODE, phase))
-        subprocess.run([sys.executable, os.path.join(KIT, "make_lipsync.py"), vp, "--json", tmp],
-                       check=True, capture_output=True)
-        tr = json.load(open(tmp, encoding="utf-8"))
-        if "1" not in tr["bits"]:
-            sys.exit("X  the %s gate VO measured silent - no lip-sync track" % phase)
-        lips[phase] = {"bits": tr["bits"], "step_ms": tr["step_ms"]}
-    g["talk"] = {"src": GATE_TALK_SHEET, "first": GATE_TALK_FIRST, "cols": GATE_TALK_COLS, "fw": fw, "fh": fh,
-                 "rest": 37, "blink": [38, 39, 40],
-                 # each open beak with the closed beak drawn right after it in the art
-                 "open": [[42, 43], [44, 45], [51, 52], [53, 54], [55, 56], [58, 59], [60, 61]]}
-    g["lips"] = lips
-    # [r108] WHEN EACH WORD OF THE ON-SCREEN PHRASE IS SPOKEN. Yasir: "in the first transition the
-    # «चलिए, शुरू करें» VO plays but its text does not complete - not in sync with the VO". The typewriter
-    # spread the letters evenly over the whole phrase, so «शु» typed in the pause after «चलिए,» and the
-    # rest ran on timers of its own. Measured here from the clip (25 ms RMS, voice = above -42 dBFS,
-    # gaps under 150 ms bridged): the voiced stretches inside the phrase. The engine types the letters
-    # only while the voice is sounding, on the clip's own clock (CARD.gate.title_voice_ms).
-    import array
-    voice = {}
-    for phase, vo in (("tutorial", "vo_pt_tutorial"), ("guided", "vo_pt_guided"), ("practice", "vo_pt_practice")):
-        vp = os.path.join(AUD_DIR, vo + ".ogg")
-        cue, dur = g["title_cue_ms"].get(phase), g["title_dur_ms"].get(phase)
-        if not os.path.isfile(vp) or cue is None or dur is None:
-            continue
-        raw = subprocess.run(["ffmpeg", "-v", "error", "-i", vp, "-ac", "1", "-ar", "16000", "-f", "s16le", "-"],
-                             capture_output=True, check=True).stdout
-        a = array.array("h"); a.frombytes(raw[: len(raw) // 2 * 2])
-        segs = []
-        for i in range(0, len(a) - 400, 400):
-            ms = i // 16
-            if not (cue - 150 <= ms <= cue + dur + 200):
-                continue
-            r = (sum(x * x for x in a[i:i + 400]) / 400) ** 0.5
-            if r > 32768 * 10 ** (-42 / 20):
-                if segs and ms - segs[-1][1] < 150:
-                    segs[-1][1] = ms + 25
-                else:
-                    segs.append([ms, ms + 25])
-        segs = [x for x in segs if x[1] - x[0] >= 50]
-        if not segs:
-            sys.exit("X  no voice measured inside the %s phrase window" % phase)
-        voice[phase] = segs
-    g["title_voice_ms"] = voice
-    print("  OK  transition phrases, voiced (ms in clip): %s" % voice)
-    print("  OK  gate lip-sync: %s (%d frames, %d KB), tracks for %s"
-          % (GATE_TALK_SHEET, n, os.path.getsize(out) // 1024, sorted(lips)))
-
+    print("  OK  transition phrases measured: cue %s" % g["title_cue_ms"])
 
 def _file3_cel_wrap():
     """The kit's CELEBRATION.mount wrapper, taken verbatim from File3's builder so the two lessons
@@ -1251,7 +1172,7 @@ def main():
     if img_orphan:
         print("  !!  images no longer used: %s" % img_orphan)
 
-    gate_talk(card)                                      # [File3 r107/r108]
+    gate_cues(card)                                      # [File3 r142]
     card["end_anim"] = celebration_anim(slides)
     if not card["end_anim"]:
         del card["end_anim"]

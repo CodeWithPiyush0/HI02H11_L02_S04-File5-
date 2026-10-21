@@ -1,7 +1,65 @@
 <!doctype html>
-<html lang="hi">
+<html lang="hi" translate="no" class="notranslate">
 <head>
 <meta charset="utf-8">
+<!-- [r139] QA BUG_01: Chrome offered to translate the Hindi, and a translated page lost its Play button
+     (Translate rewrites the text the engine drives). The lesson is never to be translated. -->
+<meta name="google" content="notranslate">
+<script>
+/* [r139] QA BUG_02 - "when I switch tab or even minimise the browser it should pause, and when I get back to
+   it, it should resume". Installed before anything else on the page, so it sees every sound source the
+   lesson and the game create:
+     - every AudioContext (the lesson's voice + sound effects, the game's music and sounds) is suspended
+       while the page is hidden and resumed when it is back - a clip simply carries on from where it was;
+     - every <audio> / <video> that is playing (the lesson's music, the game's valley video, any element
+       sound) is paused and played again on return;
+     - anything that tries to START while hidden (a resume(), a play()) is held and started on return.
+   A sound the lesson stops on purpose while hidden is not brought back. */
+(function(){
+  var W0 = window, ACs = [], held = [], media = new Set(), ours = false;
+  W0.__lessonPaused = false; W0.__pausedMs = 0; W0.__pauseT0 = 0;
+  var AC0 = W0.AudioContext || W0.webkitAudioContext, res0 = null;
+  if(AC0){
+    var Wrap = function(o){ var c = (o === undefined) ? new AC0() : new AC0(o); ACs.push(c); return c; };
+    Wrap.prototype = AC0.prototype;
+    try{ W0.AudioContext = Wrap; }catch(e){}
+    if(W0.webkitAudioContext){ try{ W0.webkitAudioContext = Wrap; }catch(e){} }
+    res0 = AC0.prototype.resume;
+    AC0.prototype.resume = function(){
+      if(W0.__lessonPaused){ this.__wantRun = true; return Promise.resolve(); }
+      return res0.apply(this, arguments);
+    };
+  }
+  var play0 = HTMLMediaElement.prototype.play, pause0 = HTMLMediaElement.prototype.pause;
+  HTMLMediaElement.prototype.play = function(){
+    media.add(this);
+    if(W0.__lessonPaused){ if(held.indexOf(this) < 0) held.push(this); return Promise.resolve(); }
+    return play0.apply(this, arguments);
+  };
+  HTMLMediaElement.prototype.pause = function(){
+    if(!ours){ var i = held.indexOf(this); if(i >= 0) held.splice(i, 1); }   /* stopped on purpose: stays stopped */
+    return pause0.apply(this, arguments);
+  };
+  function pause(){
+    if(W0.__lessonPaused) return;
+    W0.__lessonPaused = true; W0.__pauseT0 = Date.now();
+    ACs.forEach(function(c){ c.__wantRun = (c.state === "running"); if(c.__wantRun){ try{ c.suspend(); }catch(e){} } });
+    held = []; ours = true;
+    media.forEach(function(m){ if(!m.paused && !m.ended){ held.push(m); try{ pause0.call(m); }catch(e){} } });
+    ours = false;
+  }
+  function resume(){
+    if(!W0.__lessonPaused) return;
+    W0.__lessonPaused = false; W0.__pausedMs += Date.now() - W0.__pauseT0;
+    ACs.forEach(function(c){ if(c.__wantRun){ c.__wantRun = false; try{ var p = res0.call(c); if(p && p.catch) p.catch(function(){}); }catch(e){} } });
+    var h = held; held = [];
+    h.forEach(function(m){ try{ var p = play0.call(m); if(p && p.catch) p.catch(function(){}); }catch(e){} });
+  }
+  document.addEventListener("visibilitychange", function(){ if(document.hidden) pause(); else resume(); });
+  W0.addEventListener("pagehide", pause);
+  W0.addEventListener("pageshow", function(){ if(!document.hidden) resume(); });
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><!-- [24a N9] pinch-zoom lock: a child two-finger-zooms the game off-centre in any real browser without it -->
 <title>SwiftPAL · MTKGA02_L02_S02 · क्रम में लगाओ</title>
 <!-- OFFLINE BUILD — factory.py replaces the marker below with a <style>@font-face…</style>.
@@ -3068,15 +3126,6 @@ body.vo-lock .coach-body.dd-zone > .coach-face{ pointer-events:none !important; 
 
 /* ---------- (1) the next button's arrow ---------- */
 .nav-btn::after{content:"\2192";font-size:52px;line-height:1;}
-/* [r103] the transition's text, held until Swiftee says it - then it pops in */
-#phaseGateTitle{ transition:opacity .25s ease, transform .35s cubic-bezier(.34,1.5,.6,1); }
-/* [r105] every transform here keeps the title's own translateX(-50%) - r103/r104 dropped it, so the
-   text started at the screen's centre line instead of being centred on it */
-#phaseGateTitle.pg-title-wait{ opacity:0; transform:translateX(-50%) scale(.85); }
-/* [r104] the typewriter: the line is up at once, each akshara fades in on its beat */
-#phaseGateTitle.pg-typing{ transition:none; transform:translateX(-50%); }
-#phaseGateTitle .pg-tw{ opacity:0; transition:opacity .09s linear; }
-#phaseGateTitle .pg-tw.on{ opacity:1; }
 /* [r97] Yasir: "when the VO is finished we enable the next button - I want it to pulsate". It pulses
    for as long as it is live (the engine marks a live arrow .active and enables it; a disabled one
    never pulses). The pill is centred with translateX(-50%), so every frame keeps that. */
@@ -3675,15 +3724,6 @@ body.auto-next #navBtn{ visibility:hidden; pointer-events:none; }
 .sg-btn.sg-waiting{ background-image:url("assets/Images/play_btn_disabled.svg"); }
 .sg-btn:active{ transform:translateX(-50%) translateY(3px); }
 
-/* [r65] THE GATE BIRD SEEKS, THEN SPEAKS. Its rise is inside the art now, so the engine's own
-   pgPeek slide-up would rise it twice; and the frame is cropped to the bird, so the height clamp
-   applies to the bird itself rather than to a mostly-empty square. */
-.phase-gate #phaseGateImg.pg-card{ animation:none; height:clamp(200px,30vh,290px); }
-/* [r107] from her first speaking frame the gate bird is drawn lip-synced (engine _gateLips) on a
-   canvas that takes the animation's exact place: same height clamp, its own 505x440 aspect */
-.phase-gate #phaseGateCv{ display:none; height:clamp(200px,30vh,290px); width:auto; pointer-events:none; }
-.phase-gate.pg-talking #phaseGateImg{ display:none; }
-.phase-gate.pg-talking #phaseGateCv{ display:block; }
 
 /* [r73/r74] the cover's text title sits above the train, so the steam passes behind it */
 #sgTitle.lt-title-front{ position:relative; z-index:6; }
@@ -3973,12 +4013,48 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
    File5's rule - the 140px button sits 28px lower (bottom 40 -> 12) so it clears the cover's track ties */
 .sg-btn, .sg-btn.sg-waiting{ bottom:12px; }
 
-/* [r117] PHONES. Yasir: "on mobile the transition text gets cut and everything looks small". The
-   transition's title was a fixed 96 px line 271 px down, and its bird at least 200 px tall - on a phone
-   held sideways (~360 px tall) the text ran off the sides and sat on the bird. Both now scale with a
-   short screen; on a computer screen they come out exactly as before (min() picks the old values). */
-.pg-title{ top:min(271px, 39vh); font-size:min(96px, 10vw, 14vh); -webkit-text-stroke:.104em #FFFFFF; }
-.phase-gate #phaseGateImg.pg-card, .phase-gate #phaseGateCv{ height:clamp(110px, 30vh, 290px); }
+/* [r142] THE TRANSITION SCREEN OF Hindi-game-gender-identify (HI02H11_L03_S02), rule for rule.
+   Yasir: "extract and replace the exact same all three transition screens and their animation from
+   this repo". The grey blurred wash was already the same; what changes is everything on it:
+   - Swifty is that repo's peeking_talk_up.webp (900x900, already up and talking), bottom-anchored,
+     square, 52.8% of the window's height, at most 624px and never wider than the screen. He comes in
+     with a short .3s lift (pgUpIn); on the first transition he sinks out (pgPeekDown, .34s) at the end.
+   - the line is its magenta headline with the white stroke, sized by --pgf, 271px down (higher on a
+     short screen), and it WIPES in left to right (pgWipe, .9s) when Swifty says it.
+   The engine's _fitGateTitle (same repo) keeps the line off his head on any screen. */
+.pg-title{font-family:var(--font-hi) !important;font-weight:800 !important;letter-spacing:0 !important;}
+.pg-title.pg-pop{animation:pgWipe .9s cubic-bezier(.25,.6,.3,1) both;}
+@keyframes pgWipe{from{clip-path:inset(-24px 100% -24px -24px);}to{clip-path:inset(-24px -24px -24px -24px);}}
+html.no-anim .pg-title.pg-pop{animation:none !important;}
+.phase-gate.pg-up #phaseGateImg{animation:pgUpIn .3s ease-out both !important;}
+@keyframes pgUpIn{from{transform:translate(-50%,28%);}to{transform:translate(-50%,0);}}
+html.no-anim .phase-gate.pg-up #phaseGateImg{animation:none !important;}
+.phase-gate.pg-talk.pg-sink #phaseGateImg{
+  animation:pgPeekDown .34s ease-in both !important;}
+@keyframes pgPeekDown{
+  from{transform:translate(-50%,0);}
+  to  {transform:translate(-50%,100%);}}
+html.no-anim .phase-gate.pg-talk #phaseGateImg{animation:none !important;}
+.phase-gate{align-items:center !important;}
+.phase-gate{--pgf:min(96px, 12.8vh, 13vw);}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+.phase-gate .pg-title{z-index:3 !important;}
+.phase-gate #phaseGateImg{z-index:1;}
+@supports (height: 1svh){
+  .phase-gate{--pgf:min(96px, 12.8svh, 13vw);}
+  .pg-title{top:max(8px, min(271px, calc(58.8svh - 1.2 * var(--pgf) - 12px))) !important;}
+  .phase-gate #phaseGateImg{height:min(52.8svh,624px,92vw) !important;width:min(52.8svh,624px,92vw) !important;}
+}
+.pg-title{left:50% !important;transform:translateX(-50%) !important;
+          top:max(8px, min(271px, calc(58.8vh - 1.2 * var(--pgf) - 12px))) !important;
+          width:max-content !important;max-width:94vw !important;white-space:nowrap !important;
+          font-size:var(--pgf) !important;line-height:1.14 !important;color:#CD0FD5 !important;
+          -webkit-text-stroke:calc(var(--pgf) * 0.104) #FFFFFF !important;paint-order:stroke fill !important;}
+.phase-gate #phaseGateImg{position:fixed !important;left:50% !important;bottom:0 !important;
+          height:min(52.8vh,624px,92vw) !important;width:min(52.8vh,624px,92vw) !important;
+          object-fit:contain !important;
+          transform:translateX(-50%);
+          animation:none !important;}
 /* ...and a phone or tablet held upright is asked to turn: this card covers the lesson until it is */
 .rot-gate{ display:none; position:fixed; inset:0; z-index:2147483000; flex-direction:column;
   align-items:center; justify-content:center; gap:5vh; text-align:center; color:#fff;
@@ -4158,7 +4234,12 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
 /* pages 3 / 5: the word is centred under the picture; the mic sits to its right without pushing it off
    centre (absolutely placed, vertically centred by margin so its pulse's transform stays free) */
 .mx-v2 .mx-wordrow{ position:relative; display:flex; justify-content:center; gap:0; }
-.mx-v2 .mx-wordrow .mx-mic{ position:absolute; left:100%; top:50%; margin:-43px 0 0 22px; }
+.mx-v2 .mx-wordrow .mx-mic{ position:absolute; left:100%; top:50%; margin:-31px 0 0 22px; }
+/* [File5] the mic centred on the WHOLE word here too - but File5's matras (ो / ौ) stand ABOVE the letters,
+   where File3's (ु / ू) hang below, so the word's ink centre is higher: measured 27-29 px below it at -31 px. */
+.mx-v2 .mx-wordrow .mx-mic{ margin-top:-61px; }
+/* [r141] Yasir: "align the mic button with the word, centred with respect to the word" - -43 -> -31: measured, the
+   mic's centre sat 11 screen px (12 design px) above the centre of the word's ink on all four words */
 .mx-v2 .mx-wordrow{ align-self:center; }
 
 /* only the next button pulses while it pulses */
@@ -4170,6 +4251,19 @@ body.nav-live .slide-host *, body.nav-live .slide-host *::before, body.nav-live 
    and a later animation is the only thing that can take over from it */
 .tr-tray.tr-tray-out{ animation:trTrayOut .45s ease forwards !important; pointer-events:none; }
 @keyframes trTrayOut{ from{ opacity:1; transform:translateY(0); } to{ opacity:0; transform:translateY(24px); } }
+
+/* ==========================================================================================
+   [r139] QA round
+   ========================================================================================== */
+/* BUG_04 / BUG_07: the speaker is grey for the whole of a sequence, and after the correct answer
+   (body.spk-busy, kept by the engine) - not only while one clip plays (body.vo-lock, unchanged) */
+body.spk-busy .audio-chip,
+body.spk-busy .tut-audio{ pointer-events:none !important; opacity:.45; filter:grayscale(.75);
+  transition:opacity .18s ease, filter .18s ease; }
+/* BUG_08: after the 3rd wrong attempt only the right coach is left; the others are greyed and take nothing */
+.train-coach.is-off{ pointer-events:none; }
+.train-coach.is-off .coach-body,
+.train-coach.is-off .coach-label{ filter:grayscale(.6) opacity(.45); transition:filter .25s ease; }
 
 /* ==========================================================================================
    [S04] HI02H11_L02_S04 (ओ / औ) — additions for the SME's 2026-10-05 deck. Additive only.
@@ -5384,7 +5478,7 @@ body.mt-page{ background:#7FC2FE; }
 </div>
 <div class="phase-gate" id="phaseGate">
     <div class="pg-title" id="phaseGateTitle"></div>
-    <img id="phaseGateImg" data-src="assets/UI/peeking.webp" alt="">   <!-- [20a landing-fix] reunited with #phaseGate (was orphaned in .stage → full-bleed on landing once the gate went transparent) -->
+    <img id="phaseGateImg" alt="">   <!-- [20a landing-fix] reunited with #phaseGate (was orphaned in .stage → full-bleed on landing once the gate went transparent) -->
 </div>
 
 <!-- ============ CARD DATA (embedded; in prod the compiler does this) ============ -->
@@ -5436,8 +5530,6 @@ body.mt-page{ background:#7FC2FE; }
   "next": "sfx_next_button"
  },
  "gate": {
-  "img": "assets/UI/swifty_gate_seek.webp",
-  "talk_at_ms": 1960,
   "at": {
    "round3": "MT1"
   },
@@ -5445,92 +5537,6 @@ body.mt-page{ background:#7FC2FE; }
    "tutorial": 3240,
    "guided": 3750,
    "practice": 1220
-  },
-  "title_dur_ms": {
-   "tutorial": 1000,
-   "guided": 1270,
-   "practice": 820
-  },
-  "talk": {
-   "src": "assets/UI/swifty_gate_talk.webp",
-   "first": 37,
-   "cols": 8,
-   "fw": 505,
-   "fh": 440,
-   "rest": 37,
-   "blink": [
-    38,
-    39,
-    40
-   ],
-   "open": [
-    [
-     42,
-     43
-    ],
-    [
-     44,
-     45
-    ],
-    [
-     51,
-     52
-    ],
-    [
-     53,
-     54
-    ],
-    [
-     55,
-     56
-    ],
-    [
-     58,
-     59
-    ],
-    [
-     60,
-     61
-    ]
-   ]
-  },
-  "lips": {
-   "tutorial": {
-    "bits": "0011001111111111111111000011100011000000000011110000000000000011100111111100110000011111100000000001100011100000000000000000000000001111100111000000000000111110000110000000000",
-    "step_ms": 25
-   },
-   "guided": {
-    "bits": "0000001110000111100000111100001111000000000000000000000011110001111111100000000111110000000111110001110000000011000110000000011100000000000000000000000011000001111000000000000000111100000011100011111100000",
-    "step_ms": 25
-   },
-   "practice": {
-    "bits": "011100000111000111111100000000000000000000000000011100111111000000011001111100110000000",
-    "step_ms": 25
-   }
-  },
-  "title_voice_ms": {
-   "tutorial": [
-    [
-     3225,
-     4275
-    ]
-   ],
-   "guided": [
-    [
-     3725,
-     4100
-    ],
-    [
-     4400,
-     5025
-    ]
-   ],
-   "practice": [
-    [
-     1200,
-     2075
-    ]
-   ]
   }
  },
  "scaffold_rules": {
@@ -5737,7 +5743,8 @@ body.mt-page{ background:#7FC2FE; }
    "sfx_train_move": "assets/Audio/sfx_train_move.ogg",
    "sfx_whistle": "assets/Audio/sfx_whistle.ogg",
    "sfx_mt_burst": "assets/Audio/sfx_mt_burst.ogg",
-   "sfx_chime": "assets/Audio/sfx_chime.ogg"
+   "sfx_chime": "assets/Audio/sfx_chime.ogg",
+   "sfx_whoosh": "assets/Audio/sfx_whoosh.ogg"
   },
   "audio_text": {
    "vo_pair_o": "यह है ओ। इसकी मात्रा देखिए।",
@@ -7345,7 +7352,7 @@ function _chainMs(srcs, gapMs){
    no reason to fetch it again and the reviewer keeps hearing the previous take. __AUDIO_V is
    stamped by the builder from the CONTENT of the audio folder, so it changes exactly when a clip
    changes and not otherwise - a fresh URL on every build would defeat caching for no reason. */
-var __AUDIO_V = "17ca15af42e5";
+var __AUDIO_V = "65e7085db679";
 function _av(src){
   if(typeof src !== "string" || src.indexOf("assets/Audio/") < 0) return src;
   return src.indexOf("?") >= 0 ? src : src + "?v=" + __AUDIO_V;
@@ -7445,7 +7452,14 @@ function swApplyPose(){ /* [20a] retired: heads no longer couple to isPlaying (s
 function _swApplyPose_dead(){ const img = document.getElementById("swBuddyImg"); if(!img) return;
   img.src = "assets/UI/" + (isPlaying ? (SW_POSE[swMood] || SW_POSE.talk) + ".gif" : SW_REST + ".webp");
   img.style.display = ""; }
-function setSwMood(m){ swMood = m;
+/* [r139] QA BUG_06: "Swifty sad only in case of a wrong attempt". The try-again face used to stay until
+   the next event; it now returns to her normal face once the wrong-answer moment has passed (the buzz
+   and the start of the hint), unless something else has changed her mood meanwhile. */
+let _swSadT = 0;
+function setSwMood(m){
+  clearTimeout(_swSadT);
+  if(m === "tryagain") _swSadT = setTimeout(()=>{ if(swMood === "tryagain") setSwMood("point"); }, 1800);
+  swMood = m;
   const img = document.getElementById("swBuddyImg"), w = document.getElementById("swBuddy");
   if(!img) return;
   const expr = SW_POSE[m] || "talking";
@@ -12217,6 +12231,13 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
     });
   }
 
+  /* [r139] QA BUG_08: "after the third wrong attempt we show which option goes in which coach - also disable
+     every coach but the correct one, so only one coach is left". The others are greyed and take nothing
+     (a card dropped there springs back, not counted) until the locked card is in its coach. */
+  function coachesOnly(train, keep){ train.coaches.forEach((c, k)=> c.el.classList.toggle("is-off", k !== keep)); }
+  function coachesAll(train){ train.coaches.forEach(c => c.el.classList.remove("is-off")); }
+  const coachOff = (train, k)=> !!(train.coaches[k] && train.coaches[k].el.classList.contains("is-off"));
+
   function hintSeq(steps, done){
     let i = 0;
     (function step(){
@@ -12297,7 +12318,16 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
       if(gen !== _voGen) return;                 // the screen moved on; this chain is stale
       if(next) next(); };
     try { play(clip(src) || null, go); } catch(e){ go(); return; }
-    setTimeout(go, 9000);
+    /* [r139] QA BUG_02: the page pauses while it is hidden, and a clip cannot end while it is paused -
+       so this fallback counts only the time the page was actually on screen, or a hidden tab would have
+       skipped the chain on past a clip that is only waiting to resume */
+    const t0 = Date.now(), p0 = window.__pausedMs || 0;
+    (function fb(){
+      const paused = !!window.__lessonPaused;
+      const shown = Date.now() - t0 - ((window.__pausedMs || 0) - p0) - (paused ? Date.now() - (window.__pauseT0 || Date.now()) : 0);
+      if(paused || shown < 9000){ setTimeout(fb, paused ? 500 : Math.max(50, 9000 - shown)); return; }
+      go();
+    })();
   }
   /* say() for an OPTIONAL clip: a null/absent id runs `next` immediately instead of handing
      play() a null source and then sitting out the 9-second fallback timer. Round 3 has
@@ -12305,6 +12335,25 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
      the completion line on every sort screen — and each of those is an absent clip, not a
      pause the child should sit through. */
   function sayOpt(src, next){ if(!src){ if(next) next(); return; } say(src, next); }
+
+  /* [r139] QA BUG_04: "the speaker turns blue, then grey, and so on while the options are announced" - its
+     grey state followed each single clip (body.vo-lock), so it turned blue in every gap of a sequence.
+     `body.spk-busy` covers the WHOLE sequence: any clip playing, a reveal / read-out / hint in progress,
+     a watch-only demonstration running - and it lets go only after 700 ms with none of those, which
+     bridges the gaps between the clips of a sequence. QA BUG_07: once the answer is right (state.locked)
+     it stays grey and the speaker ignores taps (the replay guard in the engine) until the next page. */
+  (function speakerState(){
+    let quietSince = 0;
+    const tick = ()=>{
+      const seq = !!((typeof isPlaying !== "undefined" && isPlaying) || state.revealing || state.demoRunning || hintBusy);
+      const now = performance.now();
+      if(seq) quietSince = 0; else if(!quietSince) quietSince = now;
+      const busy = seq || (now - quietSince < 700) || !!state.locked;
+      if(document.body && document.body.classList.contains("spk-busy") !== busy)
+        document.body.classList.toggle("spk-busy", busy);
+    };
+    setInterval(tick, 80);
+  })();
 
   function sayAll(list, next){
     let i = 0;
@@ -13771,7 +13820,7 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
          screen-wide lock earned by one card would refuse a different card the coach it actually
          belongs in. The drop handler reads `only` and hands the card back without counting it,
          so a child who keeps trying the wrong coach is not punished for it either. */
-      const lockToBin = (tile, want)=>{ tile.dataset.only = String(want); };
+      const lockToBin = (tile, want)=>{ tile.dataset.only = String(want); coachesOnly(train, want); };
 
       /* [r83] a card that has gone into its RIGHT coach - shared by the child's drop and the
          demonstration's, so the watch-first page shows exactly what a real drop does */
@@ -13794,6 +13843,7 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
           tile._ghost = g;
           requestAnimationFrame(()=> closeGap(g));         /* [r96] and folds away */
         }
+        if(tile.dataset.only != null) coachesAll(train);      /* [r139] the locked card is home: all coaches back */
         tile.classList.add("snapped");
         /* the card belongs on the coach's painted CREAM PANEL, not loose in the coach body.
            `body` is the drop target (it is what carries .dd-zone); `.coach-face` is the panel
@@ -13851,7 +13901,7 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
           const ci = parseInt(body.dataset.idx, 10);
           /* rung 3 has already named this card's coach: every other one simply will not take it,
              and refusing is NOT a wrong attempt - the child has run out of ladder. */
-          if(tile.dataset.only != null && String(ci) !== tile.dataset.only){
+          if(coachOff(train, ci) || (tile.dataset.only != null && String(ci) !== tile.dataset.only)){   /* [r139] greyed coaches take nothing */
             tile.style.transform = "";
             tile.classList.remove("tr-cshake"); void tile.offsetWidth;
             tile.classList.add("tr-cshake");
@@ -14479,20 +14529,33 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
          the mic - for 3 seconds, as we give the user 3 seconds to read the word; and if the user does not
          tap for 7 seconds the VO plays «इस बटन पर टैप कीजिए और शब्द पढ़िए।»". Nothing is recorded. The
          lesson waits for the tap; the reminder repeats after every 7 s of nothing. */
-      const micTurn = (mic, after)=>{
+      /* [r140] QA BUG_05, Yasir's fix: (1) the reminder «इस बटन पर टैप करिए» now comes with the hand pointing at
+         the MIC, so "इस बटन" can only mean that button; it stays until the mic is tapped. (2) While the mic
+         waits, the speaker is live and replays the whole line of the word on screen («गुड़, इसमें ग पर छोटी उ
+         की मात्रा लगी है। बोलकर देखिए।»); the 7 s reminder count starts again after it. */
+      const micTurn = (mic, ex, after)=>{
         if(!mic){ after(); return; }
         const live = ()=> CARD.slides[state.idx] === slide && myGen === _voGen;
         let idleT = 0, done = false;
         const arm = ()=>{ clearTimeout(idleT); idleT = setTimeout(remind, 7000); };
         const remind = ()=>{ if(done || !live()) return;
+          pointNudgeAt(mic);
           sayOpt(clip(d.mic_nudge_audio), ()=>{ if(!done && live()) arm(); }); };
+        state.demoRunning = false;            /* the child's turn: the speaker is live */
+        state.replayAudio = ()=>{
+          if(done || !live()) return;
+          clearTimeout(idleT);
+          say(clip(ex.audio_line), ()=>{ if(!done && live()) arm(); });
+        };
         mic.disabled = false;
         mic.classList.remove("mx-hide"); mic.classList.add("mx-live");
         sfxPopSoft();
         mic.onclick = ()=>{
           if(done || !live()) return;
           done = true; clearTimeout(idleT);
-          if(isPlaying && typeof stopAudio === "function") stopAudio();   /* a reminder being spoken */
+          if(typeof stopNudge === "function") stopNudge();
+          state.replayAudio = null; state.demoRunning = true;             /* the turn is over: back to the page's sequence */
+          if(isPlaying && typeof stopAudio === "function") stopAudio();   /* a reminder (or a replay) being spoken */
           if(typeof sfxTap === "function") sfxTap();
           mic.classList.remove("mx-live"); mic.classList.add("mx-rec");
           setTimeout(()=>{
@@ -14562,7 +14625,7 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
             matraHLSoon(word, ex.matra);
             word.classList.remove("mh-pulse");
             /* [r121] then 3 s for the child to say it, mic live */
-            sayOpt(clip(ex.matra_audio), ()=> micTurn(mic, ()=>{ if(alive()) setTimeout(after, 420); }));
+            sayOpt(clip(ex.matra_audio), ()=> micTurn(mic, ex, ()=>{ if(alive()) setTimeout(after, 420); }));
           });
         }, 260));
       };
@@ -15227,7 +15290,7 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
           if(blank.classList.contains("filled")) return;
           const i = parseInt(blank.dataset.idx, 10);
           /* rung 3 has already named this letter's coach - see lockToBin's twin in TRAIN_SORT */
-          if(tile.dataset.only != null && String(i) !== tile.dataset.only){
+          if(coachOff(train, i) || (tile.dataset.only != null && String(i) !== tile.dataset.only)){   /* [r139] greyed coaches take nothing */
             tile.style.transform = "";
             tile.classList.remove("tr-cshake"); void tile.offsetWidth;
             tile.classList.add("tr-cshake");
@@ -15237,6 +15300,7 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
           const slot = d.slots[i];
           tile.style.transform = "";
           if(tile.dataset.akshar + slot.tail === slot.word){
+            if(tile.dataset.only != null) coachesAll(train);    /* [r139] the locked letter is home: all coaches back */
             const quiet = (perCard.get(tile) || 0) >= maxTries() - 1;
             blank.classList.add("filled");
             blank.innerHTML = '<span class="ink-glyph wb-inakshar">' + tile.dataset.akshar + "</span>";
@@ -15306,7 +15370,7 @@ SlideModules.MATCH_VACHAN_PAIRS    = SlideModules.MATCH_GENDER_PAIRS;
               const at = want >= 0 ? want : i;
               const bl = train.coaches[at].body.querySelector(".wb-blank");
               /* the letter now goes to that blank and nowhere else */
-              if(from && want >= 0) from.dataset.only = String(want);
+              if(from && want >= 0){ from.dataset.only = String(want); coachesOnly(train, want); }   /* [r139] */
               withHand3(()=> train.nudgeTo(at, (want >= 0 ? from : null), slide,
                                            (want >= 0 ? bl : null)));
               if(bl && want >= 0) bl.classList.add("wb-pulse");
@@ -15411,7 +15475,7 @@ const ONLY_UU = POOL_UU.filter(w=>hasUU(w[0]) && !hasU(w[0]));
    that had heard the old goal_u.ogg would go on playing it after every redeploy. The lesson build
    stamps this from the CONTENT of the game's voice, music and feedback files, so it moves exactly
    when one of them changes. Opened on its own the game keeps the placeholder, which is harmless. */
-const MR_AV = "17ca15af42e5";
+const MR_AV = "65e7085db679";
 const mrv = u => u + "?v=" + MR_AV;
 /* [r124] THE SAME FOR THE GAME'S PICTURES AND ITS VIDEO. Yasir: "when I enter the game screen it
    plays the very earlier version ... multiple times". The art has been replaced several times under
@@ -15419,7 +15483,7 @@ const mrv = u => u + "?v=" + MR_AV;
    immutable for a year, so a device that had played an earlier build kept drawing the old pictures.
    Stamped from the CONTENT of the art folder by the lesson build, so a changed file gets a new
    address and every device fetches it; unchanged, the address stays and the cache still works. */
-const MR_IV = "17ca15af42e5";
+const MR_IV = "65e7085db679";
 const mri = u => u + "?v=" + MR_IV;
 /* बोली जाने वाली पंक्तियाँ — assets/MatraRunner/voice/<id>.ogg */
 /* [r76] the lesson's आप register, as the recordings now speak it (the SME's round-3 rule: the
@@ -19363,7 +19427,7 @@ if(document.fonts && document.fonts.load){
        it never competes with the lesson's own voice. The pictures are kept, decoded, until the game
        has started. */
     const D = "assets/MatraRunner/";
-    const ART_V = "17ca15af42e5", AUD_V = "17ca15af42e5";
+    const ART_V = "65e7085db679", AUD_V = "65e7085db679";
     const imgs = "".split(",").filter(Boolean);
     const vid = (()=>{ try{ const v = document.createElement("video");
                        return v.canPlayType('video/webm; codecs="vp9"') ? "bg_valley.webm" : "bg_valley.mp4"; }
@@ -19402,7 +19466,7 @@ if(document.fonts && document.fonts.load){
      [r100] Yasir: "the bg music should only play when we click on the play button" - so it starts
      with that tap, and nothing else starts it (not the cover, not another touch). */
   const BGM = (function(){
-    const BASE = 0.68, SFX = 0.32, VO = 0.16;
+    const BASE = 0.40, SFX = 0.32, VO = 0.16;   /* [r139] QA BUG_03: 0.68 -> 0.50; [r143] QA again ("still feels loud"): 0.40. The ducking under SFX / VO is unchanged */
     const src = (typeof _av === "function") ? _av("assets/Audio/bgm_lesson.ogg") : "assets/Audio/bgm_lesson.ogg";
     let el = null, vol = 0, started = false, sfxUntil = 0;
     const live = new Set();
@@ -21623,6 +21687,8 @@ function mountSlide(idx){
   // reveal_seq/sort reveal runs (no stomping the one-by-one narration); while a self-driving demo
   // chain runs (a replay would gen-kill its chain); and on self-driving slides that offer no replay.
   const replaySlideAudio = ()=>{
+    /* [r139] QA BUG_07: after the correct answer (state.locked) the speaker ignores taps until the next page */
+    if(state.locked) return;
     if(isPlaying || state.revealing || state.demoRunning || (state.ownsAudio && !state.replayAudio)) return;
     state.audioReplays++;
     SwiftPAL.emit("audio_replay", { slide_id: slide.id, phase: slide.phase, count: state.audioReplays });
@@ -21708,253 +21774,132 @@ const PHASE_GATE_VO    = { tutorial:"vo_pt_tutorial", guided:"vo_pt_guided",
 const PHASE_ROUND = { tutorial:"tutorial", guided:"guided", practice:"round3", independent:"round3" };
 const _gatedPhases = new Set();   // each ROUND gate plays ONCE (Start→tutorial, →guided, →round 3)
 let _gateToken = 0;
-/* [r66] THE GATE BIRD IS FETCHED AND DECODED AT BOOT, NOT WHEN THE GATE OPENS.
-   Yasir: "there is slight delay in playing swifty gif and its VO in transition screen". Two
-   causes, both from r65 setting the src at the moment of the gate: (1) the WebP was first
-   requested THEN, so the gate opened on an empty frame and the bird appeared late; (2) the talk
-   timer ran from the gate opening, not from the bird starting, so once the bird was late the VO
-   drifted against her mouth. Now the art is warm before the first gate, and the timer is
-   anchored to the moment the image has actually loaded. */
-let _gateWarm = null;
-function _warmGate(){
-  const g = (typeof CARD !== "undefined" && CARD && CARD.gate) || null;
-  if(!g || !g.img || _gateWarm) return;
-  const im = new Image();
-  try{ im.fetchPriority = "high"; }catch(e){}
-  im.src = g.img;
-  _gateWarm = (im.decode ? im.decode() : new Promise(r => { im.onload = r; im.onerror = r; }))
-                .catch(()=>{});
-  window.__gateWarmImg = im;                 /* hold a reference so the decoded copy stays cached */
-  /* [r107] the sheet she speaks from (see _gateLips) is warmed with her */
-  if(g.talk && g.talk.src){ const ts = new Image(); ts.src = g.talk.src;
-    (ts.decode ? ts.decode() : Promise.resolve()).then(()=>{ window.__gateTalkImg = ts;
-      /* drawn once now, out of sight: the first draw of the big sheet uploads it (measured 90-180 ms),
-         which on the first gate landed after the line had started */
-      try{ _gateCv(); }catch(e){} }, ()=>{}); }
+/* [r142] THE TRANSITION SCREEN OF Hindi-game-gender-identify (HI02H11_L03_S02). Its Swifty, its
+   animation and its headline replace ours (the seeking bird, the lip-sync canvas and the typewriter):
+   - peeking_talk_up.webp: Swifty already at the top and talking, lifted in by .3s (pgUpIn);
+   - a soft whoosh as the screen changes;
+   - the headline is blank until Swifty says it, then wipes in (pgWipe) - CARD.gate.title_cue_ms is
+     where the phrase starts inside each of OUR transition clips, counted from when the clip is heard;
+   - when the line ends the gate lets go; on the first transition he sinks out first (pgPeekDown);
+   - a 12 s watchdog closes a gate whose voice never ends, and the next button is off while it is up.
+   Our clips (vo_pt_*), our lines and where the third gate stands (CARD.gate.at) are unchanged.
+   EVERY GATE STARTS THE BIRD FROM FRAME 0 (that repo's [H11-132]): Chrome keeps one animation clock
+   per image URL, so each gate gets a NEW URL - a blob: URL from ONE fetch over http (downloaded once),
+   a counter in the query from file://. */
+const PEEK_UP_SRC = "assets/UI/peeking_talk_up.webp";
+let _peekBlob = null, _peekBlobUrl = null, _peekN = 0, _peekFetch = null;
+function _warmPeek(){
+  if(_peekBlob || _peekFetch || !/^https?:$/.test(location.protocol)) return;
+  try{ _peekFetch = fetch(PEEK_UP_SRC).then(r => r.ok ? r.blob() : null)
+                    .then(b => { if(b) _peekBlob = b; }).catch(()=>{}).then(()=>{ _peekFetch = null; }); }catch(e){}
 }
-function _gateCv(){
-  const T = CARD.gate && CARD.gate.talk, sh = window.__gateTalkImg, img = document.getElementById("phaseGateImg");
-  if(!T || !sh || !sh.naturalWidth || !img) return null;
-  let cv = document.getElementById("phaseGateCv");
-  if(!cv){ cv = document.createElement("canvas"); cv.id = "phaseGateCv"; cv.width = T.fw; cv.height = T.fh;
-           img.parentNode.insertBefore(cv, img.nextSibling);
-           const k = T.rest - T.first, cx = cv.getContext("2d");
-           if(cx) cx.drawImage(sh, (k % T.cols) * T.fw, Math.floor(k / T.cols) * T.fh, T.fw, T.fh, 0, 0, T.fw, T.fh);
-           cv.dataset.f = T.rest; }
-  return cv;
+function _freshPeekSrc(){
+  if(_peekBlob){
+    const old = _peekBlobUrl;
+    _peekBlobUrl = URL.createObjectURL(_peekBlob);
+    if(old) setTimeout(()=> URL.revokeObjectURL(old), 1000);
+    return _peekBlobUrl;
+  }
+  return PEEK_UP_SRC + "?g=" + (++_peekN);
 }
-/* [r107] SHE SPEAKS THE LINE SHE IS SAYING. Yasir: "when «चलिए शुरू करें» plays Swifty stays static,
-   no mouth movement - same on transitions 2 and 3". The gate art is a fixed animation whose beak
-   opens 7 times whatever the clip says, then blinks and holds still - right where the on-screen phrase
-   is spoken. From her first speaking frame she is drawn instead from a sheet of the same art's own
-   frames (CARD.gate.talk), lip-synced to this transition's clip (CARD.gate.lips[phase], the
-   celebration kit's measure: one character per 25 ms, "1" = beak open): the beak opens on each
-   syllable, a different open beak each time with the closed beak the art draws beside it, she blinks
-   in a pause, and the beak shuts when the clip ends. Read on the clip's own clock, from when it is
-   really audible. Additive: no talk/lips on the card, or the sheet not decoded yet -> the animation
-   plays exactly as before. Returns false when it did not take over. */
-/* [r108] THE CLIP'S OWN CLOCK, shared by the beak and the typewriter: how long the clip that starts
-   next has really been audible (Web Audio: when the source started + the context's output latency,
-   or the celebration kit's own stamp; <audio>: the element's currentTime), and whether it is over. */
-function _voiceClock(){
-  let src0 = null, el0 = null, heard = null, ended = false;
-  return ()=>{
-    if(ended) return { t:null, ended:true };
-    const now = performance.now();
-    if(currentAudio && (!el0 || currentAudio === el0)){
-      if(!currentAudio.paused && currentAudio.currentTime > 0){ el0 = currentAudio; return { t: currentAudio.currentTime * 1000, ended:false }; }
-      if(el0 && currentAudio.ended) ended = true;
-      return { t:null, ended };
+/* [H11-210] THE LINE NEVER SITS ON THE BIRD - MEASURED, NOT ASSUMED. Once the caption is in, the
+   line's real box is measured against the bird's: his crest is never higher than 38% down his
+   picture. If the line reaches to within 12px of it, the line moves up; if there is no room above
+   him, or it is wider than the screen, it is scaled down until it fits. Re-run on resize. */
+function _fitGateTitle(){
+  try{
+    const t = $("phaseGateTitle"), im = $("phaseGateImg"), g = $("phaseGate");
+    if(!t || !im || !t.textContent || !g || !g.classList.contains("show")){ window.removeEventListener("resize", _fitGateTitle); return; }
+    t.style.removeProperty("top"); t.style.scale = "";
+    const ir = im.getBoundingClientRect(); if(!ir.height) return;
+    const crest = ir.top + ir.height * 0.38, GAP = 12, EDGE = 8, W = window.innerWidth;
+    const tr = t.getBoundingClientRect();
+    let sc = Math.min(1, (W - 2 * EDGE) / tr.width);                   // never wider than the screen
+    if(tr.top + tr.height * sc > crest - GAP){                          // reaches the bird: lift it
+      const room = crest - GAP - EDGE;
+      sc = Math.min(sc, room / tr.height);
+      sc = Math.max(0.35, sc);
+      const top = Math.max(EDGE, crest - GAP - tr.height * sc);
+      t.style.setProperty("top", top + "px", "important");
     }
-    if(currentVoiceSource && (!src0 || currentVoiceSource === src0)){
-      if(!src0){ src0 = currentVoiceSource;
-        const c = (typeof _voiceContext === "function") ? _voiceContext() : null;
-        heard = src0.__swcAt != null ? src0.__swcAt
-              : now + (c ? ((c.baseLatency || 0) + (c.outputLatency || 0)) * 1000 : 0); }
-      return { t: now - heard, ended:false };
-    }
-    if(src0 || el0) ended = true;                      /* the clip is over (or another took over) */
-    return { t:null, ended };
-  };
+    if(sc < 0.999){ t.style.transformOrigin = "50% 0"; t.style.scale = String(sc); }
+  }catch(e){}
 }
-function _gateLips(gate, img, lip, isLive){
-  const T = CARD.gate && CARD.gate.talk, sh = window.__gateTalkImg;
-  if(!T || !lip || !lip.bits || !sh || !sh.naturalWidth || !img) return false;
-  const cv = _gateCv(); if(!cv) return false;
-  const cx = cv.getContext("2d"); if(!cx) return false;
-  let drawn = -1;
-  const draw = (f)=>{ if(f === drawn) return; drawn = f; cv.dataset.f = f; const k = f - T.first;
-    cx.clearRect(0, 0, T.fw, T.fh);
-    cx.drawImage(sh, (k % T.cols) * T.fw, Math.floor(k / T.cols) * T.fh, T.fw, T.fh, 0, 0, T.fw, T.fh); };
-  draw(T.rest);
-  gate.classList.add("pg-talking");
-  const step = lip.step_ms || 25, bits = lip.bits;
-  const clock = _voiceClock();
-  let syl = -1, prev = "0", runAt = performance.now(), lastBlink = performance.now(), blinkAt = null;
-  (function tick(){
-    if(!isLive() || !gate.classList.contains("show")){ gate.classList.remove("pg-talking"); return; }
-    const now = performance.now();
-    const t = clock().t;
-    let bit = "0";
-    if(t != null && t >= 0){ const i = Math.floor((t + 16) / step); bit = i < bits.length ? bits[i] : "0"; }
-    if(bit === "1" && prev !== "1") syl++;
-    if(bit !== prev){ runAt = now; prev = bit; }
-    let f = null;
-    if(bit === "1") f = T.open[syl % T.open.length][0];
-    else {
-      if(blinkAt == null && now - runAt > 300 && now - lastBlink > 2600) blinkAt = now;
-      if(blinkAt != null){ const b = Math.floor((now - blinkAt) / 60);
-        if(b < T.blink.length) f = T.blink[b]; else { blinkAt = null; lastBlink = now; } }
-      if(f == null) f = syl < 0 ? T.rest : T.open[syl % T.open.length][1];
-    }
-    draw(f);
-    requestAnimationFrame(tick);
-  })();
-  return true;
-}
-/* NOT on window 'load': that waits for every other asset, and on a slow link the child can
-   press play before it fires. Measured at 8 Mbit/s: the bird was still downloading when the gate
-   opened and arrived 4.7s late. So the fetch starts as soon as the card is parsed. */
-(function _warmSoon(tries){
-  if(typeof CARD !== "undefined" && CARD){ _warmGate(); return; }
-  if(tries > 200) return;
-  setTimeout(()=> _warmSoon(tries + 1), 25);
-})(0);
-
 function phaseBlurTransition(cb, toPhase){
   const tok = ++_gateToken;
+  const _idxAtGateOpen = (typeof state !== "undefined") ? state.idx : -1;
   stopNudge(); stopAudio();
   const gate = $("phaseGate"), img = $("phaseGateImg");
-  /* [gate-cache] restart the peek animation WITHOUT re-downloading it. `?r=+Date.now()` minted a new
-     URL per gate, so the 1286KB bird downloaded AGAIN at every transition — measured 2026-08-08:
-     one session with 2 gates = 3 fetches = 3.9MB for one asset, and on the tab's Wi-Fi that download
-     races the gate VO. Clearing src + forcing a reflow restarts the animated WebP from the cached copy. */
-  /* [r65] A CARD MAY BRING ITS OWN GATE BIRD, AND SAY WHEN SHE STARTS TALKING.
-     Yasir's swifty_seeking_transition: she rises, peeks, rises again and only THEN speaks - the
-     mouth starts moving 3.8s in. So the VO is held back by `talk_at_ms` and starts on her first
-     word instead of over her climb. Additive: a card without CARD.gate gets the stock peek and
-     the stock timing, byte for byte. */
-  const _G = (CARD && CARD.gate) || {};
-  const _gateSrc = _G.img || "assets/UI/peeking.webp";
-  const _talkAt  = _G.img ? Math.max(0, _G.talk_at_ms || 0) : 0;
-  if(img){ img.classList.toggle("pg-card", !!_G.img);
-           img.removeAttribute("src"); void img.offsetWidth; img.src = _gateSrc; }
-  gate.classList.remove("pg-talking");          /* [r107] every gate rises on the animation */
-  _warmGate();                                  /* no-op once warm; covers a gate before 'load' */
-  const title = $("phaseGateTitle"); if(title) title.textContent = PHASE_GATE_TITLE[toPhase] || "";
-  /* [r103] THE TEXT APPEARS WHEN SWIFTEE SAYS IT. Yasir: "in all the transition pages the text will only
-     appear when its VO plays, like «चलिए शुरू करें»". CARD.gate.title_cue_ms[phase] is where that phrase
-     starts inside the clip (measured); the title is held hidden until then. No cue -> as before. */
-  const _cue = ((CARD.gate && CARD.gate.title_cue_ms) || {})[toPhase];
-  if(title) title.classList.toggle("pg-title-wait", _cue != null);
+  let _peekStart = Date.now();
+  gate.classList.toggle("pg-talk", toPhase === "tutorial");   /* carries the sink on the first gate */
+  gate.classList.add("pg-up");
+  _warmPeek();
+  if(img){ img.removeAttribute("src"); void img.offsetWidth;
+           img.onload = function(){ _peekStart = Date.now(); };
+           img.src = _freshPeekSrc(); }
+  const title = $("phaseGateTitle");
+  if(title){ title.textContent = ""; title.classList.remove("pg-pop"); title.style.removeProperty("top"); title.style.scale = ""; }
   $("stage").classList.add("blurred", "gating");
   document.body.classList.add("gating");
   gate.classList.add("show","hint-glow");
+  playSfx("sfx_whoosh");   /* the screen changes - a soft swish, well before Swifty speaks */
   SwiftPAL.emit("phase_transition", { to: toPhase });
   const closeGate = ()=>{ gate.classList.remove("show"); $("stage").classList.remove("blurred", "gating"); document.body.classList.remove("gating"); };
-  // VO only if the card actually ships it; else a silent beat — the 2s min-hold keeps the peek visible.
+  setNavActive(false);
+  let _gateDone = false, _capT = null, _capAt = 0;
+  const finishGate = ()=>{
+    if(_gateDone) return;                       // cb() must mount the next slide exactly once
+    _gateDone = true;
+    gate.classList.add("pg-sink");
+    setTimeout(()=> _tearDownGate(), gate.classList.contains("pg-talk") ? 340 : 0);
+  };
+  const _tearDownGate = ()=>{
+    gate.classList.remove("show", "pg-sink");
+    clearTimeout(_capT); if(title){ title.textContent = ""; title.classList.remove("pg-pop"); }
+    $("stage").classList.remove("blurred");
+    if(cb && (_idxAtGateOpen < 0 || state.idx === _idxAtGateOpen)) cb();   // mounts the next slide
+    $("stage").classList.remove("gating");      // header returns once the slide is in
+    document.body.classList.remove("gating");
+  };
+  const GATE_WATCHDOG_MS = 12000;
+  setTimeout(()=>{ if(tok === _gateToken) finishGate(); }, GATE_WATCHDOG_MS);
   const voId = PHASE_GATE_VO[toPhase];
-  const voSrc = voId ? ("assets/Audio/" + voId + "." + AUDIO_EXT) : null;   // [20a] use AUDIO_EXT path so generated clips resolve (was: assets.audio .mp3 map -> silent)
-  const openedAt = Date.now();
-  /* [r66] the talk clock starts when the bird does. `complete` is already true when the warm
-     copy is cached, which is the normal case. If she arrives, she speaks talk_at_ms after she
-     STARTS; if she has not arrived in 4s there is no mouth to sync to any more, so the line
-     plays at once rather than keeping the child waiting a further 3.8s on top. */
-  const _startTalkClock = (fn)=>{
-    if(!_G.img || !img || img.complete){ setTimeout(fn, _talkAt); return; }
-    let done = false;
-    const go = (late)=>{ if(done) return; done = true; setTimeout(fn, late ? 0 : _talkAt); };
-    img.addEventListener("load", ()=> go(false), { once:true });
-    img.addEventListener("error", ()=> go(true), { once:true });
-    setTimeout(()=> go(true), 4000);
-  };
-  _startTalkClock(()=>{ if(tok !== _gateToken){ closeGate(); return; }
-  /* [r104] ...and it TYPES itself, one akshara at a time, over exactly the time Swiftee takes to say
-     it (CARD.gate.title_dur_ms[phase], measured). Aksharas, not code points: «शु» is one step, so a
-     matra never shows without its letter. Every akshara holds its place from the start (only its
-     opacity changes), so the line does not slide about as it grows. */
-  const _typeTitle = ()=>{ if(tok !== _gateToken) return;
-    const txt = title.textContent, dur = ((CARD.gate && CARD.gate.title_dur_ms) || {})[toPhase] || 1200;
-    let parts = null;
-    try{ if(window.Intl && Intl.Segmenter) parts = [...new Intl.Segmenter("hi", { granularity:"grapheme" }).segment(txt)].map(x => x.segment); }catch(e){}
-    if(!parts || !voSrc){ title.classList.remove("pg-title-wait"); return; }
-    title.textContent = "";
-    const spans = parts.map(p => { const sp = document.createElement("span"); sp.className = "pg-tw"; sp.textContent = p; title.appendChild(sp); return sp; });
-    title.classList.add("pg-typing"); title.classList.remove("pg-title-wait");
-    const steps = spans.filter(sp => sp.textContent.trim());           /* spaces take no time */
-    const each = dur / Math.max(1, steps.length);
-    spans.forEach(sp => { if(!sp.textContent.trim()) sp.classList.add("on"); });
-    steps.forEach((sp, i) => setTimeout(()=>{ if(tok === _gateToken) sp.classList.add("on"); }, Math.round(i * each)));
-  };
-  /* [r107] from her first speaking frame she speaks the clip's own syllables */
-  if(voSrc) _gateLips(gate, img, ((CARD.gate && CARD.gate.lips) || {})[toPhase], ()=> tok === _gateToken);
-  play(voSrc, ()=>{
-    if(tok !== _gateToken){ closeGate(); return; }               // a newer gate superseded us
-    const hold = Math.max(200, 2000 - (Date.now() - openedAt));  // Swiftie peeks ≥2s even with no/short VO
-    setTimeout(()=>{
-      if(tok !== _gateToken){ closeGate(); return; }
-      gate.classList.remove("show");
-      $("stage").classList.remove("blurred");
-      if(cb) cb();                              // mounts the next slide
-      $("stage").classList.remove("gating");    // header returns once the slide is in
-      document.body.classList.remove("gating");
-    }, hold);
-  });
-  /* [r108] THE LETTERS TYPE WHILE THE WORDS ARE SPOKEN. Yasir: "in the first transition the «चलिए,
-     शुरू करें» VO plays but its text does not complete - not in sync with the VO". The r104 typewriter
-     spread the letters evenly over the phrase on timers of its own: «शु» typed in the pause after
-     «चलिए,», and nothing tied the end of the text to the end of the voice. Now each letter's moment
-     is placed inside the stretches where the phrase is actually voiced (CARD.gate.title_voice_ms,
-     measured from the clip by the build), read every frame on the clip's own clock; punctuation
-     comes with the letter before it; and when the clip ends whatever is left appears at once, so the
-     line is always complete by the time she stops talking. */
-  const _segs = ((CARD.gate && CARD.gate.title_voice_ms) || {})[toPhase];
-  let _parts = null;
-  if(title && _cue != null && voSrc && _segs && _segs.length){
-    try{ if(window.Intl && Intl.Segmenter) _parts = [...new Intl.Segmenter("hi", { granularity:"grapheme" }).segment(title.textContent)].map(x => x.segment); }catch(e){}
-  }
-  if(_parts){
-    title.textContent = "";
-    const spans = _parts.map(p => { const sp = document.createElement("span"); sp.className = "pg-tw"; sp.textContent = p; title.appendChild(sp); return sp; });
-    title.classList.add("pg-typing"); title.classList.remove("pg-title-wait");
-    const isLetter = (x)=> { try{ return /[\p{L}\p{M}\p{N}]/u.test(x); }catch(e){ return !!x.trim(); } };
-    const groups = [];                                  /* a letter + the punctuation after it */
-    spans.forEach(sp => {
-      if(!sp.textContent.trim()) sp.classList.add("on");
-      else if(isLetter(sp.textContent) || !groups.length) groups.push([sp]);
-      else groups[groups.length - 1].push(sp);
-    });
-    const V = _segs.reduce((a, x) => a + (x[1] - x[0]), 0), n = groups.length;
-    const at = groups.map((g, i) => { let v = i * V / n;
-      for(const x of _segs){ const L = x[1] - x[0]; if(v < L) return x[0] + v; v -= L; }
-      return _segs[_segs.length - 1][1]; });
-    const clock = _voiceClock(), t0 = performance.now();
-    let next = 0, lost = null;
-    const show = (k)=>{ while(next < k){ groups[next].forEach(sp => sp.classList.add("on")); next++; } };
-    (function typeTick(){
-      if(tok !== _gateToken) return;
-      const c = clock();
-      if(c.ended){ show(n); return; }
-      let t = c.t;
-      /* [r109] no voice after 1.5 s AND the clip is no longer on its way (play() gave up or ended):
-         type without it. A clip still loading keeps the text waiting for the voice. */
-      if(t == null && lost == null && !isPlaying && performance.now() - t0 > 1500) lost = performance.now();
-      if(t == null && lost != null) t = _segs[0][0] + (performance.now() - lost);
-      if(t != null){ let k = next; while(k < n && t >= at[k]) k++; show(k); }
-      if(next < n) requestAnimationFrame(typeTick);
-    })();
-  }
-  else if(title && _cue != null){
-    /* [r104] the cue counts from the moment the clip is SOUNDING, not from the play() call */
-    const _t0 = performance.now();
-    (function _waitVoice(){
+  const voSrc = voId ? ("assets/Audio/" + voId + "." + AUDIO_EXT) : null;
+  /* the headline arrives with its words: title_cue_ms into the clip, counted from when it is heard */
+  const _cue = ((CARD.gate && CARD.gate.title_cue_ms) || {})[toPhase];
+  const _capText = PHASE_GATE_TITLE[toPhase] || "";
+  const _armCaption = ()=>{
+    if(!title || !_capText) return;
+    const show = ()=>{
+      if(tok !== _gateToken || _gateDone) return;
+      _capAt = Date.now();
+      title.textContent = _capText; title.classList.remove("pg-pop"); void title.offsetWidth; title.classList.add("pg-pop");
+      _fitGateTitle(); window.addEventListener("resize", _fitGateTitle);
+    };
+    if(_cue == null || !voSrc){ _capT = setTimeout(show, 0); return; }
+    const t0 = performance.now();
+    (function waitVoice(){
       if(tok !== _gateToken) return;
       const on = !!currentVoiceSource || !!(currentAudio && !currentAudio.paused && currentAudio.currentTime > 0);
-      if(on || !voSrc || performance.now() - _t0 > 1500) setTimeout(_typeTitle, voSrc ? _cue : 0);
-      else requestAnimationFrame(_waitVoice);
+      if(on || performance.now() - t0 > 1500){ _capT = setTimeout(show, _cue); return; }
+      requestAnimationFrame(waitVoice);
     })();
-  }
-  });                                           /* [r65/r66] she speaks when her mouth moves */
+  };
+  _armCaption();
+  play(voSrc, ()=>{
+    if(tok !== _gateToken){ closeGate(); return; }               // a newer gate superseded us
+    const PEEK_MS = 1200;                                          // he is shown at least this long
+    /* [r142] OUR third clip is short (1.9 s, the phrase at 0.9 s): the .9 s wipe ended as the gate let
+       go, so the line was never seen whole. The gate now also holds until the line has been fully on
+       screen for 0.7 s (wipe .9 s + .7 s) - the longer two clips already end later than that. */
+    const CAP_HOLD_MS = 1600;
+    (function waitPeek(){
+      if(tok !== _gateToken){ closeGate(); return; }
+      const left = Math.max(PEEK_MS - (Date.now() - _peekStart), _capAt ? CAP_HOLD_MS - (Date.now() - _capAt) : 0);
+      if(left > 0){ setTimeout(waitPeek, Math.min(left, 120)); return; }
+      finishGate();
+    })();
+  });
 }
 
 function completeSlide(success){
@@ -22161,6 +22106,7 @@ function warmUiChrome(){
       if(im.decode) im.decode().catch(()=>{});  // DECODE too — the decode is half the visible delay
       window.__uiWarm.push(im);
     });
+    _warmPeek();                                /* [r142] the transition's Swifty, fetched once */
   }catch(e){}
 }
 /* [r126] THE COVER DOWNLOADS FIRST. Measured on a 2 Mbit/s connection with an empty cache: the page

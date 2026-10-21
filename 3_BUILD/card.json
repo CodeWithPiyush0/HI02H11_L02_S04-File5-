@@ -46,8 +46,6 @@
   "next": "sfx_next_button"
  },
  "gate": {
-  "img": "assets/UI/swifty_gate_seek.webp",
-  "talk_at_ms": 1960,
   "at": {
    "round3": "MT1"
   },
@@ -55,92 +53,6 @@
    "tutorial": 3240,
    "guided": 3750,
    "practice": 1220
-  },
-  "title_dur_ms": {
-   "tutorial": 1000,
-   "guided": 1270,
-   "practice": 820
-  },
-  "talk": {
-   "src": "assets/UI/swifty_gate_talk.webp",
-   "first": 37,
-   "cols": 8,
-   "fw": 505,
-   "fh": 440,
-   "rest": 37,
-   "blink": [
-    38,
-    39,
-    40
-   ],
-   "open": [
-    [
-     42,
-     43
-    ],
-    [
-     44,
-     45
-    ],
-    [
-     51,
-     52
-    ],
-    [
-     53,
-     54
-    ],
-    [
-     55,
-     56
-    ],
-    [
-     58,
-     59
-    ],
-    [
-     60,
-     61
-    ]
-   ]
-  },
-  "lips": {
-   "tutorial": {
-    "bits": "0011001111111111111111000011100011000000000011110000000000000011100111111100110000011111100000000001100011100000000000000000000000001111100111000000000000111110000110000000000",
-    "step_ms": 25
-   },
-   "guided": {
-    "bits": "0000001110000111100000111100001111000000000000000000000011110001111111100000000111110000000111110001110000000011000110000000011100000000000000000000000011000001111000000000000000111100000011100011111100000",
-    "step_ms": 25
-   },
-   "practice": {
-    "bits": "011100000111000111111100000000000000000000000000011100111111000000011001111100110000000",
-    "step_ms": 25
-   }
-  },
-  "title_voice_ms": {
-   "tutorial": [
-    [
-     3225,
-     4275
-    ]
-   ],
-   "guided": [
-    [
-     3725,
-     4100
-    ],
-    [
-     4400,
-     5025
-    ]
-   ],
-   "practice": [
-    [
-     1200,
-     2075
-    ]
-   ]
   }
  },
  "scaffold_rules": {
@@ -347,7 +259,8 @@
    "sfx_train_move": "assets/Audio/sfx_train_move.ogg",
    "sfx_whistle": "assets/Audio/sfx_whistle.ogg",
    "sfx_mt_burst": "assets/Audio/sfx_mt_burst.ogg",
-   "sfx_chime": "assets/Audio/sfx_chime.ogg"
+   "sfx_chime": "assets/Audio/sfx_chime.ogg",
+   "sfx_whoosh": "assets/Audio/sfx_whoosh.ogg"
   },
   "audio_text": {
    "vo_pair_o": "यह है ओ। इसकी मात्रा देखिए।",

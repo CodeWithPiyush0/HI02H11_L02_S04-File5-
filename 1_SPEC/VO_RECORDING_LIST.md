@@ -163,3 +163,4 @@
 - `sfx_whistle`
 - `sfx_mt_burst`
 - `sfx_chime`
+- `sfx_whoosh`

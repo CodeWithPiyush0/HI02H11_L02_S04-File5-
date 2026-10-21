@@ -351,3 +351,37 @@ placeholders and the 11 lines borrowed from File3, including the three transitio
   `3_BUILD/.env` is no longer valid. In the browser with real audio: pages 1, 2, 4 move on her words to
   within ~0.1 s; `_verify_vo_overlap.py` 0 clashes on every page; `_verify_assets.py` 0 FAIL 0 WARN
   (no truncated clip); «मात्रा टोकरी» plays through to the celebration.
+
+## Round 11 (2026-10-21) — File3's QA fixes and its last two changes (File3 r139-r142)
+
+File3 and File5 share one engine, so File3's QA round is applied here as the same code (the File3 engine
+diff since its "make final changes suggested by ankita" commit, applied hunk by hunk - every hunk landed).
+- **BUG_01** no translation (`translate="no"`, `notranslate`).
+- **BUG_02** hidden tab / minimised browser pauses everything (voice, sounds, music, the tokri game) and
+  resumes where it was; nothing starts while hidden.
+- **BUG_03** music 0.68 → 0.50, still stepping back under voice and sound effects.
+- **BUG_04** the speaker stays grey for a whole sequence, not just per clip.
+- **BUG_05** pages 3 / 5 (T3, T5): the hand points at the mic when «इस बटन पर टैप करिए» plays; while the mic
+  waits, the speaker replays the word's whole line.
+- **BUG_06** Swifty's sad face only for the wrong-answer moment (back after 1.8 s).
+- **BUG_07** after the correct answer the speaker is grey and ignores taps.
+- **BUG_08 case 1** after the 3rd wrong attempt only the right coach takes the card.
+- **Mic centred on the word** (T3, T5). File5's matras (ो / ौ) stand ABOVE the letters, so the word's centre
+  is higher than in File3: the mic's offset is -61 px here (File3: -31). Measured within ±1.5 px of the
+  centre of the whole word (letters + matra) on मोर, कोयल, कौआ, पौधा.
+- **Transition screens** - Hindi-game-gender-identify's screen: its peeking Swifty (`assets/UI/
+  peeking_talk_up.webp`), whoosh (`assets/Audio/sfx_whoosh.ogg`), magenta headline that wipes in when Swifty
+  says it (still at the cue measured from the SME's clips: 3.24 / 3.75 / 1.22 s), the sink on the first one;
+  the third screen holds until its line has been whole for 0.7 s. The seeking bird, its lip-sync and the
+  typewriter are gone (the builder's `gate_talk()` is now `gate_cues()`, which only measures the cues).
+  `swifty_gate_seek.webp` / `swifty_gate_talk.webp` are still in `assets/UI`, unused.
+- The old gate styles are also taken out of `4_ENGINE/train_styles.css`, so `inject_train.py` cannot bring
+  them back.
+Checked in the browser: all three transitions (the real cover → T1 path too), each bug above on File5's own
+pages (G1 for the speaker, G8 for the face and the speaker after the answer - dragged, as these pages are
+drag-only - G4 for the coaches, T3 / T5 for the mic); no console errors.
+
+## Round 12 (2026-10-21) — background music 40 %
+
+QA: the music "still feels loud" at 50 %. Its level is now 0.40 (was 0.50). It still steps back under
+sound effects and the voice, unchanged. Measured: 0.40 with no voice, 0.16 under the voice.

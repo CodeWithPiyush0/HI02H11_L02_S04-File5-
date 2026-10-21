@@ -1026,15 +1026,6 @@ body.vo-lock .coach-body.dd-zone > .coach-face{ pointer-events:none !important; 
 
 /* ---------- (1) the next button's arrow ---------- */
 .nav-btn::after{content:"\2192";font-size:52px;line-height:1;}
-/* [r103] the transition's text, held until Swiftee says it - then it pops in */
-#phaseGateTitle{ transition:opacity .25s ease, transform .35s cubic-bezier(.34,1.5,.6,1); }
-/* [r105] every transform here keeps the title's own translateX(-50%) - r103/r104 dropped it, so the
-   text started at the screen's centre line instead of being centred on it */
-#phaseGateTitle.pg-title-wait{ opacity:0; transform:translateX(-50%) scale(.85); }
-/* [r104] the typewriter: the line is up at once, each akshara fades in on its beat */
-#phaseGateTitle.pg-typing{ transition:none; transform:translateX(-50%); }
-#phaseGateTitle .pg-tw{ opacity:0; transition:opacity .09s linear; }
-#phaseGateTitle .pg-tw.on{ opacity:1; }
 /* [r97] Yasir: "when the VO is finished we enable the next button - I want it to pulsate". It pulses
    for as long as it is live (the engine marks a live arrow .active and enables it; a disabled one
    never pulses). The pill is centred with translateX(-50%), so every frame keeps that. */
@@ -1633,15 +1624,6 @@ body.auto-next #navBtn{ visibility:hidden; pointer-events:none; }
 .sg-btn.sg-waiting{ background-image:url("assets/Images/play_btn_disabled.svg"); }
 .sg-btn:active{ transform:translateX(-50%) translateY(3px); }
 
-/* [r65] THE GATE BIRD SEEKS, THEN SPEAKS. Its rise is inside the art now, so the engine's own
-   pgPeek slide-up would rise it twice; and the frame is cropped to the bird, so the height clamp
-   applies to the bird itself rather than to a mostly-empty square. */
-.phase-gate #phaseGateImg.pg-card{ animation:none; height:clamp(200px,30vh,290px); }
-/* [r107] from her first speaking frame the gate bird is drawn lip-synced (engine _gateLips) on a
-   canvas that takes the animation's exact place: same height clamp, its own 505x440 aspect */
-.phase-gate #phaseGateCv{ display:none; height:clamp(200px,30vh,290px); width:auto; pointer-events:none; }
-.phase-gate.pg-talking #phaseGateImg{ display:none; }
-.phase-gate.pg-talking #phaseGateCv{ display:block; }
 
 /* [r73/r74] the cover's text title sits above the train, so the steam passes behind it */
 #sgTitle.lt-title-front{ position:relative; z-index:6; }
@@ -1931,12 +1913,48 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
    File5's rule - the 140px button sits 28px lower (bottom 40 -> 12) so it clears the cover's track ties */
 .sg-btn, .sg-btn.sg-waiting{ bottom:12px; }
 
-/* [r117] PHONES. Yasir: "on mobile the transition text gets cut and everything looks small". The
-   transition's title was a fixed 96 px line 271 px down, and its bird at least 200 px tall - on a phone
-   held sideways (~360 px tall) the text ran off the sides and sat on the bird. Both now scale with a
-   short screen; on a computer screen they come out exactly as before (min() picks the old values). */
-.pg-title{ top:min(271px, 39vh); font-size:min(96px, 10vw, 14vh); -webkit-text-stroke:.104em #FFFFFF; }
-.phase-gate #phaseGateImg.pg-card, .phase-gate #phaseGateCv{ height:clamp(110px, 30vh, 290px); }
+/* [r142] THE TRANSITION SCREEN OF Hindi-game-gender-identify (HI02H11_L03_S02), rule for rule.
+   Yasir: "extract and replace the exact same all three transition screens and their animation from
+   this repo". The grey blurred wash was already the same; what changes is everything on it:
+   - Swifty is that repo's peeking_talk_up.webp (900x900, already up and talking), bottom-anchored,
+     square, 52.8% of the window's height, at most 624px and never wider than the screen. He comes in
+     with a short .3s lift (pgUpIn); on the first transition he sinks out (pgPeekDown, .34s) at the end.
+   - the line is its magenta headline with the white stroke, sized by --pgf, 271px down (higher on a
+     short screen), and it WIPES in left to right (pgWipe, .9s) when Swifty says it.
+   The engine's _fitGateTitle (same repo) keeps the line off his head on any screen. */
+.pg-title{font-family:var(--font-hi) !important;font-weight:800 !important;letter-spacing:0 !important;}
+.pg-title.pg-pop{animation:pgWipe .9s cubic-bezier(.25,.6,.3,1) both;}
+@keyframes pgWipe{from{clip-path:inset(-24px 100% -24px -24px);}to{clip-path:inset(-24px -24px -24px -24px);}}
+html.no-anim .pg-title.pg-pop{animation:none !important;}
+.phase-gate.pg-up #phaseGateImg{animation:pgUpIn .3s ease-out both !important;}
+@keyframes pgUpIn{from{transform:translate(-50%,28%);}to{transform:translate(-50%,0);}}
+html.no-anim .phase-gate.pg-up #phaseGateImg{animation:none !important;}
+.phase-gate.pg-talk.pg-sink #phaseGateImg{
+  animation:pgPeekDown .34s ease-in both !important;}
+@keyframes pgPeekDown{
+  from{transform:translate(-50%,0);}
+  to  {transform:translate(-50%,100%);}}
+html.no-anim .phase-gate.pg-talk #phaseGateImg{animation:none !important;}
+.phase-gate{align-items:center !important;}
+.phase-gate{--pgf:min(96px, 12.8vh, 13vw);}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+.phase-gate .pg-title{z-index:3 !important;}
+.phase-gate #phaseGateImg{z-index:1;}
+@supports (height: 1svh){
+  .phase-gate{--pgf:min(96px, 12.8svh, 13vw);}
+  .pg-title{top:max(8px, min(271px, calc(58.8svh - 1.2 * var(--pgf) - 12px))) !important;}
+  .phase-gate #phaseGateImg{height:min(52.8svh,624px,92vw) !important;width:min(52.8svh,624px,92vw) !important;}
+}
+.pg-title{left:50% !important;transform:translateX(-50%) !important;
+          top:max(8px, min(271px, calc(58.8vh - 1.2 * var(--pgf) - 12px))) !important;
+          width:max-content !important;max-width:94vw !important;white-space:nowrap !important;
+          font-size:var(--pgf) !important;line-height:1.14 !important;color:#CD0FD5 !important;
+          -webkit-text-stroke:calc(var(--pgf) * 0.104) #FFFFFF !important;paint-order:stroke fill !important;}
+.phase-gate #phaseGateImg{position:fixed !important;left:50% !important;bottom:0 !important;
+          height:min(52.8vh,624px,92vw) !important;width:min(52.8vh,624px,92vw) !important;
+          object-fit:contain !important;
+          transform:translateX(-50%);
+          animation:none !important;}
 /* ...and a phone or tablet held upright is asked to turn: this card covers the lesson until it is */
 .rot-gate{ display:none; position:fixed; inset:0; z-index:2147483000; flex-direction:column;
   align-items:center; justify-content:center; gap:5vh; text-align:center; color:#fff;
@@ -2116,7 +2134,12 @@ body.vo-lock .sg-vo{ pointer-events:none !important; opacity:.45; filter:graysca
 /* pages 3 / 5: the word is centred under the picture; the mic sits to its right without pushing it off
    centre (absolutely placed, vertically centred by margin so its pulse's transform stays free) */
 .mx-v2 .mx-wordrow{ position:relative; display:flex; justify-content:center; gap:0; }
-.mx-v2 .mx-wordrow .mx-mic{ position:absolute; left:100%; top:50%; margin:-43px 0 0 22px; }
+.mx-v2 .mx-wordrow .mx-mic{ position:absolute; left:100%; top:50%; margin:-31px 0 0 22px; }
+/* [File5] the mic centred on the WHOLE word here too - but File5's matras (ो / ौ) stand ABOVE the letters,
+   where File3's (ु / ू) hang below, so the word's ink centre is higher: measured 27-29 px below it at -31 px. */
+.mx-v2 .mx-wordrow .mx-mic{ margin-top:-61px; }
+/* [r141] Yasir: "align the mic button with the word, centred with respect to the word" - -43 -> -31: measured, the
+   mic's centre sat 11 screen px (12 design px) above the centre of the word's ink on all four words */
 .mx-v2 .mx-wordrow{ align-self:center; }
 
 /* only the next button pulses while it pulses */
@@ -2128,6 +2151,19 @@ body.nav-live .slide-host *, body.nav-live .slide-host *::before, body.nav-live 
    and a later animation is the only thing that can take over from it */
 .tr-tray.tr-tray-out{ animation:trTrayOut .45s ease forwards !important; pointer-events:none; }
 @keyframes trTrayOut{ from{ opacity:1; transform:translateY(0); } to{ opacity:0; transform:translateY(24px); } }
+
+/* ==========================================================================================
+   [r139] QA round
+   ========================================================================================== */
+/* BUG_04 / BUG_07: the speaker is grey for the whole of a sequence, and after the correct answer
+   (body.spk-busy, kept by the engine) - not only while one clip plays (body.vo-lock, unchanged) */
+body.spk-busy .audio-chip,
+body.spk-busy .tut-audio{ pointer-events:none !important; opacity:.45; filter:grayscale(.75);
+  transition:opacity .18s ease, filter .18s ease; }
+/* BUG_08: after the 3rd wrong attempt only the right coach is left; the others are greyed and take nothing */
+.train-coach.is-off{ pointer-events:none; }
+.train-coach.is-off .coach-body,
+.train-coach.is-off .coach-label{ filter:grayscale(.6) opacity(.45); transition:filter .25s ease; }
 
 /* ==========================================================================================
    [S04] HI02H11_L02_S04 (ओ / औ) — additions for the SME's 2026-10-05 deck. Additive only.
