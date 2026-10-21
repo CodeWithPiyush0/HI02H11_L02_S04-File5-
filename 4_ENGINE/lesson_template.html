@@ -6511,7 +6511,13 @@ function armIdleVo(){
 // ONE document-level listener for the whole session (a per-slide listener would pile up across the
 // drag slides — the same trap the drag mechanics warn about). armIdleVo() itself re-checks phase, so
 // a pointerdown on a tutorial slide is a cheap no-op.
-document.addEventListener("pointerdown", ()=>{ armIdleVo(); }, true);
+/* [r149] ONE REMINDER PER STRETCH OF INACTIVITY, NOT PER PAGE. Yasir: "if the user does something correct or
+   incorrect and then stays inactive for 7 seconds there is no nudge". [27f] allowed one reminder per PAGE, so
+   once it had been used (the child idled before answering), every later silence on that page - after a wrong
+   attempt, or after one of several correct drops - got nothing. Now every action of the child (a tap, a drag)
+   earns the next reminder: 7 s of quiet after it, the question is asked again. Still never on a loop: with no
+   action in between it is said once, which is what [27f] was protecting (an unattended tab talking forever). */
+document.addEventListener("pointerdown", ()=>{ _idleVoFired = false; armIdleVo(); }, true);
 
 /* ---------- 7. HINT / FEEDBACK BOX ----------
    No button: the popup plays its VO, then auto-dismisses. onEnd runs after it

@@ -451,3 +451,16 @@ and its hint (line, read-out, hand) starts 750 ms later; no tap or drop is taken
 (r146) still lasts until the hint line is over.
 Measured in both files, wrong sound -> hint voice: tap page 754-763 ms, sort 757-761, word build 757-765,
 sentence 752-766; Swifty normal 0.3-0.4 s after the line ends; no console errors.
+
+## Round 18 (2026-10-21) — the 7 s reminder after every action, not once per page (File3 r149)
+
+Yasir: "there is a 7 s inactivity nudge, but if the user answers (correct or incorrect) and then stays inactive
+for 7 s there is no nudge". [27f] allowed ONE reminder per page, so once it had been used (the child idled
+before answering), every later silence on that page got nothing. Now each action of the child (a tap or a drag)
+earns the next reminder: after 7 s of quiet the page's question is asked again (the tap pages also read the
+options, as before). It never loops by itself - with no action in between it is said once. A page answered
+correctly stays quiet (its next button pulses). Same in File3 and File5.
+Measured with real pointer taps / drags, reminder already used, then a wrong answer: the reminder comes
+7.0-7.6 s after the hint ends on the tap pages (G1, G2), the sort page (G4) and the sentence page; after one
+correct drop of four (G4) 6.9-7.1 s; untouched, it plays once and not again in 30 s; nothing after a correct
+answer.
