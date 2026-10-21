@@ -327,3 +327,27 @@ hint ladders unchanged; the tokri game still plays through the gate to the celeb
    ो / ौ rise ~27 px above the headline, so कौआ / पौधा cut 4-7 px into the picture. The word row now
    moves down by what the word rises above a bare consonant (the picture does not move): 22 px from the
    picture to the top of every word, as File3. Sizes unchanged (picture 220 px, word 96 px).
+
+## Round 10 (2026-10-21) — the SME's recorded voice
+
+All 141 lines of `HI02H11_L02_S04_VO_manifest.xlsx` are now the SME's recordings (they replace the TTS
+placeholders and the 11 lines borrowed from File3, including the three transition lines).
+
+- **Source** — her WAVs (24 kHz mono) moved out of the deployed folder (`3_BUILD/assets/Audio/voiceovers/`)
+  to `1_SPEC/lesson_voice/source_wav/`; the takes they replaced are in `1_SPEC/lesson_voice/tts_backup/`.
+- **Prepared** by `1_SPEC/prepare_lesson_voice.py` (File3's): dead air trimmed (30 ms kept before the
+  voice, 120 ms after), levelled to -16 LUFS (all 141 within ±0.7), peaks limited to -1 dBFS, written as
+  WAV under the same `.ogg` names.
+- **Timing re-measured from her takes** — every screen cue tied to the voice is read off her own pauses:
+  page 1 (the letter on «ओ», the arrow on «इसकी», the matra on «देखिए»), pages 2 / 4 (the mark lands on
+  «घो» / «लौ», ड़ा / खि / ना join on their words, the picture on «घोड़ा» / «खिलौना», the three sounds), pages
+  3 / 5 (the picture on «इसमें», the matra on «ओ» / «औ»). She pauses in other places than the commas
+  («यह है · औ। · …», «मोर, · इसमें · म पर ओ · …»), so `_word_ms` now puts the punctuation on her longest
+  pauses and shares the words out over the stretches in between. The transition titles type on her
+  phrase («चलिए, शुरू करें!» 3.24 s, «चलिए, साथ में करें!» 3.75 s, «अब आपकी बारी।» 1.22 s - measured, no longer
+  File3's numbers); Swifty's lip-sync on the three transitions and the celebration follows her voice.
+- **Checked** — 141/141 files match the manifest's IDs; lengths and pause patterns fit their lines
+  (no file looks misnamed); the automatic transcription check could not run - the Gemini key in
+  `3_BUILD/.env` is no longer valid. In the browser with real audio: pages 1, 2, 4 move on her words to
+  within ~0.1 s; `_verify_vo_overlap.py` 0 clashes on every page; `_verify_assets.py` 0 FAIL 0 WARN
+  (no truncated clip); «मात्रा टोकरी» plays through to the celebration.

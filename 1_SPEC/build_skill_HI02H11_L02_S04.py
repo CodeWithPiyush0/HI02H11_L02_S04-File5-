@@ -292,21 +292,65 @@ def _voice_segs_ms(audio_id, quiet_s=0.30):
 
 
 def _word_ms(audio_id, line, word, fallback=1300):
-    """[S04] When `word` is spoken inside `line`'s clip, in ms. These lines do not pause where
-    File3's do («यह है ओ।» is one breath, File3's «यह है» · «उ» two), so a fixed phrase index cannot
-    carry over. The line is cut at its punctuation; when the clip reads as the same number of
-    phrases, the word is placed inside ITS phrase, by its share of that phrase's letters. Otherwise
-    the whole-clip estimate (`_matra_cue_ms`)."""
-    parts = [x.strip() for x in re.split(r"[,।!?]", line) if x.strip()]
-    for q in (0.30, 0.18):
-        segs = _voice_segs_ms(audio_id, q)
-        if segs and len(segs) == len(parts):
-            for (t0, t1), ph in zip(segs, parts):
-                k = ph.find(word)
-                if k >= 0:
-                    n = len(ph.replace(" ", ""))
-                    return int(t0 + (t1 - t0) * len(ph[:k].replace(" ", "")) / float(max(1, n)))
-            break
+    """[S04] When `word` is spoken inside `line`'s clip, in ms.
+
+    THE RECORDING DECIDES WHERE THE PHRASES ARE, NOT THE COMMAS. A reader pauses where she breathes:
+    «यह है · ओ। · इसकी मात्रा देखिए», «मोर, · इसमें · म पर ओ · की मात्रा लगी है। · बोलकर देखिए» - more
+    pauses than the line has commas. So the clip's sounding stretches are measured (180 ms pauses),
+    the line's punctuation breaks are put on the clip's LONGEST pauses (a full stop or comma is where a
+    reader stops longest), and inside each part the words are shared out over its stretches by their
+    letters. The word is then placed inside its stretch by its letters. If the clip cannot be read, or
+    has fewer stretches than the line has parts, the whole-clip estimate (`_matra_cue_ms`)."""
+    at = line.find(word)
+    if at < 0:
+        return _matra_cue_ms(audio_id, line, word, fallback)
+    toks = [(m.start(), m.end(), m.group()) for m in re.finditer(r"\S+", line)]
+    clean = lambda t: len(re.sub(r"[\s,।!?….\-]", "", t))
+    lens = [max(2, clean(t)) for _, _, t in toks]   # a one-letter word («ओ», «म») is still a syllable
+    ends = [k + 1 for k, (_, _, t) in enumerate(toks[:-1]) if re.search(r"[,।!?…]$", t)]
+    parts = list(zip([0] + ends, ends + [len(toks)]))             # word ranges between punctuation
+    segs = _voice_segs_ms(audio_id, 0.18)
+    if len(segs) > len(toks):
+        segs = _voice_segs_ms(audio_id, 0.30)
+    if not segs or len(segs) < len(parts) or len(segs) > len(toks):
+        return _matra_cue_ms(audio_id, line, word, fallback)
+    # the len(parts)-1 longest pauses are the punctuation breaks
+    gaps = sorted(range(1, len(segs)), key=lambda g: segs[g][0] - segs[g - 1][1], reverse=True)
+    cuts = sorted(gaps[:len(parts) - 1])
+    seg_groups = list(zip([0] + cuts, cuts + [len(segs)]))
+    wi = next(x for x, (s0, e0, _) in enumerate(toks) if at < e0)
+    for (w0, w1), (g0, g1) in zip(parts, seg_groups):
+        if not (w0 <= wi < w1):
+            continue
+        ss, ws = segs[g0:g1], lens[w0:w1]
+        if len(ss) > len(ws):                                    # more stretches than words: merge
+            ss = [(ss[0][0], ss[-1][1])]
+        k, n = len(ss), len(ws)
+        pre = [0]
+        for L in ws:
+            pre.append(pre[-1] + L)
+        tot_c = float(pre[-1]); tot_d = float(sum(b - a for a, b in ss)) or 1.0
+        INF = float("inf")
+        best = [[INF] * (n + 1) for _ in range(k + 1)]; back = [[0] * (n + 1) for _ in range(k + 1)]
+        best[0][0] = 0.0
+        for g in range(1, k + 1):
+            share = (ss[g - 1][1] - ss[g - 1][0]) / tot_d
+            for e in range(g, n - (k - g) + 1):
+                for b0 in range(g - 1, e):
+                    if best[g - 1][b0] < INF:
+                        c = best[g - 1][b0] + ((pre[e] - pre[b0]) / tot_c - share) ** 2
+                        if c < best[g][e]:
+                            best[g][e], back[g][e] = c, b0
+        bounds, e = [], n
+        for g in range(k, 0, -1):
+            b0 = back[g][e]; bounds.append((b0, e)); e = b0
+        bounds.reverse()
+        x = wi - w0
+        for g, (b0, e0) in enumerate(bounds):
+            if b0 <= x < e0:
+                t0, t1 = ss[g]
+                before = pre[x] - pre[b0] + clean(line[toks[wi][0]:at])
+                return int(t0 + (t1 - t0) * before / float(max(1, pre[e0] - pre[b0])))
     return _matra_cue_ms(audio_id, line, word, fallback)
 
 
@@ -414,7 +458,7 @@ def s_pair(sid, words, matra):
         ex.append({"word": w, "matra": matra_of(w), "img": pic(k), "emoji": OBJ[k][1],
                    "audio_line": vid,
                    "pic_ms":   _word_ms(vid, t, "इसमें", 520),
-                   "matra_ms": _word_ms(vid, t, "पर " + M, 900) + 120,
+                   "matra_ms": _word_ms(vid, t, M, 900),
                    "matra_audio": None})
     return {"id": sid, "phase": "tutorial", "eis": "iconic", "type": "MEET_PAIR",
             "prompt_hi": "",                     # no heading, as File3
@@ -1074,6 +1118,18 @@ def gate_talk(card):
     import subprocess, tempfile
     from PIL import Image
     g = card["gate"]
+    # [2026-10-21] THE TRANSITION LINES ARE THE SME'S OWN RECORDINGS NOW, so where the on-screen phrase
+    # («चलिए, शुरू करें!» / «चलिए, साथ में करें!» / «अब आपकी बारी!») sits in each clip is measured here
+    # instead of reusing File3's numbers: it is everything after the clip's last long pause (>= 400 ms;
+    # the comma inside «चलिए, साथ में करें!» is a shorter one). Falls back to the card's values.
+    for phase, vo_id in (("tutorial", "vo_pt_tutorial"), ("guided", "vo_pt_guided"), ("practice", "vo_pt_practice")):
+        segs = _voice_segs_ms(vo_id, 0.30)
+        if len(segs) < 2:
+            continue
+        k = max(i for i in range(1, len(segs)) if segs[i][0] - segs[i - 1][1] >= 400)             if any(segs[i][0] - segs[i - 1][1] >= 400 for i in range(1, len(segs))) else len(segs) - 1
+        g["title_cue_ms"][phase] = segs[k][0]
+        g["title_dur_ms"][phase] = segs[-1][1] - segs[k][0]
+    print("  OK  transition phrases measured: cue %s  dur %s" % (g["title_cue_ms"], g["title_dur_ms"]))
     src = os.path.join(BUNDLE, g["img"])
     out = os.path.join(BUNDLE, GATE_TALK_SHEET)
     if not os.path.isfile(src):

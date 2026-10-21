@@ -1,0 +1,977 @@
+{
+ "ladder_pass": {
+  "start": [
+   "vo_landing"
+  ],
+  "gate_tutorial": [
+   "vo_pt_tutorial"
+  ],
+  "pages": {
+   "1": {
+    "id": "T1",
+    "type": "MATRA_PAIRS",
+    "entry": [
+     "vo_pair_o",
+     "vo_pair_au"
+    ],
+    "items": [],
+    "first_try": []
+   },
+   "2": {
+    "id": "T2",
+    "type": "MATRA_BUILD",
+    "entry": [
+     "vo_t2_prompt",
+     "vo_base_ghada",
+     "vo_onset_ghoda",
+     "vo_result_ghoda",
+     "vo_sounds_ghoda"
+    ],
+    "items": [],
+    "first_try": []
+   },
+   "3": {
+    "id": "T3",
+    "type": "MEET_PAIR",
+    "entry": [
+     "vo_t3_prompt",
+     "vo_meet_mor",
+     "vo_mic_nudge"
+    ],
+    "items": [],
+    "first_try": []
+   },
+   "4": {
+    "id": "T4",
+    "type": "MATRA_BUILD",
+    "entry": [
+     "vo_t4_prompt",
+     "vo_base_khilna",
+     "vo_onset_khilona",
+     "vo_result_khilona",
+     "vo_sounds_khilona"
+    ],
+    "items": [],
+    "first_try": []
+   },
+   "5": {
+    "id": "T5",
+    "type": "MEET_PAIR",
+    "entry": [
+     "vo_t5_prompt",
+     "vo_meet_kaua",
+     "vo_mic_nudge"
+    ],
+    "items": [],
+    "first_try": []
+   },
+   "6": {
+    "id": "G5D",
+    "type": "TRAIN_SORT",
+    "entry": [
+     "vo_g5d_prompt",
+     "vo_letter_au",
+     "vo_letter_o",
+     "vo_letter_au",
+     "vo_g5d_au",
+     "vo_letter_o",
+     "vo_g5d_o",
+     "vo_g4d_end"
+    ],
+    "items": [],
+    "first_try": [],
+    "note": "watch-only; moved on to page 7 by itself"
+   },
+   "7": {
+    "id": "G5",
+    "type": "TRAIN_SORT",
+    "entry": [
+     "vo_g5_prompt",
+     "vo_matra_au",
+     "vo_matra_o"
+    ],
+    "items": [
+     {
+      "item": "◌ो",
+      "miss1": [
+       "vo_g5_h1",
+       "vo_matra_o"
+      ],
+      "miss2": [
+       "vo_letter_o",
+       "vo_letter_au",
+       "vo_g5_h2"
+      ],
+      "miss3": [
+       "vo_g5_h3_o",
+       "vo_matra_o"
+      ],
+      "right_after_hints": []
+     },
+     {
+      "item": "◌ौ",
+      "miss1": [
+       "vo_matra_au"
+      ],
+      "miss2": [
+       "vo_matra_au"
+      ],
+      "miss3": [
+       "vo_matra_au"
+      ],
+      "right_after_hints": [
+       "vo_ok_matra_au"
+      ]
+     }
+    ],
+    "first_try": [
+     {
+      "item": "◌ो",
+      "right": [
+       "vo_ok_matra_o"
+      ]
+     },
+     {
+      "item": "◌ौ",
+      "right": [
+       "vo_ok_matra_au"
+      ]
+     }
+    ],
+    "after_last": []
+   },
+   "8": {
+    "id": "G1",
+    "type": "TRAIN_TAP",
+    "entry": [
+     "vo_tap_prompt_o",
+     "vo_name_mor",
+     "vo_name_chauk",
+     "vo_name_daud"
+    ],
+    "items": [
+     {
+      "item": "मोर",
+      "miss1": [
+       "vo_tap_h1_o"
+      ],
+      "miss2": [
+       "vo_name_mor",
+       "vo_name_chauk",
+       "vo_name_daud",
+       "vo_tap_h2_o"
+      ],
+      "miss3": [
+       "vo_g1_h3"
+      ],
+      "right_after_hints": []
+     }
+    ],
+    "first_try": [
+     {
+      "item": "मोर",
+      "right": [
+       "vo_g1_correct"
+      ]
+     }
+    ]
+   },
+   "9": {
+    "id": "G3",
+    "type": "TRAIN_TAP",
+    "entry": [
+     "vo_tap_prompt_o",
+     "vo_name_tota",
+     "vo_name_kaua",
+     "vo_name_nauka"
+    ],
+    "items": [
+     {
+      "item": "तोता",
+      "miss1": [
+       "vo_tap_h1_o"
+      ],
+      "miss2": [
+       "vo_name_tota",
+       "vo_name_kaua",
+       "vo_name_nauka",
+       "vo_tap_h2_o"
+      ],
+      "miss3": [
+       "vo_g3_h3"
+      ],
+      "right_after_hints": []
+     }
+    ],
+    "first_try": [
+     {
+      "item": "तोता",
+      "right": [
+       "vo_g3_correct"
+      ]
+     }
+    ]
+   },
+   "10": {
+    "id": "G2",
+    "type": "TRAIN_TAP",
+    "entry": [
+     "vo_tap_prompt_au",
+     "vo_name_dhol",
+     "vo_name_kaua",
+     "vo_name_gol"
+    ],
+    "items": [
+     {
+      "item": "कौआ",
+      "miss1": [
+       "vo_tap_h1_au"
+      ],
+      "miss2": [
+       "vo_name_dhol",
+       "vo_name_kaua",
+       "vo_name_gol",
+       "vo_tap_h2_au"
+      ],
+      "miss3": [
+       "vo_g2_h3"
+      ],
+      "right_after_hints": []
+     }
+    ],
+    "first_try": [
+     {
+      "item": "कौआ",
+      "right": [
+       "vo_g2_correct"
+      ]
+     }
+    ]
+   },
+   "11": {
+    "id": "G4",
+    "type": "TRAIN_SORT",
+    "entry": [
+     "vo_g4_prompt",
+     "vo_name_paudha",
+     "vo_name_dhol",
+     "vo_name_tota",
+     "vo_name_kaua"
+    ],
+    "items": [
+     {
+      "item": "पौधा",
+      "miss1": [
+       "vo_g4_h1",
+       "vo_name_paudha"
+      ],
+      "miss2": [
+       "vo_name_paudha",
+       "vo_name_dhol",
+       "vo_name_tota",
+       "vo_name_kaua",
+       "vo_g4_h2_paudha"
+      ],
+      "miss3": [
+       "vo_g4_h3_paudha",
+       "vo_name_paudha"
+      ],
+      "right_after_hints": []
+     },
+     {
+      "item": "ढोल",
+      "miss1": [
+       "vo_g4_h1",
+       "vo_name_dhol"
+      ],
+      "miss2": [
+       "vo_name_dhol",
+       "vo_name_tota",
+       "vo_name_kaua",
+       "vo_g4_h2_dhol"
+      ],
+      "miss3": [
+       "vo_g4_h3_dhol",
+       "vo_name_dhol"
+      ],
+      "right_after_hints": []
+     },
+     {
+      "item": "कौआ",
+      "miss1": [
+       "vo_g4_h1",
+       "vo_name_kaua"
+      ],
+      "miss2": [
+       "vo_name_tota",
+       "vo_name_kaua",
+       "vo_g4_h2_kaua"
+      ],
+      "miss3": [
+       "vo_g4_h3_kaua",
+       "vo_name_kaua"
+      ],
+      "right_after_hints": []
+     },
+     {
+      "item": "तोता",
+      "miss1": [
+       "vo_g4_h1",
+       "vo_name_tota"
+      ],
+      "miss2": [
+       "vo_name_tota",
+       "vo_g4_h2_tota"
+      ],
+      "miss3": [
+       "vo_g4_h3_tota",
+       "vo_name_tota"
+      ],
+      "right_after_hints": []
+     }
+    ],
+    "first_try": [
+     {
+      "item": "पौधा",
+      "right": [
+       "vo_ok_paudha"
+      ]
+     },
+     {
+      "item": "ढोल",
+      "right": [
+       "vo_ok_dhol"
+      ]
+     },
+     {
+      "item": "कौआ",
+      "right": [
+       "vo_ok_kaua"
+      ]
+     },
+     {
+      "item": "तोता",
+      "right": [
+       "vo_ok_tota"
+      ]
+     }
+    ],
+    "after_last": []
+   },
+   "12": {
+    "id": "G6",
+    "type": "WORD_BUILD",
+    "entry": [
+     "vo_wb_prompt"
+    ],
+    "items": [
+     {
+      "item": "मोर",
+      "miss1": [
+       "vo_g6_h1",
+       "vo_ak_nau"
+      ],
+      "miss2": [
+       "vo_name_mor",
+       "vo_name_dhol",
+       "vo_name_paudha",
+       "vo_g6_h2"
+      ],
+      "miss3": [
+       "vo_g6_h3_mor",
+       "vo_ak_nau"
+      ],
+      "right_after_hints": [
+       "vo_ok_wb_mor"
+      ]
+     },
+     {
+      "item": "ढोल",
+      "miss1": [
+       "vo_g6_h3_dhol",
+       "vo_ak_nau"
+      ],
+      "miss2": [
+       "vo_g6_h3_dhol",
+       "vo_ak_nau"
+      ],
+      "miss3": [
+       "vo_g6_h3_dhol",
+       "vo_ak_nau"
+      ],
+      "right_after_hints": [
+       "vo_ok_wb_dhol"
+      ]
+     },
+     {
+      "item": "पौधा",
+      "miss1": [
+       "vo_g6_h3_paudha",
+       "vo_ak_nau"
+      ],
+      "miss2": [
+       "vo_g6_h3_paudha",
+       "vo_ak_nau"
+      ],
+      "miss3": [
+       "vo_g6_h3_paudha",
+       "vo_ak_nau"
+      ],
+      "right_after_hints": [
+       "vo_ok_wb_paudha"
+      ]
+     }
+    ],
+    "first_try": [
+     {
+      "item": "मोर",
+      "right": [
+       "vo_ok_wb_mor"
+      ]
+     },
+     {
+      "item": "ढोल",
+      "right": [
+       "vo_ok_wb_dhol"
+      ]
+     },
+     {
+      "item": "पौधा",
+      "right": [
+       "vo_ok_wb_paudha"
+      ]
+     }
+    ],
+    "after_last": []
+   },
+   "13": {
+    "id": "G7",
+    "type": "TRAIN_SORT",
+    "entry": [
+     "vo_g7_prompt",
+     "vo_name_hathauda",
+     "vo_name_tota",
+     "vo_name_ghoda",
+     "vo_name_daud"
+    ],
+    "items": [
+     {
+      "item": "दौड़",
+      "miss1": [
+       "vo_g7_h1",
+       "vo_name_daud"
+      ],
+      "miss2": [
+       "vo_name_hathauda",
+       "vo_name_tota",
+       "vo_name_ghoda",
+       "vo_name_daud",
+       "vo_g7_h2_daud"
+      ],
+      "miss3": [
+       "vo_g7_h3_daud",
+       "vo_name_daud"
+      ],
+      "right_after_hints": []
+     },
+     {
+      "item": "तोता",
+      "miss1": [
+       "vo_g7_h1",
+       "vo_name_tota"
+      ],
+      "miss2": [
+       "vo_name_hathauda",
+       "vo_name_tota",
+       "vo_name_ghoda",
+       "vo_g7_h2_tota"
+      ],
+      "miss3": [
+       "vo_g7_h3_tota",
+       "vo_name_tota"
+      ],
+      "right_after_hints": []
+     },
+     {
+      "item": "घोड़ा",
+      "miss1": [
+       "vo_g7_h1",
+       "vo_name_ghoda"
+      ],
+      "miss2": [
+       "vo_name_hathauda",
+       "vo_name_ghoda",
+       "vo_g7_h2_ghoda"
+      ],
+      "miss3": [
+       "vo_g7_h3_ghoda",
+       "vo_name_ghoda"
+      ],
+      "right_after_hints": []
+     },
+     {
+      "item": "हथौड़ा",
+      "miss1": [
+       "vo_g7_h1",
+       "vo_name_hathauda"
+      ],
+      "miss2": [
+       "vo_name_hathauda",
+       "vo_g7_h2_hathauda"
+      ],
+      "miss3": [
+       "vo_g7_h3_hathauda",
+       "vo_name_hathauda"
+      ],
+      "right_after_hints": []
+     }
+    ],
+    "first_try": [
+     {
+      "item": "दौड़",
+      "right": [
+       "vo_okp_daud"
+      ]
+     },
+     {
+      "item": "तोता",
+      "right": [
+       "vo_okp_tota"
+      ]
+     },
+     {
+      "item": "घोड़ा",
+      "right": [
+       "vo_okp_ghoda"
+      ]
+     },
+     {
+      "item": "हथौड़ा",
+      "right": [
+       "vo_okp_hathauda"
+      ]
+     }
+    ],
+    "after_last": []
+   },
+   "14": {
+    "id": "G8",
+    "type": "SENTENCE_COMPLETE",
+    "entry": [
+     "vo_sc_prompt"
+    ],
+    "items": [
+     {
+      "item": "कौआ",
+      "miss1": [
+       "vo_name_ghoda",
+       "vo_name_ghoda",
+       "vo_g8_h1"
+      ],
+      "miss2": [
+       "vo_name_mor",
+       "vo_name_mor",
+       "vo_g8_try_ghoda",
+       "vo_g8_try_mor",
+       "vo_g8_try_kaua",
+       "vo_sc_h2"
+      ],
+      "miss3": [
+       "vo_name_ghoda",
+       "vo_name_ghoda",
+       "vo_g8_h3"
+      ],
+      "right_after_hints": [
+       "vo_name_kaua",
+       "vo_name_kaua",
+       "vo_g8_try_kaua"
+      ]
+     }
+    ],
+    "first_try": [
+     {
+      "item": "कौआ",
+      "right": [
+       "vo_name_kaua",
+       "vo_name_kaua",
+       "vo_g8_correct"
+      ]
+     }
+    ]
+   },
+   "15": {
+    "id": "G9",
+    "type": "SENTENCE_COMPLETE",
+    "entry": [
+     "vo_sc_prompt"
+    ],
+    "items": [
+     {
+      "item": "खिलौना",
+      "miss1": [
+       "vo_name_mor",
+       "vo_name_mor",
+       "vo_g9_h1"
+      ],
+      "miss2": [
+       "vo_name_dhol",
+       "vo_name_dhol",
+       "vo_g9_try_dhol",
+       "vo_g9_try_khilona",
+       "vo_g9_try_mor",
+       "vo_sc_h2"
+      ],
+      "miss3": [
+       "vo_name_mor",
+       "vo_name_mor",
+       "vo_g9_h3"
+      ],
+      "right_after_hints": [
+       "vo_name_khilona",
+       "vo_name_khilona",
+       "vo_g9_try_khilona"
+      ]
+     }
+    ],
+    "first_try": [
+     {
+      "item": "खिलौना",
+      "right": [
+       "vo_name_khilona",
+       "vo_name_khilona",
+       "vo_g9_correct"
+      ]
+     }
+    ]
+   },
+   "16": {
+    "id": "G10",
+    "type": "SENTENCE_COMPLETE",
+    "entry": [
+     "vo_sc_prompt"
+    ],
+    "items": [
+     {
+      "item": "हथौड़ा",
+      "miss1": [
+       "vo_name_dhol",
+       "vo_name_dhol",
+       "vo_g10_h1"
+      ],
+      "miss2": [
+       "vo_name_tota",
+       "vo_name_tota",
+       "vo_g10_try_tota",
+       "vo_g10_try_hathauda",
+       "vo_g10_try_dhol",
+       "vo_sc_h2"
+      ],
+      "miss3": [
+       "vo_name_dhol",
+       "vo_name_dhol",
+       "vo_g10_h3"
+      ],
+      "right_after_hints": [
+       "vo_name_hathauda",
+       "vo_name_hathauda",
+       "vo_g10_try_hathauda"
+      ]
+     }
+    ],
+    "first_try": [
+     {
+      "item": "हथौड़ा",
+      "right": [
+       "vo_name_hathauda",
+       "vo_name_hathauda",
+       "vo_g10_correct",
+       "vo_pt_practice"
+      ]
+     }
+    ]
+   },
+   "17": {
+    "id": "MT1",
+    "type": "MATRA_TOKRI",
+    "entry": [
+     "vo_mt_intro",
+     "vo_mt_intro",
+     "vo_mt_intro",
+     "vo_mt_intro",
+     "vo_mt_round_o",
+     "vo_mt_intro"
+    ],
+    "items": [],
+    "first_try": []
+   },
+   "18": {
+    "id": "CEL",
+    "type": "CELEBRATION",
+    "entry": [
+     "vo_cel_prompt"
+    ],
+    "items": [],
+    "first_try": []
+   }
+  },
+  "errors": [],
+  "gate_guided": [
+   "vo_pt_guided"
+  ],
+  "gate_practice": [
+   "vo_pt_practice"
+  ],
+  "console": [
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)",
+   "http://127.0.0.1:8979/favicon.ico - Failed to load resource: the server responded with a status of 404 (File not found)"
+  ]
+ },
+ "first_try_pass": {
+  "7": {
+   "entry": [
+    "vo_g5_prompt",
+    "vo_matra_o",
+    "vo_matra_au"
+   ],
+   "right": [
+    {
+     "item": "◌ो",
+     "clips": [
+      "vo_g5_prompt",
+      "vo_ok_matra_o"
+     ]
+    },
+    {
+     "item": "◌ौ",
+     "clips": [
+      "vo_ok_matra_au"
+     ]
+    }
+   ],
+   "tail": []
+  },
+  "8": {
+   "entry": [
+    "vo_tap_prompt_o",
+    "vo_name_chauk",
+    "vo_name_mor",
+    "vo_name_daud"
+   ],
+   "right": [
+    {
+     "item": "मोर",
+     "clips": [
+      "vo_g1_correct"
+     ]
+    }
+   ],
+   "tail": []
+  },
+  "9": {
+   "entry": [
+    "vo_tap_prompt_o",
+    "vo_name_tota",
+    "vo_name_kaua",
+    "vo_name_nauka"
+   ],
+   "right": [
+    {
+     "item": "तोता",
+     "clips": [
+      "vo_g3_correct"
+     ]
+    }
+   ],
+   "tail": []
+  },
+  "10": {
+   "entry": [
+    "vo_tap_prompt_au",
+    "vo_name_dhol",
+    "vo_name_gol",
+    "vo_name_kaua"
+   ],
+   "right": [
+    {
+     "item": "कौआ",
+     "clips": [
+      "vo_g2_correct"
+     ]
+    }
+   ],
+   "tail": []
+  },
+  "11": {
+   "entry": [
+    "vo_g4_prompt",
+    "vo_name_dhol",
+    "vo_name_kaua",
+    "vo_name_paudha",
+    "vo_name_tota"
+   ],
+   "right": [
+    {
+     "item": "पौधा",
+     "clips": [
+      "vo_ok_paudha"
+     ]
+    },
+    {
+     "item": "ढोल",
+     "clips": [
+      "vo_ok_dhol"
+     ]
+    },
+    {
+     "item": "कौआ",
+     "clips": [
+      "vo_g4_prompt",
+      "vo_ok_kaua"
+     ]
+    },
+    {
+     "item": "तोता",
+     "clips": [
+      "vo_ok_tota"
+     ]
+    }
+   ],
+   "tail": []
+  },
+  "12": {
+   "entry": [
+    "vo_wb_prompt"
+   ],
+   "right": [
+    {
+     "item": "मोर",
+     "clips": [
+      "vo_wb_prompt",
+      "vo_ok_wb_mor"
+     ]
+    },
+    {
+     "item": "ढोल",
+     "clips": [
+      "vo_ok_wb_dhol"
+     ]
+    },
+    {
+     "item": "पौधा",
+     "clips": [
+      "vo_ok_wb_paudha"
+     ]
+    }
+   ],
+   "tail": []
+  },
+  "13": {
+   "entry": [
+    "vo_g7_prompt",
+    "vo_name_hathauda",
+    "vo_name_tota",
+    "vo_name_ghoda",
+    "vo_name_daud"
+   ],
+   "right": [
+    {
+     "item": "दौड़",
+     "clips": [
+      "vo_okp_daud"
+     ]
+    },
+    {
+     "item": "तोता",
+     "clips": [
+      "vo_okp_tota"
+     ]
+    },
+    {
+     "item": "घोड़ा",
+     "clips": [
+      "vo_okp_ghoda",
+      "vo_g7_prompt"
+     ]
+    },
+    {
+     "item": "हथौड़ा",
+     "clips": [
+      "vo_okp_hathauda"
+     ]
+    }
+   ],
+   "tail": []
+  },
+  "14": {
+   "entry": [
+    "vo_sc_prompt"
+   ],
+   "right": [
+    {
+     "item": "कौआ",
+     "clips": [
+      "vo_sc_prompt",
+      "vo_name_kaua",
+      "vo_name_kaua",
+      "vo_g8_correct"
+     ]
+    }
+   ],
+   "tail": []
+  },
+  "15": {
+   "entry": [
+    "vo_sc_prompt"
+   ],
+   "right": [
+    {
+     "item": "खिलौना",
+     "clips": [
+      "vo_name_khilona",
+      "vo_name_khilona",
+      "vo_g9_correct"
+     ]
+    }
+   ],
+   "tail": []
+  },
+  "16": {
+   "entry": [
+    "vo_sc_prompt"
+   ],
+   "right": [
+    {
+     "item": "हथौड़ा",
+     "clips": [
+      "vo_sc_prompt",
+      "vo_name_hathauda",
+      "vo_name_hathauda",
+      "vo_g10_correct",
+      "vo_pt_practice"
+     ]
+    }
+   ],
+   "tail": []
+  }
+ }
+}

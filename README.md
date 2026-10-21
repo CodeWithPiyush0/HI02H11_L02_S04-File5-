@@ -52,6 +52,10 @@ Checks: `cd 3_BUILD && PYTHONUTF8=1 python ../1_SPEC/_verify_assets.py` ·
 `1_SPEC/_verify_vo_overlap.py <url> 3_BUILD/card.json out.txt` ·
 `1_SPEC/_drive_ladder_s04.py <url> out.json shots/` · `1_SPEC/_capture_settled.py <url> shots/`.
 
+## Voice-over manifest
+
+`HI02H11_L02_S04_VO_manifest.xlsx` (this folder) lists every clip in the order the child hears it, with its Hindi script, when it plays, its duration and whether it still needs recording - for the SME. The voice is the SME's recording: sources in `1_SPEC/lesson_voice/source_wav/`; after replacing a WAV run `PYTHONUTF8=1 python 1_SPEC/prepare_lesson_voice.py [clip_id ...]` and rebuild (the build re-measures the voice-synced cues). Regenerate after any flow change: re-record the play order with `1_SPEC/vo_play_order/drive_*.py`, then `PYTHONUTF8=1 python 1_SPEC/gen_lesson_vo_manifest.py`.
+
 ## Open items
 
 - **Independent round:** «मात्रा टोकरी» (File2's word-catch game) is built after page 16; see `CHANGES.md` Round 6.
