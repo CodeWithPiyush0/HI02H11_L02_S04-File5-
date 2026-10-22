@@ -4295,6 +4295,10 @@ body.spk-busy .tut-audio{ pointer-events:none !important; opacity:.45; filter:gr
 .mb-v2 .mb-rword > .mb-rbase, .mb-v2 .mb-rword > .mb-result{ justify-self:start; }
 /* खि of खिलौना joins from the left, as ना joins from the right */
 .mb-v2 .mb-rpre.mb-tailwait{ transform:translateX(-.35em) scale(.85); }
+/* [S04 2026-10-22] page 2: the developer - "reduce the size of घड़ा". The pot is a solid round mass that
+   filled its whole 210 px box and read much bigger than the horse beside it; it is 160 px now, standing on
+   the same ground line as the horse's hooves (the box itself is unchanged, so nothing else moves). */
+.mb-v2 .mb-p1 .mb-pic img[src*="/obj_ghada."]{ max-height:160px; align-self:flex-end; }
 
 /* [r145] QA BUG_10: the mic while the speaker replays its word - greyed like a finished mic, no pulse */
 .mx-v2 .mx-mic.mx-wait{ filter:grayscale(1); cursor:default; }
@@ -8373,7 +8377,7 @@ function sortSeqReveal(tray, slide){
 /* [S04] CACHE-BUST EVERY PICTURE, the same way _av() does for audio: a redrawn picture keeps its
    filename, so a browser that has seen the old one keeps showing it. Stamped by the builder from the
    CONTENT of assets/Images. */
-var __IMG_V = "9c8c7060d745";
+var __IMG_V = "02f674bf94b8";
 function imgOrEmoji(imgKey, emoji, imgClass, emojiClass){
   if(imgKey){
     const fb = String(emoji||"❓").replace(/'/g,"");

@@ -464,3 +464,14 @@ Measured with real pointer taps / drags, reminder already used, then a wrong ans
 7.0-7.6 s after the hint ends on the tap pages (G1, G2), the sort page (G4) and the sentence page; after one
 correct drop of four (G4) 6.9-7.1 s; untouched, it plays once and not again in 30 s; nothing after a correct
 answer.
+
+## Round 18 (2026-10-22) — the new horse, a smaller घड़ा on page 2
+
+- **Horse** — the developer's new picture («Cheerful Chestnut Horse Illustration.png», a transparent cut-out)
+  replaces `obj_ghoda.webp`: trimmed to the horse, 640 x 564, WebP. It is the same file everywhere the horse
+  appears - page 2 (घोड़ा), page 13 (picture sort), page 14 (sentence option). The source PNG moved out of the
+  deployed folder to `1_SPEC/art_src/obj_ghoda_v2_source.png`; the build's picture stamp changed, so browsers
+  fetch the new one.
+- **Page 2, «घड़ा»** — the pot filled its whole 210 px box and read much bigger than the horse; it is 160 px
+  tall now and stands on the same ground line as the horse's hooves. The box, the word and everything else on
+  the page are unchanged.
