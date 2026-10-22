@@ -6506,8 +6506,11 @@ function armIdleVo(){
     if(Date.now() - _idleSince < ms) return;
     // [27f] ONE reminder, then done for this slide. Mark spent and stop the ticker BEFORE speaking,
     // so a pointerdown arriving during the replay cannot re-arm it.
-    _idleVoFired = true;
-    stopIdleVo();
+    /* [r150] Yasir: "the VO replays only 1 time - it should play after each 7 seconds, not just once, if the
+       user remains inactive". The ticker is no longer stopped after a reminder: it keeps watching, and since
+       the reminder itself is sound (the clock holds while it plays), the next one comes 7 s after it ENDS -
+       and so on, every 7 s of silence, until the child acts or the page is answered (state.locked) or left. */
+    _idleSince = 0;
     SwiftPAL.emit("idle_vo_replay", { slide_id: s.id, phase: s.phase });
     if(state.replayAudio) state.replayAudio(); else autoPlayChain(s);
   }, IDLE_VO_TICK);

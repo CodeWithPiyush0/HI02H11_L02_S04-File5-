@@ -475,3 +475,14 @@ answer.
 - **Page 2, «घड़ा»** — the pot filled its whole 210 px box and read much bigger than the horse; it is 160 px
   tall now and stands on the same ground line as the horse's hooves. The box, the word and everything else on
   the page are unchanged.
+
+## Round 19 (2026-10-22) — the 7 s reminder repeats every 7 s while the child stays inactive (File3 r150)
+
+Yasir: "the VO replays only 1 time - it should play after each 7 seconds, not just once, if the user remains
+inactive". The idle reminder keeps going now: after each reminder the 7 s count starts again when it has
+finished speaking, so a child who stays inactive hears the question every 7 s of silence - until they act, the
+page is answered, or they leave it. Same pages as before (every page where the child has to do something; not the
+watch-only pages or the runner game; the mic pages keep their own 7 s reminder).
+Measured, 40 s untouched, silence before each repeat: tap page G1 7.3-7.4 s (3 reminders - each also reads the
+options), sort page G4 7.0-7.2 s (4), sentence page 7.0-7.1 s (4), in both files; nothing after a correct
+answer; no console errors.
