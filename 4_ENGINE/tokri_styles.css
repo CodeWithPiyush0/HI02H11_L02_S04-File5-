@@ -1031,3 +1031,32 @@ body.mt-page{ background:#7FC2FE; }
     z-index: 205;
   }
 
+/* ==========================================================================================
+   [S04 2026-10-22] «मात्रा टोकरी» - two asks from the developer, this game only.
+   ========================================================================================== */
+/* 1. THE ROUND'S MATRA ON THE BASKET'S PLAQUE. [2026-10-22, 5th ask] the developer's reference picture: a
+      wooden name-plaque on the basket's front with the matra on it. The plaque is in the ART now (both
+      layers, 1_SPEC/make_tokri_plaque.py: wooden frame, cream panel, two brass rivets, centred at 75.3 % of
+      the basket's height); the game writes only the matra on it, in the lesson's orange, so it changes with
+      the round («◌ो», then «◌ौ»). It lives in the front layer, so it moves and wiggles with the basket.
+      --mt-ink-dy centres the INK on the panel, not the line box: the hook of ो / ौ rises above the letters. */
+.mt-game .basket-front .bf-art { position: relative; }
+.mt-game .basket-matra {
+  --mt-ink-dy: 4px;          /* measured: ink centred on the cream panel (both matras) */
+  position: absolute; left: 50%; top: 75.3%;
+  transform: translate(-50%, -50%);
+  font-family: var(--pal-font-hi); font-weight: 800; font-size: 34px; line-height: 1;
+  color: #E8590C; white-space: nowrap; pointer-events: none;
+}
+.mt-game .basket-matra > span { display: block; transform: translateY(var(--mt-ink-dy)); }
+.mt-game .basket-matra:empty { display: none; }
+/* 2. NO RED ON A WRONG CATCH: "just keep the wiggle and the sfx". The basket keeps its idle white
+      outline and only wiggles (olNo); the word's cloud keeps its own colour and only shakes (wgNo);
+      the wrong sound is untouched. The green of a right catch is unchanged. */
+.mt-game #basket-art.is-wrong { --ol-c: var(--ol-idle, #FFFFFF); }
+.mt-game .drop-tile.wg-wrong .dt-cloud { filter: hue-rotate(var(--cloud-hue, 0deg)) saturate(1.2); }
+/* 3. [2026-10-22, 4th ask] "make the tokri a little bigger so that the matra box would be in the tokri": the
+      basket (both layers) is 25 % bigger, 258 x 194, same bottom; the catch line moves with the rim (10 px
+      below CATCH_Y 489, as before) - see BASKET_W / CATCH_Y in tokri_module.js. */
+.mt-game .basket, .mt-game .basket-front { width: 258px; height: 194px; }
+.mt-game .catch-line { bottom: 155px; }

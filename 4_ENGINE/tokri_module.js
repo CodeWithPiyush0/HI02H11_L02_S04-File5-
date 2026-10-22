@@ -446,7 +446,9 @@ SlideModules.MATRA_TOKRI = {
             '<div class="ol ol-alpha" id="basket-art"><img src="assets/UI/mt_basket.webp" alt="" aria-hidden="true"></div>' +
           '</span></div>' +
           '<div class="basket-front" id="basket-front" aria-hidden="true"><span class="basket-lift" id="basket-front-lift">' +
-            '<div class="bf-art" id="basket-front-art"><img src="assets/UI/mt_basket_front.webp" alt=""></div>' +
+            '<div class="bf-art" id="basket-front-art"><img src="assets/UI/mt_basket_front.webp" alt="">' +
+              /* [S04 2026-10-22] the round's matra on the basket - see the round start below */
+              '<span class="basket-matra" id="basket-matra" aria-hidden="true"></span></div>' +
           '</span></div>' +
           '<div id="mtNudgeHand">' +
             '<span class="nh-tapfx"><i class="fx-ro"></i><i class="fx-ri"></i><i class="fx-sp"></i></span>' +
@@ -555,15 +557,20 @@ SlideModules.MATRA_TOKRI = {
       var GRAVITY        = 8;       // gentle acceleration
       var TARGET_RATIO   = 0.55;    // probability a spawn is a target-matra word
 
-      var BASKET_W          = 206;
+      /* [S04 2026-10-22] the developer: "make the tokri a little bigger so that the matra box is IN the tokri".
+         The basket is 25 % bigger - 206 x 155 -> 258 x 194, the art's own 1.333 aspect, still standing on the
+         grass at the same bottom (628) - and every number derived from its size moves with it: the catch
+         width (half the rim, which is the art's full width), CATCH_Y (top 434 + 28.5 % of 194 = 489), the
+         catch depth, and the nudge hand's dx (the right flank is 13 px further out). */
+      var BASKET_W          = 258;
       /* Both measured off the painted basket by assets/_finish_art.py, not guessed:
          its widest opaque row spans 99.6% of the art's width (the old inline SVG's
          rim was rx 90 of a 200-wide viewBox, i.e. 90%) and sits 19.1% down the frame
          (the SVG's was 24.7%). A wider, higher rim than the drawing it replaced — so
          both numbers move, or the catch box drifts off what the child can see. */
-      var BASKET_CATCH_HALF = 103;  // the rim IS the art's full width, so BASKET_W / 2
-      var CATCH_Y           = 517;  // play-area px: basket top 473 + 28.5% of 155
-      var CATCH_DEPTH       = 52;   // how far past the rim a word still counts as caught
+      var BASKET_CATCH_HALF = 129;  // the rim IS the art's full width, so BASKET_W / 2
+      var CATCH_Y           = 489;  // play-area px: basket top 434 + 28.5% of 194 ([S04] was 473 + 28.5% of 155)
+      var CATCH_DEPTH       = 65;   // how far past the rim a word still counts as caught
       var PER_ROUND         = 5;
 
       /* vo-good-1/2/3 are no longer played: the between-rounds praise is now the
@@ -593,7 +600,7 @@ SlideModules.MATRA_TOKRI = {
          to 659 against the play area's 654 cut and shaved the wrist - measured, 6px clipped.
          The box bottom is the binding constraint here, not the tip, so the box keeps its
          tuned position and the finger simply points 5px higher up the same flank. */
-      var NUDGE_OPTS = { hand: 'mtNudgeHand', host: '.mt-game .play-area', dx: 26.8, dy: -82 };
+      var NUDGE_OPTS = { hand: 'mtNudgeHand', host: '.mt-game .play-area', dx: 39.8, dy: -82 };
 
       // ---- State ----
       var playArea = null, basketEl = null, basketLift = null, basketArt = null;
@@ -987,6 +994,12 @@ SlideModules.MATRA_TOKRI = {
         clearDrops();
 
         var R = ROUNDS[i];
+        /* [S04 2026-10-22] the developer: "put the relevant matra's symbol on the tokri - when the child is
+           looking for ओ की मात्रा words, the basket carries the ओ matra". The label sits on the basket's front
+           (so it rides and wiggles with it) and changes with the round: ◌ो, then ◌ौ - drawn on its dotted
+           circle, as page 1 and the G5 cards show the mark. */
+        var bm = document.getElementById('basket-matra');
+        if (bm) bm.innerHTML = R.matra ? "<span>" + R.matra + "</span>" : "";
         /* [r25 · SME] The round banner is gone. It flashed the bare matra in a white disc,
            and a bare matra is an orphan combining mark, so the font drew it as ◌ा - a
            dotted placeholder the child was being asked to read. The VO still names the

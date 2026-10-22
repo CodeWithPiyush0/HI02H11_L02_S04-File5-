@@ -486,3 +486,55 @@ watch-only pages or the runner game; the mic pages keep their own 7 s reminder).
 Measured, 40 s untouched, silence before each repeat: tap page G1 7.3-7.4 s (3 reminders - each also reads the
 options), sort page G4 7.0-7.2 s (4), sentence page 7.0-7.1 s (4), in both files; nothing after a correct
 answer; no console errors.
+
+## Round 19 (2026-10-22) — «मात्रा टोकरी»: the matra on the basket, no red on a wrong catch
+
+The developer, for the game only ("don't change anywhere else"):
+1. **The round's matra on the basket** - a white tag with the lesson's yellow border and the orange matra on
+   the basket's woven front: «◌ो» in the ओ round, «◌ौ» in the औ round (set at each round's start). It is part of
+   the basket's front layer, so it moves, bounces and wiggles with the basket. Glyph 40 px in a 62 px tag,
+   measured ~6 px clear above and below for both matras.
+2. **No red when a wrong word is caught** - the basket keeps its white outline and only wiggles; the word's
+   cloud keeps its own colour and only shakes; the wrong sound plays as before. Measured on a wrong catch:
+   basket outline rgb(255,255,255) with its olNo wiggle, cloud filter = its normal colour, word wgNo shake.
+   The green of a right catch is unchanged.
+Files: `4_ENGINE/tokri_module.js` (the tag + its text per round), `4_ENGINE/tokri_styles.css` (a block at the
+end, scoped to `.mt-game`). Played end to end: both rounds, a wrong catch, the celebration; no console errors.
+
+## Round 20 (2026-10-22) — «मात्रा टोकरी»: the matra in the centre of the basket, in a colour that shows
+
+The developer: "put the matra in the centre of the tokri, and use some other colour so that it's visible on
+the tokri". The small white tag (orange matra) is gone; the matra is drawn straight onto the basket, larger
+(52 px), in WHITE with a thick NAVY outline (#0B3D8C) and a soft shadow, which reads on the brown weave. It is
+centred on the basket's woven front - horizontally on the basket, vertically between the rim's front lip and
+the bottom (77 % of the basket's height, the ink centred, not the line box). Still «◌ो» in the ओ round and
+«◌ौ» in the औ round, still moving and wiggling with the basket. Game only; nothing else changed.
+
+## Round 21 (2026-10-22) — «मात्रा टोकरी»: the basket's matra in a box
+
+The developer: "it's still not visible on the tokri, put it inside a box so that it's clearly visible". The
+matra is now in a WHITE BOX (88 x 72 px) with a thick NAVY border (5 px, #0B3D8C), a thin white halo and a drop
+shadow, so it stands off the brown weave; the matra inside is deep orange (#E8590C), 44 px, its ink centred in
+the box (~7 px clear above and below, measured for both ◌ो and ◌ौ). Centred on the basket's front, moving and
+wiggling with it; «◌ो» in the ओ round, «◌ौ» in the औ round. Game only.
+
+## Round 22 (2026-10-22) — «मात्रा टोकरी»: a bigger basket, the matra box fully on it
+
+The developer: "make the tokri a little bigger so that the matra box would be in the tokri (part of it is on
+the top)". The basket is 25 % bigger: 206 x 155 -> 258 x 194 (its own proportions), standing on the grass at the
+same place. Everything tied to its size moved with it, so a word is caught where the bigger rim is: catch width
+103 -> 129 (half the rim), CATCH_Y 517 -> 489, catch depth 52 -> 65, the dashed catch line 10 px under the rim as
+before, and the nudge hand's dx (still on the basket's right flank). The matra box (unchanged, 88 x 72) now sits
+wholly on the woven front, below the rim: measured box 545-617 px against the weave's 546-618. Played end to end:
+all 10 right words caught, a wrong word thrown out (no red), both labels, the celebration. Game only.
+
+## Round 23 (2026-10-22) — «मात्रा टोकरी»: a basket with a name-plaque, as in the developer's reference
+
+The developer sent a picture: the basket with a wooden name-plaque on its front and the matra on it. The basket
+art (`assets/UI/mt_basket.webp` and its front layer `mt_basket_front.webp`) now carries that plaque - a wooden
+frame with a dark outline and a lighter top band, a cream panel and two brass rivets - drawn on the same spot in
+both layers so they stay in register (`1_SPEC/make_tokri_plaque.py`; the art before the plaque is kept in
+`1_SPEC/art_src/tokri_basket_v1/`). The basket's outline, rim and catch geometry are untouched (same art, same
+silhouette). The game writes only the matra on the plaque, in the lesson's orange (34 px, the ink centred on the
+cream panel for both ◌ो and ◌ौ); the white box of round 21 is gone. Played end to end: both rounds' matras on the
+plaque, a wrong catch (no red), the celebration. Game only.
