@@ -468,7 +468,11 @@ def s_pair(sid, words, matra):
             # [File3 r134/r136] the mic: if it is not tapped for 7 s, this line asks for it
             # (File3's human clip, «इस बटन पर टैप करिए।», copied)
             "data": {"examples": ex, "no_heading": True,
-                     "mic_nudge_audio": once("vo_mic_nudge", "इस बटन पर टैप करिए।")}}
+                     "mic_nudge_audio": once("vo_mic_nudge", "इस बटन पर टैप करिए।"),
+                     # [r152] as HI02H11_L02_S03 (the user's friend's build): the hand + «इस बटन पर टैप करिए» come
+                     # at once only after page 3's FIRST word - the child's first mic; page 3's second word and
+                     # page 5 wait for 7 s of inactivity (engine: MEET_PAIR micTurn)
+                     "mic_nudge_now": sid == "T3"}}
 
 
 # ---------------------------------------------------------------- test screens: File3's hint logic

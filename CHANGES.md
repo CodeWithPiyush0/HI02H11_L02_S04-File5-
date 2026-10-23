@@ -547,3 +547,14 @@ currently only in case of 7 s inactivity". The reminder now opens the child's tu
 after every 7 s of nothing until the mic is tapped. Same in File3 and File5.
 Measured on both words of both pages, in both files: hand + line 0.36-0.37 s after «…बोलकर देखिए» ends; the
 repeat 7.0 s after it finishes; no console errors.
+
+## Round 21 (2026-10-23) — the mic hand's timing as in HI02H11_L02_S03 (File3 r152)
+
+Yasir: the hand nudge on the mic as it is done in his friend's build (github khugshalharshvardhan/
+HI02H11_L02_S03-file3-, commit "hand nudge timing fixed"). Ported as it is there: the hand + «इस बटन पर टैप करिए»
+come at once (0.35 s after «…बोलकर देखिए») only on page 3's FIRST word - the child's first mic; page 3's second
+word and both words of page 5 get them after 7 s of inactivity, and every reminder repeats after each 7 s of
+nothing until the mic is tapped. Card flag `mic_nudge_now` (T3 only, set by the builder) + their condition in
+MEET_PAIR micTurn. The hand itself (pointNudgeAt, its styles) was already identical to theirs.
+Measured in both files: T3 word 1 hand + line at 0.36-0.37 s, repeat at 9.0 s; T3 word 2 and T5 both words at
+7.0 s; no console errors.

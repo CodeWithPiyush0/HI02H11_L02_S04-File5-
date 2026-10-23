@@ -537,7 +537,8 @@
      }
     ],
     "no_heading": true,
-    "mic_nudge_audio": "vo_mic_nudge"
+    "mic_nudge_audio": "vo_mic_nudge",
+    "mic_nudge_now": true
    }
   },
   {
@@ -616,7 +617,8 @@
      }
     ],
     "no_heading": true,
-    "mic_nudge_audio": "vo_mic_nudge"
+    "mic_nudge_audio": "vo_mic_nudge",
+    "mic_nudge_now": false
    }
   },
   {
