@@ -2460,7 +2460,11 @@
             if(live()) after();
           }, 3000);
         };
-        arm();
+        /* [r151] Yasir, pages 3 / 5: "when the VO «बोलकर देखिए» ends, «इस बटन पर टैप करिए» plays and the hand nudge
+           appears - currently only after 7 s of inactivity". So the reminder now opens the child's turn: a beat
+           after the mic pops in (its 0.3 s fade, so the hand lands on a mic that is there), the hand goes to the
+           mic and the line is said; then, as before, it repeats after every 7 s of nothing until the mic is tapped. */
+        idleT = setTimeout(remind, 350);
       };
 
       const myGen = _voGen;

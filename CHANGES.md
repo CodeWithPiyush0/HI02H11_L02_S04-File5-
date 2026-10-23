@@ -538,3 +538,12 @@ both layers so they stay in register (`1_SPEC/make_tokri_plaque.py`; the art bef
 silhouette). The game writes only the matra on the plaque, in the lesson's orange (34 px, the ink centred on the
 cream panel for both ◌ो and ◌ौ); the white box of round 21 is gone. Played end to end: both rounds' matras on the
 plaque, a wrong catch (no red), the celebration. Game only.
+
+## Round 20 (2026-10-23) — pages 3 / 5: the mic hand + «इस बटन पर टैप करिए» right after the word's line (File3 r151)
+
+Yasir, pages 3 / 5: "when the VO «बोलकर देखिए» ends, «इस बटन पर टैप कीजिए» plays and the hand nudge appears -
+currently only in case of 7 s inactivity". The reminder now opens the child's turn: 0.35 s after the line ends
+(the mic's pop-in), the hand goes to the mic and «इस बटन पर टैप करिए» is said; after that, as before, it repeats
+after every 7 s of nothing until the mic is tapped. Same in File3 and File5.
+Measured on both words of both pages, in both files: hand + line 0.36-0.37 s after «…बोलकर देखिए» ends; the
+repeat 7.0 s after it finishes; no console errors.
